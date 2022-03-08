@@ -1,8 +1,16 @@
 import React from 'react'
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import Layout from './pages/layout'
+import Login from './pages/login'
 
 const App = () => {
   return (
-    <div className='bg-slate-200'>App</div>
+    <Router>
+      <Routes>
+        <Route path='login' element={<Login/>}/>
+        <Route path="admin/*" element={<Layout/>}/>
+      </Routes>
+    </Router>
   )
 }
 
