@@ -24,7 +24,7 @@ const Drivers = () => {
   };
   return (
     <div className="container p-2">
-      <div className="m-4 flex justify-end space-x-2 capitalize text-gray-600">
+      <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
           <span>drivers</span>
           <span>/</span>
           <span className="text-black">list</span>

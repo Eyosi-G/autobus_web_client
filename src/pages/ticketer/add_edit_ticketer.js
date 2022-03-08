@@ -3,7 +3,7 @@ import React from "react";
 const AddEditTicketer = () => {
   return (
     <div className="bg-gray-50 flex-grow">
-      <div className="m-4 flex justify-end space-x-2 capitalize text-gray-600">
+      <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
           <span>Ticketers</span>
           <span>/</span>
           <span className="text-black">new</span>

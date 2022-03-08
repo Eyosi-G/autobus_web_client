@@ -5,7 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 const Nav = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   return (
-    <div className="col-span-1 bg-gray-100 h-screen flex flex-col">
+    <div className="col-span-1 bg-gray-100 flex flex-col">
       <div className="h-14 border-b border-gray-200 w-full" />
       <div className="space-y-3 flex-grow mt-5">
         <Menu
@@ -153,6 +153,29 @@ const Nav = () => {
         <Menu
           selected={currentIndex === 2}
           onClickHandler={() => setCurrentIndex(2)}
+          subMenus={[
+            <NavLink to="/admin/buses/new">
+              {({ isActive }) => (
+                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
+                <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span className="capitalize text-sm">new bus</span>
+                </div>
+              )}
+            </NavLink>
+          ]}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>

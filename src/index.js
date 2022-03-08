@@ -4,6 +4,13 @@ import App from './App';
 import './index.css';
 import Layout from './pages/layout';
 import reportWebVitals from './reportWebVitals';
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+L.Marker.prototype.setIcon(L.icon({
+  iconUrl:markerIcon,
+}))
 
 ReactDOM.render(
   <React.StrictMode>
