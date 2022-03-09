@@ -1,15 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Circle,
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMap,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import React, { useEffect, useState } from "react";
 
 import StopsInput from "../../components/stops_input";
+import CancelButton from "../../components/cancel_button";
+import SaveButton from "../../components/save_button";
 
 const AddEditBus = () => {
   const [stops, setStops] = useState([]);
@@ -136,10 +129,8 @@ const AddEditBus = () => {
           />
         </div>
         <div className="flex space-x-3 justify-end mt-5">
-          <button className="border rounded-md py-1 px-5">cancel</button>
-          <button className="bg-gray-700 text-white rounded-md py-1 px-5">
-            save
-          </button>
+          <CancelButton />
+          <SaveButton />
         </div>
       </div>
     </div>

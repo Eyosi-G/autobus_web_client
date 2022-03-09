@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
-import driver from "../../resources/images/driver.jpg";
-const Drivers = () => {
+import AddEditTimeFrame from "./add_edit_timeframe";
+const Timeframes = () => {
   const [products, setProducts] = useState([
     { id: 1 },
     { id: 2 },
@@ -16,46 +18,59 @@ const Drivers = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
 
-  const onPageChangeHandler = (_newPage) => {
-    setPage(_newPage);
+  const [open, setOpen] = useState(false);
+
+  const onPageChangeHandler = (newPage) => {
+    setPage(newPage);
   };
-  const onLimitChangeHandler = (_newLimt) => {
-    setLimit(_newLimt);
+  const onLimitChangeHandler = (newLimit) => {
+    setLimit(newLimit);
   };
+
   return (
     <div className="container p-4">
+      <Modal open={open}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center z-10">
+          <AddEditTimeFrame setOpen={setOpen} />
+        </div>
+      </Modal>
       <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
-          <span>drivers</span>
-          <span>/</span>
-          <span className="text-black">list</span>
+        <span>TimeFrames</span>
+        <span>/</span>
+        <span className="text-black">list</span>
+      </div>
+      <div className="my-2">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>new timeframe</span>
+        </button>
       </div>
       <table className="w-full border border-collapse">
         <thead className="bg-slate-50">
           <tr className="text-left">
-            <th></th>
-            <th className="p-2">first name</th>
-            <th className="p-2">last name</th>
-            <th className="p-2">phone number</th>
-            <th className="p-2">email</th>
+            <th className="p-2">date</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {[1, 2, 3, 4].map((_) => {
+          {[1, 2, 3, 4].map((id) => {
             return (
-              <tr>
-                <td className="border p-2">
-                  <div className="flex justify-center">
-                    <img
-                      src={driver}
-                      className="h-12 w-12 object-cover rounded-full"
-                    />
-                  </div>
-                </td>
-                <td className="border p-2">abebe</td>
-                <td className="border p-2">kebede</td>
-                <td className="border p-2">0911139074</td>
-                <td className="border p-2">abebe@gmail.com</td>
+              <tr className="hover:bg-gray-100">
+                <td className="border p-2">June 1, 2010 - July 1, 2010</td>
                 <td className="border p-2">
                   <div className="flex space-x-2">
                     <button>
@@ -90,6 +105,22 @@ const Drivers = () => {
                         />
                       </svg>
                     </button>
+                    <Link to={`/admin/timeframes/${id}/schedules`}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </Link>
                   </div>
                 </td>
               </tr>
@@ -111,4 +142,4 @@ const Drivers = () => {
   );
 };
 
-export default Drivers;
+export default Timeframes;

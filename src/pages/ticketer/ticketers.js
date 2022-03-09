@@ -23,7 +23,7 @@ const Ticketers = () => {
     setLimit(_newLimt);
   };
   return (
-    <div className="container p-2">
+    <div className="container p-4">
       <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
           <span>Ticketers</span>
           <span>/</span>
@@ -33,10 +33,10 @@ const Ticketers = () => {
         <thead className="bg-slate-50">
           <tr className="text-left">
             <th></th>
-            <th className="py-3">first name</th>
-            <th>last name</th>
-            <th>phone number</th>
-            <th>email</th>
+            <th className="p-2">first name</th>
+            <th className="p-2">last name</th>
+            <th className="p-2">phone number</th>
+            <th className="p-2">email</th>
             <th></th>
           </tr>
         </thead>

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Menu from "./menu";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
   return (
     <div className="col-span-1 bg-gray-100 flex flex-col">
       <div className="h-14 border-b border-gray-200 w-full" />
@@ -12,6 +13,32 @@ const Nav = () => {
           selected={currentIndex === 0}
           onClickHandler={() => {
             setCurrentIndex(0);
+          }}
+        >
+          <Link to="/admin/dashboard">
+            <div className="flex space-x-2 justify-start items-center">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              <span>Dashboard</span>
+            </div>
+          </Link>
+        </Menu>
+        <Menu
+          selected={currentIndex === 1}
+          onClickHandler={() => {
+            setCurrentIndex(1);
           }}
           subMenus={[
             <NavLink to="/admin/drivers/list">
@@ -41,8 +68,12 @@ const Nav = () => {
             </NavLink>,
             <NavLink to="/admin/drivers/new">
               {({ isActive }) => (
-                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
-                <span>
+                <div
+                  className={`pl-12 py-2 flex space-x-2  ${
+                    isActive && "bg-gray-200"
+                  }`}
+                >
+                  <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5"
@@ -81,8 +112,8 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 1}
-          onClickHandler={() => setCurrentIndex(1)}
+          selected={currentIndex === 2}
+          onClickHandler={() => setCurrentIndex(2)}
           subMenus={[
             <NavLink to="/admin/ticketers/list">
               {({ isActive }) => (
@@ -111,8 +142,12 @@ const Nav = () => {
             </NavLink>,
             <NavLink to="/admin/ticketers/new">
               {({ isActive }) => (
-                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
-                <span>
+                <div
+                  className={`pl-12 py-2 flex space-x-2  ${
+                    isActive && "bg-gray-200"
+                  }`}
+                >
+                  <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5"
@@ -126,7 +161,7 @@ const Nav = () => {
                       />
                     </svg>
                   </span>
-                  <span className="capitalize text-sm">new ticketers</span>
+                  <span className="capitalize text-sm">new ticketer</span>
                 </div>
               )}
             </NavLink>,
@@ -151,13 +186,17 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 2}
-          onClickHandler={() => setCurrentIndex(2)}
+          selected={currentIndex === 3}
+          onClickHandler={() => setCurrentIndex(3)}
           subMenus={[
             <NavLink to="/admin/buses/new">
               {({ isActive }) => (
-                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
-                <span>
+                <div
+                  className={`pl-12 py-2 flex space-x-2  ${
+                    isActive && "bg-gray-200"
+                  }`}
+                >
+                  <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5"
@@ -174,7 +213,7 @@ const Nav = () => {
                   <span className="capitalize text-sm">new bus</span>
                 </div>
               )}
-            </NavLink>
+            </NavLink>,
           ]}
         >
           <div className="flex space-x-2 justify-start items-center">
@@ -194,8 +233,11 @@ const Nav = () => {
         </Menu>
 
         <Menu
-          selected={currentIndex === 3}
-          onClickHandler={() => setCurrentIndex(3)}
+          selected={currentIndex === 4}
+          onClickHandler={() => {
+            setCurrentIndex(4);
+            navigate("/admin/timeframes/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -216,8 +258,60 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 4}
-          onClickHandler={() => setCurrentIndex(4)}
+          selected={currentIndex === 5}
+          onClickHandler={() => setCurrentIndex(5)}
+          subMenus={[
+            <NavLink to="/admin/bus_stats/list">
+              {({ isActive }) => (
+                <div
+                  className={`pl-12 py-2 flex space-x-2  ${
+                    isActive && "bg-gray-200"
+                  }`}
+                >
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span className="capitalize text-sm">stats list</span>
+                </div>
+              )}
+            </NavLink>,
+            <NavLink to="/admin/bus_stats/new">
+              {({ isActive }) => (
+                <div
+                  className={`pl-12 py-2 flex space-x-2  ${
+                    isActive && "bg-gray-200"
+                  }`}
+                >
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span className="capitalize text-sm">new stat</span>
+                </div>
+              )}
+            </NavLink>,
+          ]}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -237,8 +331,11 @@ const Nav = () => {
         </Menu>
 
         <Menu
-          selected={currentIndex === 5}
-          onClickHandler={() => setCurrentIndex(5)}
+          selected={currentIndex === 6}
+          onClickHandler={() => {
+            setCurrentIndex(6);
+            navigate("/admin/settings");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>

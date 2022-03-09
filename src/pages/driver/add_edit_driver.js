@@ -1,4 +1,6 @@
 import React from "react";
+import CancelButton from "../../components/cancel_button";
+import SaveButton from "../../components/save_button";
 
 const AddEditDriver = () => {
   return (
@@ -9,14 +11,14 @@ const AddEditDriver = () => {
           <span className="text-black">new</span>
       </div>
       <div className="m-4 space-y-2 bg-white p-3 font-normal">
-        <div className="text-lg">Driver Information</div>
+    
         <div className="grid grid-cols-2 gap-x-1">
           <div className="flex flex-col">
             <label clas>first name</label>
             <input
               className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
               type="text"
-              placeholder="first name"
+              placeholder="e.g abebe"
             
             />
           </div>
@@ -25,7 +27,7 @@ const AddEditDriver = () => {
             <input
               className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
               type="text"
-              placeholder="last name"
+              placeholder="e.g kebede"
             />
           </div>
         </div>
@@ -34,7 +36,7 @@ const AddEditDriver = () => {
           <input
             className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
             type="email"
-            placeholder="email"
+            placeholder="e.g email@me"
           />
         </div>
         <div className="flex flex-col">
@@ -42,12 +44,12 @@ const AddEditDriver = () => {
           <input
             className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
             type="number"
-            placeholder="phonenumber"
+            placeholder="e.g 0911213221"
           />
         </div>
         <div className="flex space-x-3 justify-end mt-5">
-            <button className="border rounded-md py-1 px-5">cancel</button>
-            <button className="bg-gray-700 text-white rounded-md py-1 px-5">save</button>
+          <CancelButton/>
+          <SaveButton/>
         </div>
       </div>
     </div>
