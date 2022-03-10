@@ -1,9 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
+import axios from "axios";
 
-const LoadStops = ({ stops, addStop, removeStop }) => {
+const LoadStops = ({ addStop, removeStop }) => {
+  const [stops, setStops] = useState([]);
   const map = useMap();
+  const loadStops = async () => {
+    const response = await axios.get("http://localhost:8080/api/v1/terminals");
+    setStops(response.data);
+  };
+  useEffect(() => {
+    loadStops();
+  }, []);
+
   useEffect(() => {
     const unselectedStopIcon = L.divIcon({
       className: "text-red-400",
@@ -31,18 +41,18 @@ const LoadStops = ({ stops, addStop, removeStop }) => {
       },
       onEachFeature: function (feature, layer) {
         layer.addEventListener("click", (e) => {
-          if (!feature.properties.isSelected) {
-            addStop(feature.properties.id);
+          if (!feature.isSelected) {
+            addStop(feature._id);
             e.target.setIcon(selectedStopIcon);
           } else {
-            removeStop(feature.properties.id);
+            removeStop(feature._id);
             e.target.setIcon(unselectedStopIcon);
           }
-          feature.properties.isSelected = !feature.properties.isSelected;
+          feature.isSelected = !feature.isSelected;
         });
       },
     }).addTo(map);
-  }, []);
+  }, [stops]);
   return null;
 };
 

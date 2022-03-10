@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Paginate from "../../components/paginate";
+import Search from "../../components/search";
 import driver from "../../resources/images/driver.jpg";
 const Ticketers = () => {
   const [products, setProducts] = useState([
@@ -15,6 +17,7 @@ const Ticketers = () => {
   ]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
+  const navigate = useNavigate();
 
   const onPageChangeHandler = (_newPage) => {
     setPage(_newPage);
@@ -23,14 +26,31 @@ const Ticketers = () => {
     setLimit(_newLimt);
   };
   return (
-    <div className="container p-4">
-      <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
-          <span>Ticketers</span>
-          <span>/</span>
-          <span className="text-black">list</span>
+    <div>
+      <div className="flex items-center justify-between mb-3 ">
+        <p className="font-semibold capitalize">Manage ticketers</p>
+        <button
+          onClick={() => navigate("/admin/ticketers/new")}
+          className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span className="lowercase">new ticketer</span>
+        </button>
       </div>
-      <table className="w-full border border-collapse">
-        <thead className="bg-slate-50">
+      <Search />
+      <table className="w-full border border-collapse bg-white">
+        <thead>
           <tr className="text-left">
             <th></th>
             <th className="p-2">first name</th>

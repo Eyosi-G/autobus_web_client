@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import AddEditTimeFrame from "./add_edit_timeframe";
@@ -15,6 +15,8 @@ const Timeframes = () => {
     { id: 5 },
     { id: 9 },
   ]);
+
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
 
@@ -70,7 +72,12 @@ const Timeframes = () => {
           {[1, 2, 3, 4].map((id) => {
             return (
               <tr className="hover:bg-gray-100">
-                <td className="border p-2">June 1, 2010 - July 1, 2010</td>
+                <td
+                  className="border p-2  hover:cursor-pointer"
+                  onClick={() => navigate(`/admin/timeframes/${id}/schedules`)}
+                >
+                  June 1, 2010 - July 1, 2010
+                </td>
                 <td className="border p-2">
                   <div className="flex space-x-2">
                     <button>
@@ -105,22 +112,6 @@ const Timeframes = () => {
                         />
                       </svg>
                     </button>
-                    <Link to={`/admin/timeframes/${id}/schedules`}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
-                    </Link>
                   </div>
                 </td>
               </tr>

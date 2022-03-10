@@ -4,13 +4,9 @@ import SaveButton from "../../components/save_button";
 
 const AddEditBusStat = () => {
   return (
-    <div className="bg-gray-50 flex-grow">
-      <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
-        <span>bus stats</span>
-        <span>/</span>
-        <span className="text-black">new</span>
-      </div>
-      <div className="m-4 space-y-2 bg-white p-3 font-normal">
+    <div>
+      <div className="m-4 flex capitaliz font-semibold">Add New Bus Stat</div>
+      <div className="m-4 space-y-4 bg-white p-3 font-normal rounded-md shadow-sm capitalize">
         <div className="flex flex-col">
           <label>date</label>
           <input

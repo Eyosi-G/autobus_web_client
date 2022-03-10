@@ -29,7 +29,7 @@ const Schedules = () => {
   };
 
   return (
-    <div className="container p-4">
+    <div>
       <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
         <span className="capitalize">{`${startDate} - ${endDate}`}</span>
         <span>/</span>
