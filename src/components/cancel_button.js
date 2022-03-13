@@ -1,8 +1,8 @@
 import React from "react";
 
-const CancelButton = () => {
+const CancelButton = ({onCancelHandler = ()=>{}}) => {
   return (
-    <button className="border rounded-md py-1 px-5 drop-shadow-md">
+    <button onClick={onCancelHandler}className="border rounded-md py-1 px-5 drop-shadow-md">
       cancel
     </button>
   );

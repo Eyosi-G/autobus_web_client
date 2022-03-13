@@ -1,6 +1,16 @@
-import { combineReducers } from 'redux'
-import driverReducer from './driver/reducer'
+import { combineReducers } from "redux";
+import {
+  createDriverReducer,
+  driversListReducer,
+  editDriverReducer,
+  fetchSingleDriverReducer,
+  deleteDriverReducer
+} from "./driver/reducer";
 
 export default combineReducers({
-    driver: driverReducer
-})
+  createDriver: createDriverReducer,
+  driversList: driversListReducer,
+  editDriver: editDriverReducer,
+  fetchSingleDriver: fetchSingleDriverReducer,
+  deleteDriver: deleteDriverReducer
+});

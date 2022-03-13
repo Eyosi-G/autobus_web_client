@@ -26,6 +26,10 @@ const Layout = () => {
               <Route path="settings" element={<Settings />} />
               <Route path="drivers/list" element={<Drivers />} />
               <Route path="drivers/new" element={<AddEditDriver />} />
+              <Route
+                path="drivers/:id/edit"
+                element={<AddEditDriver edit={true} />}
+              />
               <Route path="ticketers/list" element={<Ticketers />} />
               <Route path="ticketers/new" element={<AddEditTicketer />} />
               <Route path="buses/new" element={<AddEditBus />} />

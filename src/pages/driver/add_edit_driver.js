@@ -3,55 +3,152 @@ import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import { useFormik } from "formik";
 import Dialog from "../../components/dialog";
-import { createDriver, resetDriver } from "../../store/driver/actions";
-import { connect } from "react-redux";
+import {
+  createDriver,
+  fetchSingleDriver,
+  resetCreateDriver,
+  resetFetchSingleDriver,
+} from "../../store/driver/actions";
+import { useDispatch, useSelector } from "react-redux";
+import Modal from "../../components/modal";
+import Spinner from "../../components/spinner";
+import { useNavigate, useParams } from "react-router-dom";
+import BackButton from "../../components/back_button";
+import { baseURL } from "../../utils/axios";
 
-const AddEditDriver = (props) => {
-  const selectedImage = useRef(null);
+const AddEditDriver = ({ edit = false }) => {
+  const dispatch = useDispatch();
+  const {
+    loading: createDriverLoading,
+    success: createDriverSuccess,
+    error: createDriverError,
+  } = useSelector((state) => state.createDriver);
+
+  const {
+    loading: fetchSingleDriverLoading,
+    data: fetchSingleDriverData,
+    error: fetchSingleDriverError,
+  } = useSelector((state) => state.fetchSingleDriver);
+
+  const navigate = useNavigate();
+  const params = useParams();
+
+  const imageRef = useRef(null);
   const [image, setImage] = useState(null);
-
+  const [imageFile, setImageFile] = useState(null);
+  const initalValues = {
+    user_name: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    gender: "male",
+  };
   const formik = useFormik({
-    initialValues: {
-      user_name: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone_number: "",
-      gender: "male",
-    },
+    initialValues: initalValues,
     onSubmit: async (values) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      formData.append("image", image);
-      props.createDriver(formData);
+      formData.append("image", imageFile);
+      dispatch(createDriver(formData));
+      formik.setValues(initalValues);
     },
   });
 
+  useEffect(() => {
+    if (edit) {
+      const { id } = params;
+      dispatch(fetchSingleDriver(id));
+    }
+    return () => {
+      dispatch(resetCreateDriver());
+      dispatch(resetFetchSingleDriver());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (fetchSingleDriverData) {
+      const singleDriverData = { ...fetchSingleDriverData };
+      const { user_name } = singleDriverData.user;
+      delete singleDriverData.user;
+      singleDriverData.user_name = user_name;
+      formik.setValues(singleDriverData);
+      setImage(`${baseURL}/images/${singleDriverData.image}`);
+    }
+  }, [fetchSingleDriverData]);
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
+    setImageFile(e.target.files[0]);
   };
 
   return (
     <>
       <div className="m-4">
+        <Modal open={createDriverLoading}>
+          <div
+            className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
+            style={{ zIndex: 1000 }}
+          >
+            <div className="absolute p-4 bg-white rounded-sm">
+              <Spinner className="mr-2 w-14 h-14 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
+            </div>
+          </div>
+        </Modal>
         <Dialog
-          open={props.driver.failure}
+          open={createDriverError}
           severity="failure"
-          message="driver registraion failed !"
-          close={() => props.resetDriver()}
+          message="failed to create driver."
+          close={() => dispatch(resetCreateDriver())}
         />
         <Dialog
-          open={props.driver.success}
+          open={createDriverSuccess}
           severity="success"
-          message="driver registered successfully !"
-          close={() => props.resetDriver()}
+          message="driver created successfully !"
+          close={() => dispatch(resetCreateDriver())}
         />
       </div>
       <form onSubmit={formik.handleSubmit}>
-        <div className="m-4 flex capitaliz font-semibold">New Driver</div>
-        <div className="m-4 space-y-2 bg-white p-3 font-normal rounded-md capitalize">
+        <div className="m-4 flex justify-end">
+          <BackButton navigateHandler={() => navigate("/admin/drivers/list")} />
+        </div>
+        <div className="m-4 mb-2 capitalize font-semibold ">
+          {edit ? (
+            <div className="flex items-center space-x-2">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              </span>
+              <span>edit driver</span>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              <span>new driver</span>
+            </div>
+          )}{" "}
+        </div>
+        <div className="m-4 mt-0 space-y-2 bg-white p-3 font-normal rounded-md capitalize">
           <div className="flex flex-col mb-2 space-y-1">
             <label>profile photo</label>
             <div
@@ -61,7 +158,7 @@ const AddEditDriver = (props) => {
             >
               <span
                 onClick={(e) => {
-                  selectedImage.current.click();
+                  imageRef.current.click();
                 }}
                 className="hover:cursor-pointer absolute -top-3 -right-3 p-2 bg-white rounded-full drop-shadow-md"
               >
@@ -96,7 +193,7 @@ const AddEditDriver = (props) => {
             </div>
 
             <input
-              ref={selectedImage}
+              ref={imageRef}
               className="hidden"
               type="file"
               onChange={onImageChange}
@@ -187,7 +284,7 @@ const AddEditDriver = (props) => {
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">
-            <CancelButton />
+            <CancelButton onCancelHandler={()=>navigate("/admin/drivers/list")} />
             <SaveButton />
           </div>
         </div>
@@ -196,15 +293,4 @@ const AddEditDriver = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    driver: state.driver,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    createDriver: (data) => dispatch(createDriver(data)),
-    resetDriver: () => dispatch(resetDriver()),
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(AddEditDriver);
+export default AddEditDriver;
