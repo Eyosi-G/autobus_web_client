@@ -10,9 +10,10 @@ const Dialog = ({
     throw new Error("illegal serverity");
   return (
     <div
+       style={{zIndex: 2000}}
       className={`${
         !open && "hidden"
-      }  absolute right-10 top-10 drop-shadow-lg rounded border-l-8 ${
+      }  absolute right-10 bottom-10 drop-shadow-lg rounded border-l-8 ${
         severity == "success" ? "border-l-green-400" : "border-l-red-400"
       } border-l-green-400 flex bg-white py-2 items-center`}
     >

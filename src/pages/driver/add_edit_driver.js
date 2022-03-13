@@ -54,6 +54,7 @@ const AddEditDriver = ({ edit = false }) => {
       formData.append("image", imageFile);
       dispatch(createDriver(formData));
       formik.setValues(initalValues);
+      setImage(null);
     },
   });
 
@@ -284,7 +285,9 @@ const AddEditDriver = ({ edit = false }) => {
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">
-            <CancelButton onCancelHandler={()=>navigate("/admin/drivers/list")} />
+            <CancelButton
+              onCancelHandler={() => navigate("/admin/drivers/list")}
+            />
             <SaveButton />
           </div>
         </div>

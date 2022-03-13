@@ -57,6 +57,10 @@ export const deleteDriver = (id) => async (dispatch) => {
       }, 2000)
     );
     dispatch({
+      type: types.DELETE_DRIVER_UPDATE_LIST,
+      payload: response.data.id
+    })
+    dispatch({
       type: types.DELETE_DRIVER_SUCCESS,
       payload: response.data,
     });

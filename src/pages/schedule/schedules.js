@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import BackButton from "../../components/back_button";
 import Paginate from "../../components/paginate";
 const Schedules = () => {
+  const navigate = useNavigate()
   const { id } = useParams();
   const [products, setProducts] = useState([
     { id: 1 },
@@ -30,13 +32,20 @@ const Schedules = () => {
 
   return (
     <div>
-      <div className="m-4 flex justify-end space-x-2 lowercase text-gray-600">
-        <span className="capitalize">{`${startDate} - ${endDate}`}</span>
-        <span>/</span>
-        <span className="text-black">Schedules</span>
+      <div className="flex justify-end my-2">
+        <BackButton navigateHandler={()=> navigate('/admin/timeframes/list')}/>
       </div>
-      <div className="flex justify-end my-4">
-        <button className="flex space-x-2 items-center px-3 py-1 border rounded-md bg-gray-600 text-white drop-shadow-md">
+      <div className="flex items-center justify-between mb-3 ">
+        <p className="font-semibold capitalize space-x-2">
+          <span className="bg-amber-100 px-2 py-1 rounded-lg">
+            June 12, 2021
+          </span>
+          <span>-</span>
+          <span className="bg-amber-100 px-2 py-1 rounded-lg">
+            July 12, 2021
+          </span>
+        </p>
+        <button className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5"
@@ -54,23 +63,21 @@ const Schedules = () => {
           <span>generate schedule</span>
         </button>
       </div>
-      <table className="w-full border border-collapse">
-        <thead className="bg-slate-50">
-          <tr className="text-left">
+      <table className="w-full border border-collapse bg-white">
+        <thead>
+          <tr className="text-left capitalize">
             <th className="p-2">driver</th>
             <th className="p-2">ticketer</th>
             <th className="p-2">bus number</th>
-            <th className="p-2">shifts</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-sm">
           {[1, 2, 3, 4].map((id) => {
             return (
               <tr className="hover:bg-gray-100">
                 <td className="border p-2">Abebe Kebede</td>
                 <td className="border p-2">Tigist Assefa</td>
                 <td className="border p-2">53</td>
-                <td className="border p-2">morning</td>
               </tr>
             );
           })}

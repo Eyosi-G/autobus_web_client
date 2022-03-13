@@ -47,11 +47,7 @@ const Drivers = (props) => {
     };
   }, [page, limit]);
 
-  useEffect(() => {
-    if (deleteDriverSuccess) {
-      dispatch(fetchDrivers(page, limit));
-    }
-  }, [deleteDriverSuccess]);
+
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);

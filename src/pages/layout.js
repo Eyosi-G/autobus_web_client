@@ -13,13 +13,20 @@ import BusStats from "./bus_stats/bus_stats";
 import AddEditBusStat from "./bus_stats/add_edit_bus_stats";
 import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
+import Buses from "./bus/buses";
 const Layout = () => {
   return (
     <div className="grid grid-cols-5 h-screen overflow-hidden">
       <Nav />
       <div className="overflow-y-scroll col-span-4">
         <div className=" flex flex-col min-h-screen ">
-          <div className="h-14 w-full border-b border-gray-200 " />
+          <div className="h-14 w-full border-b border-gray-200 flex justify-end items-center">
+            <div className="mr-2">
+              <select>
+                <option>logout</option>
+              </select>  
+            </div>  
+          </div>
           <div className="bg-gray-100 flex-grow p-4">
             <Routes>
               <Route path="dashboard" element={<Dashboard />} />
@@ -32,7 +39,12 @@ const Layout = () => {
               />
               <Route path="ticketers/list" element={<Ticketers />} />
               <Route path="ticketers/new" element={<AddEditTicketer />} />
+              <Route
+                path="ticketers/:id/edit"
+                element={<AddEditTicketer edit={true} />}
+              />u
               <Route path="buses/new" element={<AddEditBus />} />
+              <Route path="buses/list" element={<Buses />} />
               <Route path="timeframes/list" element={<Timeframes />} />
               <Route path="timeframes/:id/schedules" element={<Schedules />} />
               <Route path="bus_stats/list" element={<BusStats />} />
