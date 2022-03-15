@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import Menu from "./menu";
+import lion from '../resources/images/lion.png'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-const ACTIVE_LINK_COLOR = "bg-gray-900";
 
-const Nav = () => {
+const Nav = ({ open = true }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   return (
-    <div className="col-span-1 bg-gray-800 flex flex-col">
-      <div className="h-14" />
+    <div
+      className="col-span-1 bg-gray-800 flex flex-col min-w-max"
+      style={{ zIndex: 150 }}
+    >
+      <div className="h-20 p-2 flex justify-center items-center">
+        <img src={lion}  className="h-full text-white fill-gray-500"/>
+      </div>
       <div className="space-y-3 flex-grow mt-5 text-white">
         <Menu
           selected={currentIndex === 0}
@@ -154,33 +159,7 @@ const Nav = () => {
                 <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
               </svg>
             </span>
-            <span>Bus Statistics</span>
-          </div>
-        </Menu>
-
-        <Menu
-          selected={currentIndex === 6}
-          onClickHandler={() => {
-            setCurrentIndex(6);
-            navigate("/admin/settings");
-          }}
-        >
-          <div className="flex space-x-2 justify-start items-center">
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-            <span>Settings</span>
+            <span>Bus Stats</span>
           </div>
         </Menu>
       </div>

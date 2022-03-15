@@ -7,22 +7,23 @@ import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
 
 import Confirmation from "../../components/confirmation";
-import { fetchBuses } from "../../store/bus/actions";
+import { deleteBus, fetchBuses, resetDeleteBus } from "../../store/bus/actions";
 import Empty from "../../components/empty";
 
 const Buses = () => {
   const dispatch = useDispatch();
-  const {
-    loading: createTimeFrameLoading,
-    success: createTimeFrameSuccess,
-    error: createTimeFrameError,
-  } = useSelector((state) => state.createTimeFrame);
 
   const {
     loading,
     data: { count = 0, buses = [] },
     error,
   } = useSelector((state) => state.busesList);
+
+  const {
+    loading: deleteBusLoading,
+    success: deleteBusSuccess,
+    error: deleteBusError,
+  } = useSelector((state) => state.deleteBus);
 
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
@@ -40,9 +41,48 @@ const Buses = () => {
   }, [page, limit]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [currentBus, setCurrentBus] = useState(null);
 
   return (
     <div className="container p-4">
+      <Modal open={openConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (currentBus) {
+                dispatch(deleteBus(currentBus.id));
+                setOpenConfirmation(false);
+              }
+            }}
+            handleCancel={() => {
+              setOpenConfirmation(false);
+              setCurrentBus(null);
+            }}
+          />
+        </div>
+      </Modal>
+
+      <Modal open={deleteBusLoading}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <div className="bg-white p-10 rounded-lg">
+            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
+          </div>
+        </div>
+      </Modal>
+
+      <Dialog
+        open={deleteBusError}
+        severity="failure"
+        message="failed to delete bus !"
+        close={() => dispatch(resetDeleteBus())}
+      />
+      <Dialog
+        open={deleteBusSuccess}
+        severity="success"
+        message="bus successfully deleted !"
+        close={() => dispatch(resetDeleteBus())}
+      />
+
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Buses</p>
         <button
@@ -94,10 +134,16 @@ const Buses = () => {
                     <td
                       className="border p-2 hover:cursor-pointer"
                       onClick={() => {}}
-                    ></td>
+                    >
+                      {bus.bus_number}
+                    </td>
                     <td className="border p-2">
                       <div className="flex space-x-2">
-                        <button onClick={() => {}}>
+                        <button
+                          onClick={() => {
+                            navigate(`/admin/buses/${bus.id}/edit`);
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-6 w-6"
@@ -117,6 +163,7 @@ const Buses = () => {
                           className="text-red-600"
                           onClick={() => {
                             setOpenConfirmation(true);
+                            setCurrentBus(bus);
                           }}
                         >
                           <svg

@@ -5,6 +5,15 @@ export const busesListReducer = (
   action
 ) => {
   switch (action.type) {
+    case types.DELETE_BUS_UPDATE_LIST:
+      return {
+        loading: false,
+        error: null,
+        data: {
+          count: state.data.count - 1,
+          buses: state.data.buses.filter((bus) => bus.id !== action.payload),
+        },
+      };
     case types.FETCH_BUSES_REQUEST:
       return { loading: true, data: { count: 0, buses: [] }, error: null };
     case types.FETCH_BUSES_SUCCESS:

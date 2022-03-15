@@ -48,6 +48,6 @@ export default combineReducers({
   createBus: createBusReducer,
   deleteBus: deleteBusReducer,
   editBus: editBusReducer,
-  fetchSingleBus: fetchSingleBusReducer,
+  singleBus: fetchSingleBusReducer,
   busesList: busesListReducer
 });
