@@ -11,6 +11,16 @@ export const createTicketer = (data) => async (dispatch) => {
   }
 };
 
+export const editTicketer = (id, data) => async (dispatch) => {
+  try {
+    dispatch({ type: types.EDIT_TICKETER_REQUEST });
+    const ticketer = await axios.patch(`/ticketers/${id}`, data);
+    dispatch({ type: types.EDIT_TICKETER_SUCCESS, payload: ticketer });
+  } catch (e) {
+    dispatch({ type: types.EDIT_TICKETER_FAILURE, payload: e.message });
+  }
+};
+
 export const fetchTicketers = (page, limit) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_TICKETERS_REQUEST });
@@ -57,6 +67,10 @@ export const deleteTicketer = (id) => async (dispatch) => {
       }, 2000)
     );
     dispatch({
+      type: types.DELETE_TICKETER_UPDATE_LIST,
+      payload: id
+    })
+    dispatch({
       type: types.DELETE_TICKETER_SUCCESS,
       payload: response.data,
     });
@@ -84,5 +98,9 @@ export const resetFetchSingleTicketer = () => ({
 
 export const resetDeleteTicketer = ()=>({
   type: types.DELETE_TICKETER_RESET
+})
+
+export const resetEditTicketer = ()=>({
+  type: types.EDIT_TICKETER_RESET
 })
 

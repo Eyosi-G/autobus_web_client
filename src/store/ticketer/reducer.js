@@ -5,6 +5,17 @@ export const ticketerListReducer = (
   action
 ) => {
   switch (action.type) {
+    case types.DELETE_TICKETER_UPDATE_LIST:
+      return {
+        loading: false,
+        data: {
+          count: state.data.count - 1,
+          ticketers: state.data.ticketers.filter(
+            (ticketer) => ticketer.id !== action.payload
+          ),
+        },
+        error: null
+      };
     case types.FETCH_TICKETERS_REQUEST:
       return { loading: true, data: { count: 0, ticketers: [] }, error: null };
     case types.FETCH_TICKETERS_SUCCESS:

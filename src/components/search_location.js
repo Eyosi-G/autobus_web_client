@@ -21,7 +21,7 @@ const SearchLocation = () => {
 
   return (
     <div
-      className="absolute bg-white right-1 top-1 p-2 max-h-56 flex flex-col"
+      className="absolute bg-white right-1 top-1 p-2 max-h-56 flex flex-col rounded-md"
       style={{ zIndex: "2000" }}
     >
       <div className="flex w-full border p-2 mb-2 bg-gray-100 rounded-md">

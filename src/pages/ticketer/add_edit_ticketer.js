@@ -5,10 +5,13 @@ import { useFormik } from "formik";
 import Dialog from "../../components/dialog";
 import {
   createTicketer,
+  editTicketer,
   fetchSingleTicketer,
   resetCreateTicketer,
+  resetEditTicketer,
   resetFetchSingleTicketer,
 } from "../../store/ticketer/actions";
+
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../components/modal";
 import Spinner from "../../components/spinner";
@@ -29,6 +32,12 @@ const AddEditTicketer = ({ edit = false }) => {
     data: fetchSingleTicketerData,
     error: fetchSingleTicketerError,
   } = useSelector((state) => state.fetchSingleTicketer);
+
+  const {
+    loading: editTicketerLoading,
+    success: editTicketerSuccess,
+    error: editTicketerError,
+  } = useSelector((state) => state.editTicketer);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -52,8 +61,14 @@ const AddEditTicketer = ({ edit = false }) => {
         formData.append(`${val}`, values[val]);
       }
       formData.append("image", imageFile);
-      dispatch(createTicketer(formData));
+      if (edit) {
+        const { id } = params;
+        dispatch(editTicketer(id, formData));
+      } else {
+        dispatch(createTicketer(formData));
+      }
       formik.setValues(initalValues);
+      setImage(null);
     },
   });
 
@@ -71,6 +86,8 @@ const AddEditTicketer = ({ edit = false }) => {
   useEffect(() => {
     if (fetchSingleTicketerData) {
       const singleTicketerData = { ...fetchSingleTicketerData };
+      console.log(singleTicketerData);
+
       const { user_name } = singleTicketerData.user;
       delete singleTicketerData.user;
       singleTicketerData.user_name = user_name;
@@ -83,10 +100,28 @@ const AddEditTicketer = ({ edit = false }) => {
     setImageFile(e.target.files[0]);
   };
 
+  const closeDialogHandler = () => {
+    if (createTicketerError || createTicketerSuccess)
+      return dispatch(resetCreateTicketer());
+    if (fetchSingleTicketerData || fetchSingleTicketerError)
+      return dispatch(resetFetchSingleTicketer());
+    if (editTicketerSuccess || editTicketerError)
+      return dispatch(resetEditTicketer());
+  };
+  const successDialogMessage = () => {
+    if (createTicketerSuccess) return "ticketer created successfully !";
+    if (editTicketerSuccess) return "ticketer edited successfully !";
+  };
+  const errorDialogMessage = () => {
+    if (createTicketerError) return "failed to create ticketer";
+    if (fetchSingleTicketerError) return "failed to load data";
+    if (editTicketerError) return "failed to edit ticketer";
+  };
+
   return (
     <>
       <div className="m-4">
-        <Modal open={createTicketerLoading}>
+        <Modal open={createTicketerLoading || fetchSingleTicketerLoading}>
           <div
             className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
             style={{ zIndex: 1000 }}
@@ -97,21 +132,25 @@ const AddEditTicketer = ({ edit = false }) => {
           </div>
         </Modal>
         <Dialog
-          open={createTicketerError}
+          open={
+            createTicketerError || fetchSingleTicketerError || editTicketerError
+          }
           severity="failure"
-          message="failed to create ticketer."
-          close={() => dispatch(resetCreateTicketer())}
+          message={errorDialogMessage()}
+          close={() => closeDialogHandler()}
         />
         <Dialog
-          open={createTicketerSuccess}
+          open={createTicketerSuccess || editTicketerSuccess}
           severity="success"
-          message="ticketer created successfully !"
-          close={() => dispatch(resetCreateTicketer())}
+          message={successDialogMessage()}
+          close={() => closeDialogHandler()}
         />
       </div>
       <form onSubmit={formik.handleSubmit}>
         <div className="m-4 flex justify-end">
-          <BackButton navigateHandler={() => navigate("/admin/ticketers/list")} />
+          <BackButton
+            navigateHandler={() => navigate("/admin/ticketers/list")}
+          />
         </div>
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (
@@ -284,7 +323,9 @@ const AddEditTicketer = ({ edit = false }) => {
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">
-            <CancelButton onCancelHandler={()=>navigate("/admin/ticketers/list")} />
+            <CancelButton
+              onCancelHandler={() => navigate("/admin/ticketers/list")}
+            />
             <SaveButton />
           </div>
         </div>

@@ -47,11 +47,7 @@ const Ticketers = (props) => {
     };
   }, [page, limit]);
 
-  useEffect(() => {
-    if (deleteTicketerSuccess) {
-      dispatch(fetchTicketers(page, limit));
-    }
-  }, [deleteTicketerSuccess]);
+
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentTicketer, setCurrentTicketer] = useState(null);

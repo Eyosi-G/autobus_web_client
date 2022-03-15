@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import Menu from "./menu";
-import lion from '../resources/images/lion.png'
+import lion from "../resources/images/lion.png";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-
-const Nav = ({ open = true }) => {
+const Nav = ({ menuOpen  }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   return (
     <div
-      className="col-span-1 bg-gray-800 flex flex-col min-w-max"
+      className={`${menuOpen ? "hidden" : "flex"} flex-col min-w-max col-span-1 bg-gray-800  `}
       style={{ zIndex: 150 }}
     >
-      <div className="h-20 p-2 flex justify-center items-center">
-        <img src={lion}  className="h-full text-white fill-gray-500"/>
+      <div className="h-36 p-2 flex justify-center items-center">
+        <img src={lion} className="h-full  object-cover text-white" />
       </div>
       <div className="space-y-3 flex-grow mt-5 text-white">
         <Menu

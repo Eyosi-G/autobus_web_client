@@ -79,6 +79,7 @@ const AddEditDriver = ({ edit = false }) => {
       setImage(`${baseURL}/images/${singleDriverData.image}`);
     }
   }, [fetchSingleDriverData]);
+  
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
     setImageFile(e.target.files[0]);

@@ -107,7 +107,7 @@ const Buses = () => {
         </button>
       </div>
 
-      {buses.length === 0 ? (
+      {!loading && buses.length === 0 ? (
         <Empty message="there are not buses registered !" />
       ) : (
         <div>
