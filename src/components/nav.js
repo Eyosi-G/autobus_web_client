@@ -1,66 +1,51 @@
 import React, { useState } from "react";
 import Menu from "./menu";
-import { NavLink, useNavigate } from "react-router-dom";
+import lion from "../resources/images/lion.png";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
-const Nav = () => {
+const Nav = ({ menuOpen  }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
   return (
-    <div className="col-span-1 bg-gray-100 h-screen flex flex-col">
-      <div className="h-14 border-b border-gray-200 w-full" />
-      <div className="space-y-3 flex-grow mt-5">
+    <div
+      className={`${menuOpen ? "hidden" : "flex"} flex-col min-w-max col-span-1 bg-gray-800  `}
+      style={{ zIndex: 150 }}
+    >
+      <div className="h-36 p-2 flex justify-center items-center">
+        <img src={lion} className="h-full  object-cover text-white" />
+      </div>
+      <div className="space-y-3 flex-grow mt-5 text-white">
         <Menu
           selected={currentIndex === 0}
           onClickHandler={() => {
             setCurrentIndex(0);
+            navigate("/admin/dashboard");
           }}
-          subMenus={[
-            <NavLink to="/admin/drivers/list">
-              {({ isActive }) => (
-                <div
-                  className={`pl-12 py-2 flex space-x-2  ${
-                    isActive && "bg-gray-200"
-                  }`}
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="capitalize text-sm">drivers list</span>
-                </div>
-              )}
-            </NavLink>,
-            <NavLink to="/admin/drivers/new">
-              {({ isActive }) => (
-                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
-                <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="capitalize text-sm">new driver</span>
-                </div>
-              )}
-            </NavLink>,
-          ]}
+        >
+          <div className="flex space-x-2 justify-start items-center">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span>Dashboard</span>
+          </div>
+        </Menu>
+        <Menu
+          selected={currentIndex === 1}
+          onClickHandler={() => {
+            setCurrentIndex(1);
+            navigate("/admin/drivers/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -81,56 +66,11 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 1}
-          onClickHandler={() => setCurrentIndex(1)}
-          subMenus={[
-            <NavLink to="/admin/ticketers/list">
-              {({ isActive }) => (
-                <div
-                  className={`pl-12 py-2 flex space-x-2  ${
-                    isActive && "bg-gray-200"
-                  }`}
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="capitalize text-sm">ticketers list</span>
-                </div>
-              )}
-            </NavLink>,
-            <NavLink to="/admin/ticketers/new">
-              {({ isActive }) => (
-                <div className={`pl-12 py-2 flex space-x-2  ${isActive && "bg-gray-200"}`}>
-                <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="capitalize text-sm">new ticketers</span>
-                </div>
-              )}
-            </NavLink>,
-          ]}
+          selected={currentIndex === 2}
+          onClickHandler={() => {
+            setCurrentIndex(2);
+            navigate("/admin/ticketers/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -151,8 +91,11 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 2}
-          onClickHandler={() => setCurrentIndex(2)}
+          selected={currentIndex === 3}
+          onClickHandler={() => {
+            setCurrentIndex(3);
+            navigate("/admin/buses/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -171,8 +114,11 @@ const Nav = () => {
         </Menu>
 
         <Menu
-          selected={currentIndex === 3}
-          onClickHandler={() => setCurrentIndex(3)}
+          selected={currentIndex === 4}
+          onClickHandler={() => {
+            setCurrentIndex(4);
+            navigate("/admin/timeframes/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -193,8 +139,11 @@ const Nav = () => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 4}
-          onClickHandler={() => setCurrentIndex(4)}
+          selected={currentIndex === 5}
+          onClickHandler={() => {
+            setCurrentIndex(5);
+            navigate("/admin/bus_stats/list");
+          }}
         >
           <div className="flex space-x-2 justify-start items-center">
             <span>
@@ -209,30 +158,7 @@ const Nav = () => {
                 <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
               </svg>
             </span>
-            <span>Bus Statistics</span>
-          </div>
-        </Menu>
-
-        <Menu
-          selected={currentIndex === 5}
-          onClickHandler={() => setCurrentIndex(5)}
-        >
-          <div className="flex space-x-2 justify-start items-center">
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-            <span>Settings</span>
+            <span>Bus Stats</span>
           </div>
         </Menu>
       </div>

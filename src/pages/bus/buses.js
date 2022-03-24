@@ -1,98 +1,95 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Paginate from "../../components/paginate";
-import Search from "../../components/search";
-import {
-  deleteDriver,
-  fetchDrivers,
-  resetDeleteDriver,
-  resetFetchDrivers,
-} from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../components/spinner";
-import Empty from "../../components/empty";
-import { baseURL } from "../../utils/axios";
-import Modal from "../../components/modal";
-import Confirmation from "../../components/confirmation";
+import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/dialog";
-const Drivers = (props) => {
+import Modal from "../../components/modal";
+import Paginate from "../../components/paginate";
+import Spinner from "../../components/spinner";
+
+import Confirmation from "../../components/confirmation";
+import { deleteBus, fetchBuses, resetDeleteBus } from "../../store/bus/actions";
+import Empty from "../../components/empty";
+
+const Buses = () => {
   const dispatch = useDispatch();
+
   const {
     loading,
-    data: { count, drivers },
+    data: { count = 0, buses = [] },
     error,
-  } = useSelector((state) => state.driversList);
+  } = useSelector((state) => state.busesList);
 
   const {
-    loading: deleteDriverLoading,
-    success: deleteDriverSuccess,
-    error: deleteDriverError,
-  } = useSelector((state) => state.deleteDriver);
+    loading: deleteBusLoading,
+    success: deleteBusSuccess,
+    error: deleteBusError,
+  } = useSelector((state) => state.deleteBus);
 
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
-  const navigate = useNavigate();
 
-  const onPageChangeHandler = (_newPage) => {
-    setPage(_newPage);
+  const onPageChangeHandler = (newPage) => {
+    setPage(newPage);
   };
-  const onLimitChangeHandler = (_newLimt) => {
-    setLimit(_newLimt);
+  const onLimitChangeHandler = (newLimit) => {
+    setLimit(newLimit);
   };
 
   useEffect(() => {
-    dispatch(fetchDrivers(page, limit));
-    return () => {
-      dispatch(resetFetchDrivers());
-    };
+    dispatch(fetchBuses(page, limit));
   }, [page, limit]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [currentDriver, setCurrentDriver] = useState(null);
+  const [currentBus, setCurrentBus] = useState(null);
 
   return (
-    <div>
-      <Modal open={deleteDriverLoading}>
+    <div className="p-4">
+      <Modal open={openConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (currentBus) {
+                dispatch(deleteBus(currentBus.id));
+                setOpenConfirmation(false);
+              }
+            }}
+            handleCancel={() => {
+              setOpenConfirmation(false);
+              setCurrentBus(null);
+            }}
+          />
+        </div>
+      </Modal>
+
+      <Modal open={deleteBusLoading}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <div className="bg-white p-10 rounded-lg">
             <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
           </div>
         </div>
       </Modal>
-      <Modal open={openConfirmation}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Confirmation
-            handleDelete={() => {
-              if (currentDriver) {
-                dispatch(deleteDriver(currentDriver.id));
-                setOpenConfirmation(false);
-              }
-            }}
-            handleCancel={() => {
-              setOpenConfirmation(false);
-            }}
-          />
-        </div>
-      </Modal>
-      <Modal open={deleteDriverError}>
+      <Modal open={deleteBusError}>
         <Dialog
           severity="failure"
-          message="failed to delete driver."
-          close={() => dispatch(resetDeleteDriver())}
+          message="failed to delete bus !"
+          close={() => dispatch(resetDeleteBus())}
         />
       </Modal>
-      <Modal open={deleteDriverSuccess}>
+      <Modal open={deleteBusSuccess}>
         <Dialog
           severity="success"
-          message="driver deleted successfully !"
-          close={() => dispatch(resetDeleteDriver())}
+          message="bus successfully deleted !"
+          close={() => dispatch(resetDeleteBus())}
         />
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
-        <p className="font-semibold capitalize">Manage Drivers</p>
+        <p className="font-semibold capitalize">Buses</p>
         <button
-          onClick={() => navigate("/admin/drivers/new")}
+          onClick={() => {
+            navigate("/admin/buses/new");
+          }}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >
           <svg
@@ -101,55 +98,46 @@ const Drivers = (props) => {
             viewBox="0 0 20 20"
             fill="currentColor"
           >
-            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+            <path
+              fill-rule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clip-rule="evenodd"
+            />
           </svg>
-          <span className="lowercase">new driver</span>
+          <span className="lowercase">new bus</span>
         </button>
       </div>
-      {!loading && drivers.length === 0 ? (
-        <Empty message="empty list of drivers please add some." />
+
+      {!loading && buses.length === 0 ? (
+        <Empty message="there are not buses registered !" />
       ) : (
         <div>
-          <Search />
           <table className="w-full border border-collapse bg-white">
-            <thead>
+            <thead className="capitalize">
               <tr className="text-left">
-                <th></th>
-                <th className="p-2">first name</th>
-                <th className="p-2">last name</th>
-                <th className="p-2">phone number</th>
-                <th className="p-2">email</th>
-                <th className="p-2">gender</th>
+                <th className="p-2">bus number</th>
                 <th></th>
               </tr>
             </thead>
-
-            <tbody>
-              <tr>
-                <td colSpan={7}>
-                  {loading && (
-                    <div className=" w-full flex items-center justify-center m-2">
+            <tbody className="text-sm">
+              {loading && (
+                <tr>
+                  <td colSpan={4}>
+                    <div className="flex justify-center my-2">
                       <Spinner />
                     </div>
-                  )}
-                </td>
-              </tr>
-              {drivers.map((driver) => {
+                  </td>
+                </tr>
+              )}
+              {buses.map((bus) => {
                 return (
-                  <tr>
-                    <td className="border p-2">
-                      <div className="flex justify-center">
-                        <img
-                          src={`${baseURL}/images/${driver.image}`}
-                          className="h-12 w-12 object-cover rounded-full"
-                        />
-                      </div>
+                  <tr className="hover:bg-gray-50">
+                    <td
+                      className="border p-2 hover:cursor-pointer"
+                      onClick={() => {}}
+                    >
+                      {bus.bus_number}
                     </td>
-                    <td className="border p-2">{driver.first_name}</td>
-                    <td className="border p-2">{driver.last_name}</td>
-                    <td className="border p-2">{driver.phone_number}</td>
-                    <td className="border p-2">{driver.email}</td>
-                    <td className="border p-2">{driver.gender}</td>
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
                         <span>
@@ -174,9 +162,9 @@ const Drivers = (props) => {
                         >
                           <button
                             className="flex space-x-2"
-                            onClick={() => {
-                              navigate(`/admin/drivers/${driver.id}/edit`);
-                            }}
+                            onClick={() =>
+                              navigate(`/admin/buses/${bus.id}/edit`)
+                            }
                           >
                             <span>
                               <svg
@@ -199,8 +187,8 @@ const Drivers = (props) => {
                           <button
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
-                              setCurrentDriver(driver);
                               setOpenConfirmation(true);
+                              setCurrentBus(bus);
                             }}
                           >
                             <span>
@@ -245,4 +233,4 @@ const Drivers = (props) => {
   );
 };
 
-export default Drivers;
+export default Buses;

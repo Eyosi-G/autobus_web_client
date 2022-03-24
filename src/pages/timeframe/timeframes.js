@@ -1,98 +1,161 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Paginate from "../../components/paginate";
-import Search from "../../components/search";
-import {
-  deleteDriver,
-  fetchDrivers,
-  resetDeleteDriver,
-  resetFetchDrivers,
-} from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../components/spinner";
-import Empty from "../../components/empty";
-import { baseURL } from "../../utils/axios";
-import Modal from "../../components/modal";
-import Confirmation from "../../components/confirmation";
+import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/dialog";
-const Drivers = (props) => {
+import Modal from "../../components/modal";
+import Paginate from "../../components/paginate";
+import Spinner from "../../components/spinner";
+import AddEditTimeFrame from "./add_edit_timeframe";
+import {
+  resetCreateTimeFrame,
+  fetchTimeFrames,
+  deleteTimeFrame,
+  resetDeleteTimeFrame,
+  resetEditTimeFrame,
+} from "../../store/timeframe/actions";
+import { toISOString, toLongDate } from "../../utils/date_format";
+import Confirmation from "../../components/confirmation";
+import Empty from "../../components/empty";
+
+const Timeframes = () => {
   const dispatch = useDispatch();
   const {
-    loading,
-    data: { count, drivers },
-    error,
-  } = useSelector((state) => state.driversList);
+    loading: createTimeFrameLoading,
+    success: createTimeFrameSuccess,
+    error: createTimeFrameError,
+  } = useSelector((state) => state.createTimeFrame);
 
   const {
-    loading: deleteDriverLoading,
-    success: deleteDriverSuccess,
-    error: deleteDriverError,
-  } = useSelector((state) => state.deleteDriver);
+    loading,
+    data: { count = 0, timeFrames = [] },
+    error,
+  } = useSelector((state) => state.timeFrameList);
 
+  const {
+    loading: deleteTimeFrameLoading,
+    success: deleteTimeFrameSuccess,
+    error: deleteTimeFrameError,
+  } = useSelector((state) => state.deleteTimeFrame);
+
+  const {
+    loading: editTimeFrameLoading,
+    success: editTimeFrameSuccess,
+    error: editTimeFrameError,
+  } = useSelector((state) => state.editTimeFrame);
+
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
-  const navigate = useNavigate();
 
-  const onPageChangeHandler = (_newPage) => {
-    setPage(_newPage);
+  const [formOpen, setFormOpen] = useState(false);
+
+  const onPageChangeHandler = (newPage) => {
+    setPage(newPage);
   };
-  const onLimitChangeHandler = (_newLimt) => {
-    setLimit(_newLimt);
+  const onLimitChangeHandler = (newLimit) => {
+    setLimit(newLimit);
   };
 
   useEffect(() => {
-    dispatch(fetchDrivers(page, limit));
-    return () => {
-      dispatch(resetFetchDrivers());
-    };
+    dispatch(fetchTimeFrames(page, limit));
   }, [page, limit]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [currentDriver, setCurrentDriver] = useState(null);
+  const [currentTimeFrame, setCurrentTimeFrame] = useState(null);
+  const [edit, setEdit] = useState(false);
+
+  const successDialogMessage = () => {
+    if (createTimeFrameSuccess) return "timeframe created successfully";
+    if (deleteTimeFrameSuccess) return "timeframe deleted successfully ";
+    if (editTimeFrameSuccess) return "timeframe edited successfully";
+  };
+
+  const errorDialogMessage = () => {
+    if (createTimeFrameError) return "failed to create timeframe";
+    if (deleteTimeFrameError) return "failed to delete timeframe";
+    if (editTimeFrameError) return "failed to edit timeframe";
+  };
+
+  const closeDialogHandler = () => {
+    if (createTimeFrameSuccess || createTimeFrameError)
+      return dispatch(resetCreateTimeFrame());
+    if (deleteTimeFrameSuccess || deleteTimeFrameError)
+      return dispatch(resetDeleteTimeFrame());
+    if (editTimeFrameSuccess || editTimeFrameError)
+      return dispatch(resetEditTimeFrame());
+  };
 
   return (
-    <div>
-      <Modal open={deleteDriverLoading}>
+    <div className=" p-4">
+      <Modal open={openConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (currentTimeFrame) {
+                dispatch(deleteTimeFrame(currentTimeFrame.id));
+                setOpenConfirmation(false);
+              }
+            }}
+            handleCancel={() => {
+              setOpenConfirmation(false);
+              setCurrentTimeFrame(null);
+            }}
+          />
+        </div>
+      </Modal>
+      <Modal open={formOpen}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center z-10">
+          <AddEditTimeFrame
+            timeFrame={currentTimeFrame}
+            edit={edit}
+            setOpen={setFormOpen}
+          />
+        </div>
+      </Modal>
+
+      <Modal
+        open={
+          createTimeFrameLoading ||
+          deleteTimeFrameLoading ||
+          editTimeFrameLoading
+        }
+      >
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <div className="bg-white p-10 rounded-lg">
             <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
           </div>
         </div>
       </Modal>
-      <Modal open={openConfirmation}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Confirmation
-            handleDelete={() => {
-              if (currentDriver) {
-                dispatch(deleteDriver(currentDriver.id));
-                setOpenConfirmation(false);
-              }
-            }}
-            handleCancel={() => {
-              setOpenConfirmation(false);
-            }}
-          />
-        </div>
-      </Modal>
-      <Modal open={deleteDriverError}>
+
+      <Modal
+        open={
+          createTimeFrameError || deleteTimeFrameError || editTimeFrameError
+        }
+      >
         <Dialog
           severity="failure"
-          message="failed to delete driver."
-          close={() => dispatch(resetDeleteDriver())}
+          message={errorDialogMessage()}
+          close={() => closeDialogHandler()}
         />
       </Modal>
-      <Modal open={deleteDriverSuccess}>
+      <Modal
+        open={
+          createTimeFrameSuccess ||
+          deleteTimeFrameSuccess ||
+          editTimeFrameSuccess
+        }
+      >
         <Dialog
           severity="success"
-          message="driver deleted successfully !"
-          close={() => dispatch(resetDeleteDriver())}
+          message={successDialogMessage()}
+          close={() => closeDialogHandler()}
         />
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
-        <p className="font-semibold capitalize">Manage Drivers</p>
+        <p className="font-semibold capitalize">Timeframes</p>
         <button
-          onClick={() => navigate("/admin/drivers/new")}
+          onClick={() => setFormOpen(true)}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >
           <svg
@@ -101,55 +164,55 @@ const Drivers = (props) => {
             viewBox="0 0 20 20"
             fill="currentColor"
           >
-            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+            <path
+              fill-rule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clip-rule="evenodd"
+            />
           </svg>
-          <span className="lowercase">new driver</span>
+          <span className="lowercase">new timeframe</span>
         </button>
       </div>
-      {!loading && drivers.length === 0 ? (
-        <Empty message="empty list of drivers please add some." />
+      {!loading && timeFrames.length == 0 ? (
+        <Empty />
       ) : (
         <div>
-          <Search />
           <table className="w-full border border-collapse bg-white">
-            <thead>
+            <thead className="capitalize">
               <tr className="text-left">
-                <th></th>
-                <th className="p-2">first name</th>
-                <th className="p-2">last name</th>
-                <th className="p-2">phone number</th>
-                <th className="p-2">email</th>
-                <th className="p-2">gender</th>
+                <th className="p-2">date</th>
                 <th></th>
               </tr>
             </thead>
-
-            <tbody>
-              <tr>
-                <td colSpan={7}>
-                  {loading && (
-                    <div className=" w-full flex items-center justify-center m-2">
+            <tbody className="text-sm">
+              {loading && (
+                <tr>
+                  <td colSpan={2}>
+                    <div className="flex justify-center my-2">
                       <Spinner />
                     </div>
-                  )}
-                </td>
-              </tr>
-              {drivers.map((driver) => {
+                  </td>
+                </tr>
+              )}
+              {timeFrames.map((timeFrame) => {
                 return (
-                  <tr>
-                    <td className="border p-2">
-                      <div className="flex justify-center">
-                        <img
-                          src={`${baseURL}/images/${driver.image}`}
-                          className="h-12 w-12 object-cover rounded-full"
-                        />
+                  <tr className="hover:bg-gray-50">
+                    <td
+                      className="border p-2  hover:cursor-pointer"
+                      onClick={() =>
+                        navigate(`/admin/timeframes/${timeFrame.id}/schedules`)
+                      }
+                    >
+                      <div className="space-x-2">
+                        <span className="bg-amber-100 px-2 py-2 rounded-lg">
+                          {toLongDate(new Date(timeFrame.start_date))}
+                        </span>
+                        <span className="font-bold">-</span>
+                        <span className="bg-amber-100 px-2 py-2 rounded-lg">
+                          {toLongDate(new Date(timeFrame.end_date))}
+                        </span>
                       </div>
                     </td>
-                    <td className="border p-2">{driver.first_name}</td>
-                    <td className="border p-2">{driver.last_name}</td>
-                    <td className="border p-2">{driver.phone_number}</td>
-                    <td className="border p-2">{driver.email}</td>
-                    <td className="border p-2">{driver.gender}</td>
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
                         <span>
@@ -175,7 +238,9 @@ const Drivers = (props) => {
                           <button
                             className="flex space-x-2"
                             onClick={() => {
-                              navigate(`/admin/drivers/${driver.id}/edit`);
+                              setCurrentTimeFrame(timeFrame);
+                              setEdit(true);
+                              setFormOpen(true);
                             }}
                           >
                             <span>
@@ -199,7 +264,7 @@ const Drivers = (props) => {
                           <button
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
-                              setCurrentDriver(driver);
+                              setCurrentTimeFrame(timeFrame);
                               setOpenConfirmation(true);
                             }}
                           >
@@ -245,4 +310,4 @@ const Drivers = (props) => {
   );
 };
 
-export default Drivers;
+export default Timeframes;

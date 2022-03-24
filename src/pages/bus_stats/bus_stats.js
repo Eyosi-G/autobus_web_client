@@ -1,34 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Paginate from "../../components/paginate";
-import Search from "../../components/search";
-import {
-  deleteDriver,
-  fetchDrivers,
-  resetDeleteDriver,
-  resetFetchDrivers,
-} from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../components/spinner";
-import Empty from "../../components/empty";
-import { baseURL } from "../../utils/axios";
-import Modal from "../../components/modal";
-import Confirmation from "../../components/confirmation";
+import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/dialog";
-const Drivers = (props) => {
+import Empty from "../../components/empty";
+import Modal from "../../components/modal";
+import Paginate from "../../components/paginate";
+import Spinner from "../../components/spinner";
+import {
+  fetchBusStats,
+  resetFetchBusStats,
+} from "../../store/bus_stat/actions";
+const BusSats = () => {
   const dispatch = useDispatch();
-  const {
-    loading,
-    data: { count, drivers },
-    error,
-  } = useSelector((state) => state.driversList);
-
-  const {
-    loading: deleteDriverLoading,
-    success: deleteDriverSuccess,
-    error: deleteDriverError,
-  } = useSelector((state) => state.deleteDriver);
-
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
   const navigate = useNavigate();
@@ -40,90 +23,78 @@ const Drivers = (props) => {
     setLimit(_newLimt);
   };
 
+  const {
+    loading,
+    data: { count, stats },
+    error,
+  } = useSelector((state) => state.busStatsList);
+
   useEffect(() => {
-    dispatch(fetchDrivers(page, limit));
-    return () => {
-      dispatch(resetFetchDrivers());
-    };
-  }, [page, limit]);
-
-  const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [currentDriver, setCurrentDriver] = useState(null);
-
+    dispatch(fetchBusStats(page, limit));
+  }, [limit, page]);
   return (
-    <div>
-      <Modal open={deleteDriverLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-          </div>
+    <div className="p-4">
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">Bus Stats </span>
+        <div className="my-3 flex justify-end items-center">
+          <button
+            onClick={() => navigate("/admin/bus_stats/new")}
+            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white mr-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span>new stat</span>
+          </button>
+          <button className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              />
+            </svg>
+            <span>upload stats</span>
+          </button>
         </div>
-      </Modal>
-      <Modal open={openConfirmation}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Confirmation
-            handleDelete={() => {
-              if (currentDriver) {
-                dispatch(deleteDriver(currentDriver.id));
-                setOpenConfirmation(false);
-              }
-            }}
-            handleCancel={() => {
-              setOpenConfirmation(false);
-            }}
-          />
-        </div>
-      </Modal>
-      <Modal open={deleteDriverError}>
+      </div>
+      <Modal open={error}>
         <Dialog
           severity="failure"
-          message="failed to delete driver."
-          close={() => dispatch(resetDeleteDriver())}
+          message={error}
+          close={() => dispatch(resetFetchBusStats())}
         />
       </Modal>
-      <Modal open={deleteDriverSuccess}>
-        <Dialog
-          severity="success"
-          message="driver deleted successfully !"
-          close={() => dispatch(resetDeleteDriver())}
-        />
-      </Modal>
-
-      <div className="flex items-center justify-between mb-3 ">
-        <p className="font-semibold capitalize">Manage Drivers</p>
-        <button
-          onClick={() => navigate("/admin/drivers/new")}
-          className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-          </svg>
-          <span className="lowercase">new driver</span>
-        </button>
-      </div>
-      {!loading && drivers.length === 0 ? (
-        <Empty message="empty list of drivers please add some." />
+      {!loading && stats.length == 0 ? (
+        <Empty message="no bus stats found" />
       ) : (
         <div>
-          <Search />
           <table className="w-full border border-collapse bg-white">
-            <thead>
+            <thead className="capitalize">
               <tr className="text-left">
-                <th></th>
-                <th className="p-2">first name</th>
-                <th className="p-2">last name</th>
-                <th className="p-2">phone number</th>
-                <th className="p-2">email</th>
-                <th className="p-2">gender</th>
+                <th className="p-2">date</th>
+                <th className="p-2">bus number</th>
+                <th className="p-2">morning commmuters</th>
+                <th className="p-2">afternoon commmuters</th>
                 <th></th>
               </tr>
             </thead>
-
             <tbody>
               <tr>
                 <td colSpan={7}>
@@ -134,22 +105,13 @@ const Drivers = (props) => {
                   )}
                 </td>
               </tr>
-              {drivers.map((driver) => {
+              {stats.map((stat) => {
                 return (
                   <tr>
-                    <td className="border p-2">
-                      <div className="flex justify-center">
-                        <img
-                          src={`${baseURL}/images/${driver.image}`}
-                          className="h-12 w-12 object-cover rounded-full"
-                        />
-                      </div>
-                    </td>
-                    <td className="border p-2">{driver.first_name}</td>
-                    <td className="border p-2">{driver.last_name}</td>
-                    <td className="border p-2">{driver.phone_number}</td>
-                    <td className="border p-2">{driver.email}</td>
-                    <td className="border p-2">{driver.gender}</td>
+                    <td className="border p-2">{stat.date.split("T")[0]}</td>
+                    <td className="border p-2">{stat.bus_number}</td>
+                    <td className="border p-2">{stat.morning_commuters}</td>
+                    <td className="border p-2">{stat.afternoon_commuters}</td>
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
                         <span>
@@ -172,12 +134,7 @@ const Drivers = (props) => {
                           className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
                           style={{ zIndex: 100 }}
                         >
-                          <button
-                            className="flex space-x-2"
-                            onClick={() => {
-                              navigate(`/admin/drivers/${driver.id}/edit`);
-                            }}
-                          >
+                          <button className="flex space-x-2" onClick={() => {}}>
                             <span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -198,10 +155,7 @@ const Drivers = (props) => {
                           </button>
                           <button
                             className="text-red-600 flex space-x-2"
-                            onClick={() => {
-                              setCurrentDriver(driver);
-                              setOpenConfirmation(true);
-                            }}
+                            onClick={() => {}}
                           >
                             <span>
                               <svg
@@ -245,4 +199,4 @@ const Drivers = (props) => {
   );
 };
 
-export default Drivers;
+export default BusSats;
