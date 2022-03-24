@@ -58,6 +58,23 @@ export const deleteTimeFrame = (id) => async (dispatch) => {
   }
 };
 
+export const fetchSingleTimeFrame = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: types.FETCH_SINGLE_TIMEFRAME_REQUEST });
+    const response = await axios.get(`/timeframes/${id}`);
+    console.log(response)
+    dispatch({
+      type: types.FETCH_SINGLE_TIMEFRAME_SUCCESS,
+      payload: response.data,
+    });
+  } catch (e) {
+    dispatch({
+      type: types.FETCH_SINGLE_TIMEFRAME_FAILURE,
+      payload: e.message,
+    });
+  }
+};
+
 export const resetCreateTimeFrame = () => {
   return {
     type: types.CREATE_TIMEFRAME_RESET,
@@ -76,4 +93,8 @@ export const resetDeleteTimeFrame = () => ({
 
 export const resetEditTimeFrame = () => ({
   type: types.EDIT_TIMEFRAME_RESET,
+});
+
+export const resetFetchSingleTimeFrame = () => ({
+  type: types.FETCH_SINGLE_TIMEFRAME_RESET,
 });

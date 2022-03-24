@@ -44,7 +44,7 @@ const Buses = () => {
   const [currentBus, setCurrentBus] = useState(null);
 
   return (
-    <div className="container p-4">
+    <div className="p-4">
       <Modal open={openConfirmation}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <Confirmation
@@ -69,19 +69,20 @@ const Buses = () => {
           </div>
         </div>
       </Modal>
-
-      <Dialog
-        open={deleteBusError}
-        severity="failure"
-        message="failed to delete bus !"
-        close={() => dispatch(resetDeleteBus())}
-      />
-      <Dialog
-        open={deleteBusSuccess}
-        severity="success"
-        message="bus successfully deleted !"
-        close={() => dispatch(resetDeleteBus())}
-      />
+      <Modal open={deleteBusError}>
+        <Dialog
+          severity="failure"
+          message="failed to delete bus !"
+          close={() => dispatch(resetDeleteBus())}
+        />
+      </Modal>
+      <Modal open={deleteBusSuccess}>
+        <Dialog
+          severity="success"
+          message="bus successfully deleted !"
+          close={() => dispatch(resetDeleteBus())}
+        />
+      </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Buses</p>
@@ -121,7 +122,7 @@ const Buses = () => {
             <tbody className="text-sm">
               {loading && (
                 <tr>
-                  <td colSpan={2}>
+                  <td colSpan={4}>
                     <div className="flex justify-center my-2">
                       <Spinner />
                     </div>
@@ -138,12 +139,8 @@ const Buses = () => {
                       {bus.bus_number}
                     </td>
                     <td className="border p-2">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => {
-                            navigate(`/admin/buses/${bus.id}/edit`);
-                          }}
-                        >
+                      <div className="relative group flex justify-end">
+                        <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-6 w-6"
@@ -155,32 +152,64 @@ const Buses = () => {
                             <path
                               stroke-linecap="round"
                               stroke-linejoin="round"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
                             />
                           </svg>
-                        </button>
-                        <button
-                          className="text-red-600"
-                          onClick={() => {
-                            setOpenConfirmation(true);
-                            setCurrentBus(bus);
-                          }}
+                        </span>
+                        <div
+                          className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
+                          style={{ zIndex: 100 }}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
+                          <button
+                            className="flex space-x-2"
+                            onClick={() =>
+                              navigate(`/admin/buses/${bus.id}/edit`)
+                            }
                           >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                />
+                              </svg>
+                            </span>
+                            <span>edit</span>
+                          </button>
+                          <button
+                            className="text-red-600 flex space-x-2"
+                            onClick={() => {
+                              setOpenConfirmation(true);
+                              setCurrentBus(bus);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </span>
+                            <span>delete</span>
+                          </button>
+                        </div>
                       </div>
                     </td>
                   </tr>

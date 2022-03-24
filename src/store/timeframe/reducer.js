@@ -97,6 +97,26 @@ export const editTimeFrameReducer = (
   return state;
 };
 
+export const fetchSingleTimeFrameReducer = (
+  state = { loading: false, data: null, error: null },
+  action
+) => {
+  switch (action.type) {
+    case types.FETCH_SINGLE_TIMEFRAME_REQUEST:
+      return { loading: true, data: null, error: null };
+    case types.FETCH_SINGLE_TIMEFRAME_SUCCESS:
+      return { loading: false, data: action.payload, error: null };
+    case types.FETCH_SINGLE_TIMEFRAME_FAILURE:
+      return {
+        loading: false,
+        data: null,
+        error: action.payload,
+      };
+    case types.FETCH_SINGLE_TIMEFRAME_RESET:
+      return { loading: false, data: null, error: null };
+  }
+  return state;
+};
 export const deleteTimeFrameReducer = (
   state = { loading: false, success: false, error: null },
   action

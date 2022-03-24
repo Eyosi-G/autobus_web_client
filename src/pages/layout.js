@@ -14,6 +14,7 @@ import AddEditBusStat from "./bus_stats/add_edit_bus_stats";
 import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
 import Buses from "./bus/buses";
+import ScheduleDetail from "./schedule/schedule_detail";
 const Layout = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(true);
@@ -23,7 +24,11 @@ const Layout = () => {
   return (
     <div className="grid grid-cols-5 h-screen overflow-hidden">
       <Nav menuOpen={menuOpen} />
-      <div className={`overflow-y-scroll ${menuOpen ? "col-span-5" : "col-span-4" }`}>
+      <div
+        className={`overflow-y-scroll ${
+          menuOpen ? "col-span-5" : "col-span-4"
+        }`}
+      >
         <div className=" flex flex-col min-h-screen ">
           <div className="h-14 w-full border-b border-gray-200 flex justify-between items-center">
             <button onClick={toggleMenu} className="ml-2">
@@ -140,7 +145,7 @@ const Layout = () => {
                 path="ticketers/:id/edit"
                 element={<AddEditTicketer edit={true} />}
               />
-              u
+
               <Route path="buses/new" element={<AddEditBus />} />
               <Route path="buses/list" element={<Buses />} />
               <Route
@@ -149,6 +154,7 @@ const Layout = () => {
               />
               <Route path="timeframes/list" element={<Timeframes />} />
               <Route path="timeframes/:id/schedules" element={<Schedules />} />
+              <Route path="schedules/:id" element={<ScheduleDetail />} />
               <Route path="bus_stats/list" element={<BusStats />} />
               <Route path="bus_stats/new" element={<AddEditBusStat />} />
             </Routes>

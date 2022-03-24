@@ -131,26 +131,28 @@ const AddEditTicketer = ({ edit = false }) => {
             </div>
           </div>
         </Modal>
-        <Dialog
+        <Modal
           open={
             createTicketerError || fetchSingleTicketerError || editTicketerError
           }
-          severity="failure"
-          message={errorDialogMessage()}
-          close={() => closeDialogHandler()}
-        />
-        <Dialog
-          open={createTicketerSuccess || editTicketerSuccess}
-          severity="success"
-          message={successDialogMessage()}
-          close={() => closeDialogHandler()}
-        />
+        >
+          <Dialog
+            severity="failure"
+            message={errorDialogMessage()}
+            close={() => closeDialogHandler()}
+          />
+        </Modal>
+        <Modal open={createTicketerSuccess || editTicketerSuccess}>
+          <Dialog
+            severity="success"
+            message={successDialogMessage()}
+            close={() => closeDialogHandler()}
+          />
+        </Modal>
       </div>
       <form onSubmit={formik.handleSubmit}>
         <div className="m-4 flex justify-end">
-          <BackButton
-            navigateHandler={() => navigate("/admin/ticketers/list")}
-          />
+          <BackButton />
         </div>
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (
@@ -302,7 +304,7 @@ const AddEditTicketer = ({ edit = false }) => {
                   <input
                     name="gender"
                     type="radio"
-                    checked={formik.values.gender == "male"}
+                    checked={formik.values.gender === "male"}
                     onChange={formik.handleChange}
                     value="male"
                   />
@@ -312,7 +314,7 @@ const AddEditTicketer = ({ edit = false }) => {
                   <input
                     name="gender"
                     type="radio"
-                    checked={formik.values.gender == "female"}
+                    checked={formik.values.gender === "female"}
                     onChange={formik.handleChange}
                     value="female"
                   />

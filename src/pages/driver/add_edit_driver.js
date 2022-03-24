@@ -79,7 +79,7 @@ const AddEditDriver = ({ edit = false }) => {
       setImage(`${baseURL}/images/${singleDriverData.image}`);
     }
   }, [fetchSingleDriverData]);
-  
+
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
     setImageFile(e.target.files[0]);
@@ -98,22 +98,24 @@ const AddEditDriver = ({ edit = false }) => {
             </div>
           </div>
         </Modal>
-        <Dialog
-          open={createDriverError}
-          severity="failure"
-          message="failed to create driver."
-          close={() => dispatch(resetCreateDriver())}
-        />
-        <Dialog
-          open={createDriverSuccess}
-          severity="success"
-          message="driver created successfully !"
-          close={() => dispatch(resetCreateDriver())}
-        />
+        <Modal open={createDriverError}>
+          <Dialog
+            severity="failure"
+            message="failed to create driver."
+            close={() => dispatch(resetCreateDriver())}
+          />
+        </Modal>
+        <Modal open={createDriverSuccess}>
+          <Dialog
+            severity="success"
+            message="driver created successfully !"
+            close={() => dispatch(resetCreateDriver())}
+          />
+        </Modal>
       </div>
       <form onSubmit={formik.handleSubmit}>
         <div className="m-4 flex justify-end">
-          <BackButton navigateHandler={() => navigate("/admin/drivers/list")} />
+          <BackButton />
         </div>
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (

@@ -47,8 +47,6 @@ const Drivers = (props) => {
     };
   }, [page, limit]);
 
-
-
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
 
@@ -76,22 +74,20 @@ const Drivers = (props) => {
           />
         </div>
       </Modal>
-      <div className="my-2">
+      <Modal open={deleteDriverError}>
         <Dialog
-          open={deleteDriverError}
           severity="failure"
           message="failed to delete driver."
           close={() => dispatch(resetDeleteDriver())}
         />
-      </div>
-      <div className="my-2">
+      </Modal>
+      <Modal open={deleteDriverSuccess}>
         <Dialog
-          open={deleteDriverSuccess}
           severity="success"
           message="driver deleted successfully !"
           close={() => dispatch(resetDeleteDriver())}
         />
-      </div>
+      </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Manage Drivers</p>
@@ -111,7 +107,7 @@ const Drivers = (props) => {
         </button>
       </div>
       {!loading && drivers.length === 0 ? (
-        <Empty  message="empty list of drivers please add some."/>
+        <Empty message="empty list of drivers please add some." />
       ) : (
         <div>
           <Search />
@@ -155,12 +151,8 @@ const Drivers = (props) => {
                     <td className="border p-2">{driver.email}</td>
                     <td className="border p-2">{driver.gender}</td>
                     <td className="border p-2">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() =>
-                            navigate(`/admin/drivers/${driver.id}/edit`)
-                          }
-                        >
+                      <div className="relative group flex justify-end">
+                        <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-6 w-6"
@@ -172,32 +164,64 @@ const Drivers = (props) => {
                             <path
                               stroke-linecap="round"
                               stroke-linejoin="round"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
                             />
                           </svg>
-                        </button>
-                        <button
-                          className="text-red-600"
-                          onClick={() => {
-                            setCurrentDriver(driver);
-                            setOpenConfirmation(true);
-                          }}
+                        </span>
+                        <div
+                          className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
+                          style={{ zIndex: 100 }}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
+                          <button
+                            className="flex space-x-2"
+                            onClick={() => {
+                              navigate(`/admin/drivers/${driver.id}/edit`);
+                            }}
                           >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                />
+                              </svg>
+                            </span>
+                            <span>edit</span>
+                          </button>
+                          <button
+                            className="text-red-600 flex space-x-2"
+                            onClick={() => {
+                              setCurrentDriver(driver);
+                              setOpenConfirmation(true);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </span>
+                            <span>delete</span>
+                          </button>
+                        </div>
                       </div>
                     </td>
                   </tr>

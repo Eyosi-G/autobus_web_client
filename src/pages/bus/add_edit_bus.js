@@ -6,7 +6,12 @@ import axios from "axios";
 import BackButton from "../../components/back_button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createBus, fetchSingleBus, resetCreateBus, resetFetchSingleBus } from "../../store/bus/actions";
+import {
+  createBus,
+  fetchSingleBus,
+  resetCreateBus,
+  resetFetchSingleBus,
+} from "../../store/bus/actions";
 import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import Spinner from "../../components/spinner";
@@ -102,25 +107,25 @@ const AddEditBus = ({ edit = false }) => {
 
   const closeDialogHandler = () => {
     if (createBusSuccess || createBusError) dispatch(resetCreateBus());
-    if (singleBusData || singleBusError) dispatch(resetFetchSingleBus())
+    if (singleBusData || singleBusError) dispatch(resetFetchSingleBus());
   };
   const successDialogMessage = () => {
     if (createBusSuccess) return "bus created successfully !";
   };
   const errorDialogMessage = () => {
     if (createBusError) return "bus creation failed!";
-    if (singleBusError) return "failed fetching bus info!"
+    if (singleBusError) return "failed fetching bus info!";
   };
 
   const loadStops = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/terminals");
     setStops(response.data);
   };
-  const params = useParams()
+  const params = useParams();
   useEffect(() => {
-    if(edit){
-      const {id} = params;
-      dispatch(fetchSingleBus(id))
+    if (edit) {
+      const { id } = params;
+      dispatch(fetchSingleBus(id));
     }
     loadStops();
   }, []);
@@ -212,10 +217,10 @@ const AddEditBus = ({ edit = false }) => {
     if (edit && singleBusData) {
       const { bus_number, forward_stops, backward_stops, waypoint_places } =
         singleBusData;
-      setBusNumber(bus_number)
-      setForwardStops(forward_stops)
-      setBackwardStops(backward_stops)
-      setWayPoints(wayPoints)
+      setBusNumber(bus_number);
+      setForwardStops(forward_stops);
+      setBackwardStops(backward_stops);
+      setWayPoints(wayPoints);
     }
   }, [singleBusData]);
 
@@ -226,26 +231,26 @@ const AddEditBus = ({ edit = false }) => {
           className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center "
           style={{ zIndex: 3000 }}
         >
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-          </div>
+            <Spinner color="white" />
         </div>
       </Modal>
 
-      <Dialog
-        open={createBusError || singleBusError}
-        severity="failure"
-        message={errorDialogMessage()}
-        close={() => closeDialogHandler()}
-      />
-      <Dialog
-        open={createBusSuccess}
-        severity="success"
-        message={successDialogMessage()}
-        close={() => closeDialogHandler()}
-      />
+      <Modal open={createBusError || singleBusError}>
+        <Dialog
+          severity="failure"
+          message={errorDialogMessage()}
+          close={() => closeDialogHandler()}
+        />
+      </Modal>
+      <Modal open={createBusSuccess}>
+        <Dialog
+          severity="success"
+          message={successDialogMessage()}
+          close={() => closeDialogHandler()}
+        />
+      </Modal>
       <div className="flex justify-end my-2">
-        <BackButton navigateHandler={() => navigate("/admin/buses/list")} />
+        <BackButton />
       </div>
       <div className="m-4 flex capitaliz font-semibold">Register New Bus</div>
       <form onSubmit={submitHandler}>

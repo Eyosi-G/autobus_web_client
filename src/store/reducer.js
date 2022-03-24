@@ -20,6 +20,7 @@ import {
   deleteTimeFrameReducer,
   editTimeFrameReducer,
   timeFrameListReducer,
+  fetchSingleTimeFrameReducer,
 } from "./timeframe/reducer";
 
 import {
@@ -29,6 +30,13 @@ import {
   fetchSingleBusReducer,
   busesListReducer,
 } from "./bus/reducer";
+
+import {
+  fetchBusStatsReducer,
+  createBusStatsReducer,
+} from "./bus_stat/reducer";
+
+import { generateScheduleReducer, getSchedulesReducer } from "./schedule/reducer";
 
 export default combineReducers({
   createDriver: createDriverReducer,
@@ -45,9 +53,14 @@ export default combineReducers({
   editTimeFrame: editTimeFrameReducer,
   deleteTimeFrame: deleteTimeFrameReducer,
   timeFrameList: timeFrameListReducer,
+  singleTimeFrame: fetchSingleTimeFrameReducer,
   createBus: createBusReducer,
   deleteBus: deleteBusReducer,
   editBus: editBusReducer,
   singleBus: fetchSingleBusReducer,
-  busesList: busesListReducer
+  busesList: busesListReducer,
+  busStatsList: fetchBusStatsReducer,
+  createBusStat: createBusStatsReducer,
+  generateSchedule: generateScheduleReducer,
+  getSchedules: getSchedulesReducer
 });

@@ -1,21 +1,15 @@
 import React, { useState } from "react";
 
-const Dialog = ({
-  open = false,
-  close = () => {},
-  severity = "success",
-  message = "",
-}) => {
+const Dialog = ({ close = () => {}, severity = "success", message = "" }) => {
   if (!(severity === "success" || severity === "failure"))
     throw new Error("illegal serverity");
   return (
     <div
-       style={{zIndex: 2000}}
-      className={`${
-        !open && "hidden"
-      }  absolute right-10 bottom-10 drop-shadow-lg rounded border-l-8 ${
-        severity == "success" ? "border-l-green-400" : "border-l-red-400"
-      } border-l-green-400 flex bg-white py-2 items-center`}
+      style={{ zIndex: 2000 }}
+      className={`
+       absolute right-10 bottom-10 drop-shadow-lg rounded border-l-8 ${
+         severity == "success" ? "border-l-green-400" : "border-l-red-400"
+       } border-l-green-400 flex bg-white py-2 items-center`}
     >
       <span
         className={`${

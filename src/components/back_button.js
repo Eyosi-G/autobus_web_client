@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const BackButton = ({ navigateHandler }) => {
+const BackButton = () => {
+  const navigate = useNavigate();
   return (
     <button
-      onClick={() => navigateHandler()}
-      className="flex space-x-2 items-center px-3 py-1 border rounded-lg capitalize"
+      onClick={() => navigate(-1)}
+      className="flex space-x-2 items-center px-3 py-1  rounded-lg capitalize"
     >
       <span>
         <svg
