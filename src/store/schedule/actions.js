@@ -17,7 +17,7 @@ export const generateSchedule = (timeFrameId) => async (dispatch) => {
   }
 };
 
-export const getSchedules = (timeframeId, page, limit) => async (dispatch) => {
+export const getSchedules = (timeframeId, page = 0, limit = 10) => async (dispatch) => {
   try {
     dispatch({ type: types.GET_SCHEDULE_REQUEST });
     const schedule = await axios.get(

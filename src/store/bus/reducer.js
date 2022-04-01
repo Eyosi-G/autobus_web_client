@@ -113,3 +113,24 @@ export const deleteBusReducer = (
   }
   return state;
 };
+
+export const searchBusReducer = (
+  state = { loading: false, data: [], error: null },
+  action
+) => {
+  switch (action.type) {
+    case types.SEARCH_BUS_REQUEST:
+      return { loading: true, data: [], error: null };
+    case types.SEARCH_BUS_SUCCESS:
+      return { loading: false, data: action.payload, error: null };
+    case types.SEARCH_BUS_FAILURE:
+      return {
+        loading: false,
+        data: [],
+        error: action.payload,
+      };
+    case types.SEARCH_BUS_RESET:
+      return { loading: false, data: [], error: null };
+  }
+  return state;
+};

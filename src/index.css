@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bus {
+  color: wheat;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.bus span {
+  background-color: rgb(211, 191, 16);
+  padding: 5px;
+  display: flex;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.my_location {
+  color: whitesmoke;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.my_location span {
+  background-color: rgba(0, 25, 248, 0.1);
+  padding: 5px;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+

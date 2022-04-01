@@ -29,7 +29,11 @@ const Paginate = ({
           }}
         >
           {limits.map((limit) => {
-            return <option className="border-none" value={limit}>{limit}</option>;
+            return (
+              <option className="border-none" value={limit}>
+                {limit}
+              </option>
+            );
           })}
         </select>
       </div>
@@ -58,8 +62,8 @@ const Paginate = ({
           </svg>
         </button>
         <button
-          disabled={limit * (page + 1) > total}
-          className={`${limit * (page + 1) > total && "text-gray-400"}`}
+          disabled={limit * (page + 1) >= total}
+          className={`${limit * (page + 1 ) >= total && "text-gray-400"}`}
           onClick={nextPage}
         >
           <svg

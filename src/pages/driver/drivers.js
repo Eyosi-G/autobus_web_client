@@ -30,7 +30,7 @@ const Drivers = (props) => {
   } = useSelector((state) => state.deleteDriver);
 
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(4);
   const navigate = useNavigate();
 
   const onPageChangeHandler = (_newPage) => {
@@ -231,7 +231,7 @@ const Drivers = (props) => {
           </table>
           <div className="flex justify-end mt-2">
             <Paginate
-              limits={[5, 10, 15]}
+              limits={[4, 8, 12]}
               page={page}
               total={count}
               limit={limit}

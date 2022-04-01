@@ -55,7 +55,7 @@ const AddEditTicketer = ({ edit = false }) => {
   };
   const formik = useFormik({
     initialValues: initalValues,
-    onSubmit: async (values) => {
+    onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
@@ -67,7 +67,7 @@ const AddEditTicketer = ({ edit = false }) => {
       } else {
         dispatch(createTicketer(formData));
       }
-      formik.setValues(initalValues);
+      action.resetForm();
       setImage(null);
     },
   });
@@ -95,6 +95,7 @@ const AddEditTicketer = ({ edit = false }) => {
       setImage(`${baseURL}/images/${singleTicketerData.image}`);
     }
   }, [fetchSingleTicketerData]);
+
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
     setImageFile(e.target.files[0]);
@@ -150,10 +151,10 @@ const AddEditTicketer = ({ edit = false }) => {
           />
         </Modal>
       </div>
+      <div className="m-4 flex justify-end">
+        <BackButton />
+      </div>
       <form onSubmit={formik.handleSubmit}>
-        <div className="m-4 flex justify-end">
-          <BackButton />
-        </div>
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (
             <div className="flex items-center space-x-2">

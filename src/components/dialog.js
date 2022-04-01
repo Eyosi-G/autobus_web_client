@@ -8,7 +8,7 @@ const Dialog = ({ close = () => {}, severity = "success", message = "" }) => {
       style={{ zIndex: 2000 }}
       className={`
        absolute right-10 bottom-10 drop-shadow-lg rounded border-l-8 ${
-         severity == "success" ? "border-l-green-400" : "border-l-red-400"
+         severity == "success" ? "border-l-green-400 bg-green-50" : "border-l-red-400 bg-red-50"
        } border-l-green-400 flex bg-white py-2 items-center`}
     >
       <span

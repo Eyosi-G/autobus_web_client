@@ -19,6 +19,7 @@ import L from "leaflet";
 import { MapContainer, TileLayer } from "react-leaflet";
 import SearchLocation from "../../components/search_location";
 import MapInputSigns from "../../components/map_input_signs";
+import { fetchStops, resetStops } from "../../store/stop/actions";
 
 const unselectedStopIcon = L.divIcon({
   className: "text-red-400",
@@ -52,7 +53,7 @@ const AddEditBus = ({ edit = false }) => {
   const [backwardStops, setBackwardStops] = useState([]);
   const [forwardLayer, setForwardLayer] = useState(null);
   const [backwardLayer, setBackwardLayer] = useState(null);
-  const [stops, setStops] = useState([]);
+  // const [stops, setStops] = useState([]);
 
   const [forwardMap, setForwadMap] = useState();
   const [backwardMap, setBackwardMap] = useState();
@@ -73,6 +74,12 @@ const AddEditBus = ({ edit = false }) => {
     data: singleBusData,
     error: singleBusError,
   } = useSelector((state) => state.singleBus);
+
+  const {
+    loading: stopsLoading,
+    stops,
+    error: stopsError,
+  } = useSelector((state) => state.fetchStops);
 
   const addToForwardStop = (id) => {
     setForwardStops((stops) => [...stops, id]);
@@ -117,18 +124,18 @@ const AddEditBus = ({ edit = false }) => {
     if (singleBusError) return "failed fetching bus info!";
   };
 
-  const loadStops = async () => {
-    const response = await axios.get("http://localhost:8080/api/v1/terminals");
-    setStops(response.data);
-  };
   const params = useParams();
   useEffect(() => {
     if (edit) {
       const { id } = params;
       dispatch(fetchSingleBus(id));
     }
-    loadStops();
+    dispatch(fetchStops())
+    return ()=>{
+      dispatch(resetStops())
+    }
   }, []);
+
 
   useEffect(() => {
     if (forwardMap) {
@@ -136,7 +143,6 @@ const AddEditBus = ({ edit = false }) => {
       const layer = L.geoJSON(stops, {
         pointToLayer: function (feature, latlng) {
           if (backwardStops.includes(feature.id)) {
-            console.log("evaluating");
             return L.marker(latlng, {
               icon: selectedBackwardStopIcon,
             });
@@ -231,7 +237,7 @@ const AddEditBus = ({ edit = false }) => {
           className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center "
           style={{ zIndex: 3000 }}
         >
-            <Spinner color="white" />
+          <Spinner color="white" />
         </div>
       </Modal>
 

@@ -58,13 +58,23 @@ export const deleteBus = (id) => async (dispatch) => {
         resolve(response);
       }, 2000)
     );
-    dispatch({ type: types.DELETE_BUS_UPDATE_LIST , payload: id});
+    dispatch({ type: types.DELETE_BUS_UPDATE_LIST, payload: id });
 
     dispatch({
       type: types.DELETE_BUS_SUCCESS,
     });
   } catch (e) {
     dispatch({ type: types.DELETE_BUS_FAILURE, payload: e.message });
+  }
+};
+
+export const searchBuses = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: types.SEARCH_BUS_REQUEST });
+    const response = await axios.post(`/buses/search`, data);
+    dispatch({ type: types.SEARCH_BUS_SUCCESS, payload: response.data });
+  } catch (e) {
+    dispatch({ type: types.SEARCH_BUS_FAILURE, payload: e.message });
   }
 };
 
@@ -86,4 +96,8 @@ export const resetFetchSingleBus = () => ({
 
 export const resetDeleteBus = () => ({
   type: types.DELETE_BUS_RESET,
+});
+
+export const resetSearchBus = () => ({
+  type: types.SEARCH_BUS_RESET,
 });
