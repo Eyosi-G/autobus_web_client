@@ -130,12 +130,11 @@ const AddEditBus = ({ edit = false }) => {
       const { id } = params;
       dispatch(fetchSingleBus(id));
     }
-    dispatch(fetchStops())
-    return ()=>{
-      dispatch(resetStops())
-    }
+    dispatch(fetchStops());
+    return () => {
+      dispatch(resetStops());
+    };
   }, []);
-
 
   useEffect(() => {
     if (forwardMap) {
@@ -388,9 +387,7 @@ const AddEditBus = ({ edit = false }) => {
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">
-            <CancelButton
-              onCancelHandler={() => navigate("/admin/buses/list")}
-            />
+            <CancelButton />
             <SaveButton />
           </div>
         </div>

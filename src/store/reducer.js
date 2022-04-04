@@ -35,6 +35,9 @@ import {
 import {
   fetchBusStatsReducer,
   createBusStatsReducer,
+  fetchSingleBusStatReducer,
+  editBusStatsReducer,
+  deleteBusStatsReducer
 } from "./bus_stat/reducer";
 
 import {
@@ -67,6 +70,9 @@ export default combineReducers({
   busesList: busesListReducer,
   busStatsList: fetchBusStatsReducer,
   createBusStat: createBusStatsReducer,
+  fetchSingleBusStat: fetchSingleBusStatReducer,
+  editBusStat: editBusStatsReducer,
+  deleteBusStat: deleteBusStatsReducer,
   generateSchedule: generateScheduleReducer,
   getSchedules: getSchedulesReducer,
   fetchStops: fetchStopsReducer,

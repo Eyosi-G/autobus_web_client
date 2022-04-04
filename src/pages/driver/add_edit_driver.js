@@ -5,8 +5,10 @@ import { useFormik } from "formik";
 import Dialog from "../../components/dialog";
 import {
   createDriver,
+  editDriver,
   fetchSingleDriver,
   resetCreateDriver,
+  resetEditDriver,
   resetFetchSingleDriver,
 } from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +32,12 @@ const AddEditDriver = ({ edit = false }) => {
     error: fetchSingleDriverError,
   } = useSelector((state) => state.fetchSingleDriver);
 
+  const {
+    loading: editDriverLoading,
+    success: editDriverSuccess,
+    error: editDriverError,
+  } = useSelector((state) => state.editDriver);
+
   const navigate = useNavigate();
   const params = useParams();
 
@@ -46,14 +54,19 @@ const AddEditDriver = ({ edit = false }) => {
   };
   const formik = useFormik({
     initialValues: initalValues,
-    onSubmit: async (values) => {
+    onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
       formData.append("image", imageFile);
-      dispatch(createDriver(formData));
-      formik.setValues(initalValues);
+      if (edit) {
+        const { id } = params;
+        dispatch(editDriver(id, formData));
+      } else {
+        dispatch(createDriver(formData));
+      }
+      action.resetForm();
       setImage(null);
     },
   });
@@ -85,37 +98,84 @@ const AddEditDriver = ({ edit = false }) => {
     setImageFile(e.target.files[0]);
   };
 
+  const successMessage = () => {
+    if (createDriverSuccess) return "driver created successfully !";
+    if (editDriverSuccess) return "driver edited successfully !";
+  };
+
+  const errorMessage = () => {
+    if (createDriverError) return "creating driver failed !";
+    if (editDriverError) return "editing driver failed !";
+  };
+
+  const closeDialog = () => {
+    if (createDriverSuccess || createDriverError)
+      return dispatch(resetCreateDriver());
+    if (editDriverSuccess || editDriverError)
+      return dispatch(resetEditDriver());
+  };
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetCreateDriver());
+      dispatch(resetEditDriver());
+      dispatch(resetFetchSingleDriver());
+    };
+  }, []);
+
+  if (fetchSingleDriverError) {
+    return (
+      <div className="flex  items-center justify-center mt-52 ">
+        <button
+          onClick={() => {
+            if (edit) {
+              const { id } = params;
+              dispatch(fetchSingleDriver(id));
+            }
+          }}
+          className="px-2 py-1 border rounded-md capitalize"
+        >
+          retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="m-4">
-        <Modal open={createDriverLoading}>
+        <Modal
+          open={
+            editDriverLoading || createDriverLoading || fetchSingleDriverError
+          }
+        >
           <div
             className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
             style={{ zIndex: 1000 }}
           >
-            <div className="absolute p-4 bg-white rounded-sm">
-              <Spinner className="mr-2 w-14 h-14 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-            </div>
+            <Spinner color="white" />
           </div>
         </Modal>
-        <Modal open={createDriverError}>
+        <Modal open={createDriverError || editDriverError}>
           <Dialog
             severity="failure"
-            message="failed to create driver."
-            close={() => dispatch(resetCreateDriver())}
+            message={errorMessage()}
+            close={closeDialog}
           />
         </Modal>
-        <Modal open={createDriverSuccess}>
+        <Modal open={createDriverSuccess || editDriverSuccess}>
           <Dialog
             severity="success"
-            message="driver created successfully !"
-            close={() => dispatch(resetCreateDriver())}
+            message={successMessage()}
+            close={closeDialog}
           />
         </Modal>
       </div>
+
       <div className="m-4 flex justify-end">
         <BackButton />
       </div>
+
       <form onSubmit={formik.handleSubmit}>
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (

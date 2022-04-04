@@ -104,8 +104,6 @@ const AddEditTicketer = ({ edit = false }) => {
   const closeDialogHandler = () => {
     if (createTicketerError || createTicketerSuccess)
       return dispatch(resetCreateTicketer());
-    if (fetchSingleTicketerData || fetchSingleTicketerError)
-      return dispatch(resetFetchSingleTicketer());
     if (editTicketerSuccess || editTicketerError)
       return dispatch(resetEditTicketer());
   };
@@ -119,24 +117,49 @@ const AddEditTicketer = ({ edit = false }) => {
     if (editTicketerError) return "failed to edit ticketer";
   };
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetFetchSingleTicketer());
+      dispatch(resetCreateTicketer());
+      dispatch(resetEditTicketer());
+    };
+  }, []);
+
+  if (fetchSingleTicketerError) {
+    return (
+      <div className="flex  items-center justify-center mt-52 ">
+        <button
+          onClick={() => {
+            if (edit) {
+              const { id } = params;
+              dispatch(fetchSingleTicketer(id));
+            }
+          }}
+          className="px-2 py-1 border rounded-md capitalize"
+        >
+          retry
+        </button>
+      </div>
+    );
+  }
   return (
     <>
       <div className="m-4">
-        <Modal open={createTicketerLoading || fetchSingleTicketerLoading}>
+        <Modal
+          open={
+            createTicketerLoading ||
+            editTicketerLoading ||
+            fetchSingleTicketerLoading
+          }
+        >
           <div
             className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
             style={{ zIndex: 1000 }}
           >
-            <div className="absolute p-4 bg-white rounded-sm">
-              <Spinner className="mr-2 w-14 h-14 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-            </div>
+            <Spinner color="white" />
           </div>
         </Modal>
-        <Modal
-          open={
-            createTicketerError || fetchSingleTicketerError || editTicketerError
-          }
-        >
+        <Modal open={createTicketerError || editTicketerError}>
           <Dialog
             severity="failure"
             message={errorDialogMessage()}
@@ -326,9 +349,7 @@ const AddEditTicketer = ({ edit = false }) => {
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">
-            <CancelButton
-              onCancelHandler={() => navigate("/admin/ticketers/list")}
-            />
+            <CancelButton />
             <SaveButton />
           </div>
         </div>

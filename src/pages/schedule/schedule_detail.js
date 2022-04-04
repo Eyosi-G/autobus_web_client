@@ -9,7 +9,7 @@ const ScheduleDetail = () => {
       <div className="flex justify-end my-2">
         <BackButton />
       </div>
-      <div className="space-y-3 flex space-x-4">
+      <div className="space-y-3 ">
         <div className="space-y-1 flex flex-col mt-2 bg-white p-2 border-l-8 border-l-gray-800 justify-center">
           <div className="space-x-2">
             <label className="font-semibold">Date</label>

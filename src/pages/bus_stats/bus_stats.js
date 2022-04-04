@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
 import Empty from "../../components/empty";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
 import {
+  deleteBusStat,
   fetchBusStats,
+  resetDeleteBusStat,
   resetFetchBusStats,
 } from "../../store/bus_stat/actions";
 const BusSats = () => {
@@ -29,11 +32,41 @@ const BusSats = () => {
     error,
   } = useSelector((state) => state.busStatsList);
 
+  const {
+    loading: deleteBusStatLoading,
+    success: deleteBusStatSuccess,
+    error: deleteBusStatError,
+  } = useSelector((state) => state.deleteBusStat);
+
   useEffect(() => {
     dispatch(fetchBusStats(page, limit));
   }, [limit, page]);
+
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [currentStat, setCurretStat] = useState(null);
+
   return (
     <div className="p-4">
+      <Modal open={deleteBusStatLoading}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Spinner color="white" />
+        </div>
+      </Modal>
+      <Modal open={openConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (currentStat) {
+                dispatch(deleteBusStat(currentStat.id));
+                setOpenConfirmation(false);
+              }
+            }}
+            handleCancel={() => {
+              setOpenConfirmation(false);
+            }}
+          />
+        </div>
+      </Modal>
       <div className="flex items-center justify-between">
         <span className="font-semibold">Bus Stats </span>
         <div className="my-3 flex justify-end items-center">
@@ -81,6 +114,21 @@ const BusSats = () => {
           close={() => dispatch(resetFetchBusStats())}
         />
       </Modal>
+      <Modal open={deleteBusStatError}>
+        <Dialog
+          severity="failure"
+          message={deleteBusStatError}
+          close={() => dispatch(resetDeleteBusStat())}
+        />
+      </Modal>
+      <Modal open={deleteBusStatSuccess}>
+        <Dialog
+          severity="success"
+          message={"bus stat deleted successfully"}
+          close={() => dispatch(resetDeleteBusStat())}
+        />
+      </Modal>
+
       {!loading && stats.length == 0 ? (
         <Empty message="no bus stats found" />
       ) : (
@@ -134,7 +182,12 @@ const BusSats = () => {
                           className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
                           style={{ zIndex: 100 }}
                         >
-                          <button className="flex space-x-2" onClick={() => {}}>
+                          <button
+                            className="flex space-x-2"
+                            onClick={() => {
+                              navigate(`/admin/bus_stats/${stat.id}/edit`);
+                            }}
+                          >
                             <span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +208,10 @@ const BusSats = () => {
                           </button>
                           <button
                             className="text-red-600 flex space-x-2"
-                            onClick={() => {}}
+                            onClick={() => {
+                              setCurretStat(stat);
+                              setOpenConfirmation(true);
+                            }}
                           >
                             <span>
                               <svg

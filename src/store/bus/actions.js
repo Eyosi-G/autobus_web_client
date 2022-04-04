@@ -4,12 +4,7 @@ import axios from "../../utils/axios";
 export const createBus = (data) => async (dispatch) => {
   try {
     dispatch({ type: types.CREATE_BUS_REQUEST });
-    await new Promise(async (resolve, reject) => {
-      setTimeout(async () => {
-        await axios.post("/buses", data);
-        resolve("");
-      }, 1000);
-    });
+    await axios.post("/buses", data);
     dispatch({ type: types.CREATE_BUS_SUCCESS });
   } catch (e) {
     dispatch({ type: types.CREATE_BUS_FAILURE, payload: e.message });
@@ -34,12 +29,7 @@ export const fetchBuses = (page, limit) => async (dispatch) => {
 export const fetchSingleBus = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_SINGLE_BUS_REQUEST });
-    const response = await new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        const response = await axios.get(`/buses/${id}`);
-        resolve(response);
-      }, 2000)
-    );
+    const response = await axios.get(`/buses/${id}`);
     dispatch({
       type: types.FETCH_SINGLE_BUS_SUCCESS,
       payload: response.data,

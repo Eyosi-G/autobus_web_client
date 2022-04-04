@@ -1,8 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const CancelButton = ({onCancelHandler = ()=>{}}) => {
+const CancelButton = ({ onCancelHandler }) => {
+  const navigate = useNavigate();
+
   return (
-    <button onClick={onCancelHandler}className="border rounded-md py-1 px-5 drop-shadow-md">
+    <button
+      type="button"
+      onClick={() => {
+        onCancelHandler ? onCancelHandler() : navigate(-1);
+      }}
+      className="border rounded-md py-1 px-5 drop-shadow-md"
+    >
       cancel
     </button>
   );

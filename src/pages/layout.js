@@ -157,6 +157,10 @@ const Layout = () => {
               <Route path="schedules/:id" element={<ScheduleDetail />} />
               <Route path="bus_stats/list" element={<BusStats />} />
               <Route path="bus_stats/new" element={<AddEditBusStat />} />
+              <Route
+                path="bus_stats/:id/edit"
+                element={<AddEditBusStat edit={true} />}
+              />
             </Routes>
           </div>
         </div>

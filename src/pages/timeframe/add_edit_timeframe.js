@@ -52,6 +52,7 @@ const AddEditTimeFrame = ({ setOpen, edit = false, timeFrame = null }) => {
             return setOpen(false);
           }
           dispatch(createTimeFrame(data));
+          setOpen(false);
         }}
       >
         <div className="flex space-x-2">

@@ -8,7 +8,9 @@ const Menu = ({
 }) => {
   return (
     <div
-      className={`border-l-4  ${selected ? "border-white" : "border-gray-800"}`}
+      className={`border-l-4  ${
+        selected ? "border-green-300" : "border-gray-800"
+      }`}
     >
       <div
         className={`flex px-5 py-2 justify-between ${

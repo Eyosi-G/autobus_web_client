@@ -1,21 +1,25 @@
 import { useFormik } from "formik";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { ClipLoader, PulseLoader } from "react-spinners";
 import BackButton from "../../components/back_button";
 import CancelButton from "../../components/cancel_button";
 import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import SaveButton from "../../components/save_button";
 import Spinner from "../../components/spinner";
-import { fetchBuses } from "../../store/bus/actions";
+import { fetchBuses, resetFetchBuses } from "../../store/bus/actions";
 import {
   createBusStat,
+  editBusStat,
+  fetchSingleBusStat,
   resetCreateBusStat,
+  resetEditBusStat,
+  resetFetchSingleBusStat,
 } from "../../store/bus_stat/actions";
 
 const AddEditBusStat = ({ edit = false }) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const {
@@ -23,12 +27,25 @@ const AddEditBusStat = ({ edit = false }) => {
     success: createBusStatSuccess,
     error: createBusStatError,
   } = useSelector((state) => state.createBusStat);
+  const params = useParams();
+
+  const {
+    loading: editBusStatLoading,
+    success: editBusStatSuccess,
+    error: editBusStatError,
+  } = useSelector((state) => state.editBusStat);
 
   const {
     loading: busesListLoading,
     data: { count, buses },
     error: busesListError,
   } = useSelector((state) => state.busesList);
+
+  const {
+    loading: busStatLoading,
+    data: busStatData,
+    error: busStatError,
+  } = useSelector((state) => state.fetchSingleBusStat);
 
   const initialValues = {
     bus_number: 0,
@@ -38,7 +55,12 @@ const AddEditBusStat = ({ edit = false }) => {
   };
 
   const onSubmitHandler = (values, action) => {
-    // dispatch(createBusStat(values));
+    if (edit) {
+      const { id } = params;
+      dispatch(editBusStat(id, values));
+    } else {
+      dispatch(createBusStat(values));
+    }
     action.resetForm();
   };
 
@@ -50,24 +72,71 @@ const AddEditBusStat = ({ edit = false }) => {
   const dialogMessage = () => {
     if (createBusStatSuccess) return "Bus Stat Inserted Successfully !";
     if (createBusStatError) return "Failed to insert bus stat !";
+    if (editBusStatSuccess) return "bus stat edited successfully !";
+    if (editBusStatError) return "failed to edit bus stat !";
   };
 
   const closeDialog = () => {
-    if (createBusStatSuccess) return dispatch(resetCreateBusStat());
-    if (createBusStatError) return dispatch(resetCreateBusStat());
+    if (createBusStatError || createBusStatSuccess)
+      return dispatch(resetCreateBusStat());
+    if (editBusStatSuccess || editBusStatError)
+      return dispatch(resetEditBusStat());
+    if (busStatError) return dispatch(resetFetchSingleBusStat());
   };
 
   useEffect(() => {
     dispatch(fetchBuses(0, 100));
+    if (edit) {
+      const { id } = params;
+      dispatch(fetchSingleBusStat(id));
+    }
+    return () => {
+      dispatch(resetCreateBusStat());
+      dispatch(resetFetchBuses());
+      dispatch(resetFetchSingleBusStat());
+      dispatch(resetEditBusStat());
+    };
   }, []);
+
+  useEffect(() => {
+    if (busStatData) {
+      busStatData.date = busStatData.date.split("T")[0];
+      formik.setValues(busStatData);
+    }
+  }, [busStatData]);
 
   useEffect(() => {
     if (buses.length > 0)
       formik.setValues({ ...formik.values, bus_number: buses[0].bus_number });
   }, [buses]);
+
+  const retryHandler = () => {
+    if (busStatError) {
+      const { id } = params;
+      dispatch(fetchSingleBusStat(id));
+    }
+    if (busesListError) {
+      dispatch(fetchBuses());
+    }
+  };
+
+  if (busesListError || busStatError) {
+    return (
+      <div className="flex justify-center mt-40">
+        <button
+          className="capitalize px-2 py-1 border rounded-md"
+          onClick={retryHandler}
+        >
+          retry
+        </button>
+      </div>
+    );
+  }
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Modal open={createBusStatLoading || busesListLoading}>
+      <Modal
+        open={createBusStatLoading || busStatLoading || editBusStatLoading}
+      >
         <div
           style={{ zIndex: 200 }}
           className=" absolute h-screen w-screen bg-black bg-opacity-40 flex items-center justify-center"
@@ -75,14 +144,14 @@ const AddEditBusStat = ({ edit = false }) => {
           <Spinner color="white" />
         </div>
       </Modal>
-      <Modal open={createBusStatError}>
+      <Modal open={createBusStatError || editBusStatError}>
         <Dialog
           severity="failure"
           message={dialogMessage()}
           close={() => closeDialog()}
         />
       </Modal>
-      <Modal open={createBusStatSuccess}>
+      <Modal open={createBusStatSuccess || editBusStatSuccess}>
         <Dialog
           severity="success"
           message={dialogMessage()}
@@ -141,18 +210,28 @@ const AddEditBusStat = ({ edit = false }) => {
         <div className="flex flex-col">
           <label>bus number</label>
           <div className="flex space-x-2 border w-full p-2 rounded-md  bg-gray-50 items-center">
-            <select
-              className="appearance-none w-full outline-none bg-gray-50 "
-              onChange={formik.handleChange}
-              name="bus_number"
-              value={
-                formik.values.bus_number != 0 ? formik.values.bus_number : null
-              }
-            >
-              {buses.map((bus) => {
-                return <option value={bus.bus_number}>{bus.bus_number}</option>;
-              })}
-            </select>
+            <div className="w-full">
+              {busesListLoading ? (
+                <PulseLoader size={5} />
+              ) : (
+                <select
+                  className="appearance-none  w-full outline-none bg-gray-50 "
+                  onChange={formik.handleChange}
+                  name="bus_number"
+                  value={
+                    formik.values.bus_number != 0
+                      ? formik.values.bus_number
+                      : null
+                  }
+                >
+                  {buses.map((bus) => {
+                    return (
+                      <option value={bus.bus_number}>{bus.bus_number}</option>
+                    );
+                  })}
+                </select>
+              )}
+            </div>
             <span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -192,8 +271,8 @@ const AddEditBusStat = ({ edit = false }) => {
           />
         </div>
         <div className="flex space-x-3 justify-end mt-5">
-          <CancelButton onCancelHandler={() => {}} />
-          <SaveButton />
+          <CancelButton />
+          <SaveButton disable={buses.length < 1} />
         </div>
       </div>
     </form>

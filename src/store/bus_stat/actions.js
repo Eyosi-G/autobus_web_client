@@ -20,6 +20,50 @@ export const createBusStat = (data) => async (dispatch) => {
   }
 };
 
+export const fetchSingleBusStat = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: types.FETCH_SINGLE_BUS_STAT_REQUEST });
+    const response = await axios.get(`/stats/${id}`);
+    dispatch({
+      type: types.FETCH_SINGLE_BUS_STAT_SUCCESS,
+      payload: response.data,
+    });
+  } catch (e) {
+    dispatch({ type: types.FETCH_SINGLE_BUS_STAT_FAILURE, payload: e.message });
+  }
+};
+
+export const editBusStat = (id, data) => async (dispatch) => {
+  try {
+    dispatch({ type: types.EDIT_BUS_STAT_REQUEST });
+    await axios.patch(`/stats/${id}`, data);
+    dispatch({
+      type: types.EDIT_BUS_STAT_SUCCESS,
+    });
+  } catch (e) {
+    dispatch({ type: types.EDIT_BUS_STAT_FAILURE, payload: e.message });
+  }
+};
+
+export const deleteBusStat = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: types.DELETE_BUS_STAT_REQUEST });
+    await axios.delete(`/stats/${id}`);
+    dispatch({
+      type: types.DELETE_BUS_STAT_SUCCESS,
+    });
+    dispatch({
+      type: types.DELETE_BUS_STAT_UPDATE_LIST,
+      payload: id,
+    });
+  } catch (e) {
+    dispatch({
+      type: types.DELETE_BUS_STAT_FAILURE,
+      payload: e.message,
+    });
+  }
+};
+
 export const resetFetchBusStats = () => ({
   type: types.FETCH_BUS_STATS_RESET,
 });
@@ -27,3 +71,16 @@ export const resetFetchBusStats = () => ({
 export const resetCreateBusStat = () => ({
   type: types.CREATE_BUS_STAT_RESET,
 });
+
+export const resetFetchSingleBusStat = () => ({
+  type: types.FETCH_SINGLE_BUS_STAT_RESET,
+});
+
+export const resetEditBusStat = () => ({
+  type: types.EDIT_BUS_STAT_RESET,
+});
+
+
+export const resetDeleteBusStat = ()=>({
+  type: types.DELETE_BUS_STAT_RESET
+})

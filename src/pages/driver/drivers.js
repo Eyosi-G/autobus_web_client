@@ -54,9 +54,7 @@ const Drivers = (props) => {
     <div>
       <Modal open={deleteDriverLoading}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-          </div>
+          <Spinner color="white"/>
         </div>
       </Modal>
       <Modal open={openConfirmation}>

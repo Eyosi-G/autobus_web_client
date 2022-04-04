@@ -1,8 +1,8 @@
 import React from "react";
-import { PulseLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
-const Spinner = ({ color = "black" }) => {
-  return <PulseLoader color={color} />;
+const Spinner = ({ color = "black", size = 14 }) => {
+  return <BeatLoader color={color} size={size} />;
 };
 
 export default Spinner;
