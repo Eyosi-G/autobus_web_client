@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "./menu";
 import lion from "../resources/images/lion.png";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const Nav = ({ menuOpen  }) => {
+const Nav = ({ menuOpen }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <div
-      className={`${menuOpen ? "hidden" : "flex"} flex-col min-w-max col-span-1 bg-gray-800  `}
+      className={`${
+        menuOpen ? "hidden" : "flex"
+      } flex-col min-w-max col-span-1 bg-gray-800  `}
       style={{ zIndex: 150 }}
     >
       <div className="h-36 p-2 flex justify-center items-center">

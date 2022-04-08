@@ -24,12 +24,7 @@ export const fetchDrivers = (page, limit) => async (dispatch) => {
 export const fetchSingleDriver = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_SINGLE_DRIVER_REQUEST });
-    const response = await new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        const response = await axios.get(`/drivers/${id}`);
-        resolve(response);
-      }, 2000)
-    );
+    const response = await axios.get(`/drivers/${id}`);
     dispatch({
       type: types.FETCH_SINGLE_DRIVER_SUCCESS,
       payload: response.data,

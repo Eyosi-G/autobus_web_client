@@ -14,12 +14,7 @@ export const createBus = (data) => async (dispatch) => {
 export const fetchBuses = (page, limit) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_BUSES_REQUEST });
-    const response = await new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        const response = await axios.get(`/buses?page=${page}&limit=${limit}`);
-        resolve(response);
-      }, 2000)
-    );
+    const response = await axios.get(`/buses?page=${page}&limit=${limit}`);
     dispatch({ type: types.FETCH_BUSES_SUCCESS, payload: response.data });
   } catch (e) {
     dispatch({ type: types.FETCH_BUSES_FAILURE, payload: e.message });
@@ -42,12 +37,7 @@ export const fetchSingleBus = (id) => async (dispatch) => {
 export const deleteBus = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.DELETE_BUS_REQUEST });
-    const response = await new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        const response = await axios.delete(`/buses/${id}`);
-        resolve(response);
-      }, 2000)
-    );
+    const response = await axios.delete(`/buses/${id}`);
     dispatch({ type: types.DELETE_BUS_UPDATE_LIST, payload: id });
 
     dispatch({

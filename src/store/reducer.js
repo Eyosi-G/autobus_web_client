@@ -37,7 +37,8 @@ import {
   createBusStatsReducer,
   fetchSingleBusStatReducer,
   editBusStatsReducer,
-  deleteBusStatsReducer
+  deleteBusStatsReducer,
+  uploadBusStatReducer,
 } from "./bus_stat/reducer";
 
 import {
@@ -45,6 +46,8 @@ import {
   getSchedulesReducer,
 } from "./schedule/reducer";
 import { fetchStopsReducer } from "./stop/reducer";
+
+import { loginReducer } from "./auth/reducer";
 
 export default combineReducers({
   createDriver: createDriverReducer,
@@ -73,7 +76,9 @@ export default combineReducers({
   fetchSingleBusStat: fetchSingleBusStatReducer,
   editBusStat: editBusStatsReducer,
   deleteBusStat: deleteBusStatsReducer,
+  uploadBusStat: uploadBusStatReducer,
   generateSchedule: generateScheduleReducer,
   getSchedules: getSchedulesReducer,
   fetchStops: fetchStopsReducer,
+  login: loginReducer,
 });

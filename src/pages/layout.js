@@ -15,12 +15,19 @@ import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
 import Buses from "./bus/buses";
 import ScheduleDetail from "./schedule/schedule_detail";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/auth/actions";
 const Layout = () => {
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(true);
+  const dispatch = useDispatch();
+
+  const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+  const logoutHandler = () => {
+    dispatch(logout());
+  }
   return (
     <div className="grid grid-cols-5 h-screen overflow-hidden">
       <Nav menuOpen={menuOpen} />
@@ -107,7 +114,10 @@ const Layout = () => {
                   </span>
                   <span>settings</span>
                 </button>
-                <button className="flex space-x-2">
+                <button
+                  className="flex space-x-2"
+                  onClick={logoutHandler}
+                >
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

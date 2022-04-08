@@ -34,12 +34,7 @@ export const fetchTicketers = (page, limit) => async (dispatch) => {
 export const fetchSingleTicketer = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_SINGLE_TICKETER_REQUEST });
-    const response = await new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        const response = await axios.get(`/ticketers/${id}`);
-        resolve(response);
-      }, 2000)
-    );
+    const response = await axios.get(`/ticketers/${id}`);
     dispatch({
       type: types.FETCH_SINGLE_TICKETER_SUCCESS,
       payload: response.data,

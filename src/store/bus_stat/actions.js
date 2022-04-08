@@ -64,6 +64,31 @@ export const deleteBusStat = (id) => async (dispatch) => {
   }
 };
 
+export const uploadBusStat = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: types.UPLOAD_BUS_STAT_REQUEST });
+    await axios.post(`/stats/upload`, data, {
+      onUploadProgress: (progress) => {
+        const percentCompleted = Math.round(
+          (progress.loaded * 100) / progress.total
+        );
+        dispatch({
+          type: types.UPLOAD_BUS_STAT_PROGRESS,
+          payload: percentCompleted,
+        });
+      },
+    });
+    dispatch({
+      type: types.UPLOAD_BUS_STAT_SUCCESS,
+    });
+  } catch (e) {
+    dispatch({
+      type: types.UPLOAD_BUS_STAT_FAILURE,
+      payload: e.message,
+    });
+  }
+};
+
 export const resetFetchBusStats = () => ({
   type: types.FETCH_BUS_STATS_RESET,
 });
@@ -80,7 +105,11 @@ export const resetEditBusStat = () => ({
   type: types.EDIT_BUS_STAT_RESET,
 });
 
+export const resetDeleteBusStat = () => ({
+  type: types.DELETE_BUS_STAT_RESET,
+});
 
-export const resetDeleteBusStat = ()=>({
-  type: types.DELETE_BUS_STAT_RESET
+
+export const resetUploadBusStat = ()=>({
+  type: types.UPLOAD_BUS_STAT_RESET
 })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Confirmation from "../../components/confirmation";
@@ -7,6 +7,7 @@ import Empty from "../../components/empty";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
+import UploadStat from "../../components/upload_stat";
 import {
   deleteBusStat,
   fetchBusStats,
@@ -19,6 +20,7 @@ const BusSats = () => {
   const [limit, setLimit] = useState(5);
   const navigate = useNavigate();
 
+  const uploadRef = useRef(null);
   const onPageChangeHandler = (_newPage) => {
     setPage(_newPage);
   };
@@ -44,6 +46,9 @@ const BusSats = () => {
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentStat, setCurretStat] = useState(null);
+
+  const [openUpload, setOpenUpload] = useState(false);
+  const [uploadFile, setUploadFile] = useState(null);
 
   return (
     <div className="p-4">
@@ -88,7 +93,10 @@ const BusSats = () => {
             </svg>
             <span>new stat</span>
           </button>
-          <button className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white">
+          <button
+            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white"
+            onClick={() => uploadRef.current.click()}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5"
@@ -105,6 +113,19 @@ const BusSats = () => {
             </svg>
             <span>upload stats</span>
           </button>
+          <input
+            type="file"
+            className="hidden"
+            ref={uploadRef}
+            onChange={(e) => {
+              console.log(e.target.files);
+              setUploadFile(e.target.files[0]);
+              setOpenUpload(true);
+            }}
+            onClick={(e) => {
+              e.target.value = null;
+            }}
+          />
         </div>
       </div>
       <Modal open={error}>
@@ -127,6 +148,17 @@ const BusSats = () => {
           message={"bus stat deleted successfully"}
           close={() => dispatch(resetDeleteBusStat())}
         />
+      </Modal>
+
+      <Modal open={openUpload}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white p-2 w-1/2 rounded-lg">
+            <UploadStat
+              file={uploadFile}
+              onCloseHandler={() => setOpenUpload(false)}
+            />
+          </div>
+        </div>
       </Modal>
 
       {!loading && stats.length == 0 ? (

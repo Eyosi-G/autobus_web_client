@@ -65,6 +65,11 @@ const Schedules = () => {
     const id = params.id;
     dispatch(fetchSingleTimeFrame(id));
     dispatch(getSchedules(id));
+    return () => {
+      dispatch(resetFetchSingleTimeFrame());
+      dispatch(resetGenerateSchedule());
+      dispatch(resetGetSchedule());
+    };
   }, []);
 
   useEffect(() => {
@@ -96,12 +101,11 @@ const Schedules = () => {
         <Dialog
           severity="failure"
           message={dialogMessage()}
-          close={generateScheduleHandler}
+          close={dialogCloseHandler}
         />
       </Modal>
       <div className="flex justify-end my-2">
-        <BackButton
-        />
+        <BackButton />
       </div>
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize space-x-2">
@@ -139,11 +143,13 @@ const Schedules = () => {
           <span>generate schedule</span>
         </button>
       </div>
-      {getScheduleLoading || generateScheduleLoading  || singelTimeFrameLoading && (
-        <div className="py-2 flex justify-center">
-          <Spinner />
-        </div>
-      )}
+      {getScheduleLoading ||
+        generateScheduleLoading ||
+        (singelTimeFrameLoading && (
+          <div className="py-2 flex justify-center">
+            <Spinner />
+          </div>
+        ))}
       {
         <div>
           <table className="w-full border border-collapse bg-white">
@@ -160,7 +166,10 @@ const Schedules = () => {
             <tbody className="text-sm">
               {schedules.map((schedule) => {
                 return (
-                  <tr className="hover:bg-gray-50 hover:cursor-pointer" onClick={()=>navigate(`/admin/schedules/${schedule.id}`)}>
+                  <tr
+                    className="hover:bg-gray-50 hover:cursor-pointer"
+                    onClick={() => navigate(`/admin/schedules/${schedule.id}`)}
+                  >
                     <td className="border p-2">
                       {toLongDate(new Date(schedule.date))}
                     </td>

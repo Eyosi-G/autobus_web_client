@@ -138,13 +138,7 @@ const Timeframes = () => {
           close={() => closeDialogHandler()}
         />
       </Modal>
-      <Modal
-        open={
-          createTimeFrameSuccess ||
-          deleteTimeFrameSuccess ||
-          editTimeFrameSuccess
-        }
-      >
+      <Modal open={editTimeFrameSuccess}>
         <Dialog
           severity="success"
           message={successDialogMessage()}

@@ -112,3 +112,42 @@ export const deleteBusStatsReducer = (
   }
   return state;
 };
+
+export const uploadBusStatReducer = (
+  state = { loading: false, progress: 0, success: false, error: null },
+  action
+) => {
+  switch (action.type) {
+    case types.UPLOAD_BUS_STAT_REQUEST:
+      return {
+        loading: true,
+        progress: 0,
+        success: false,
+        error: null,
+      };
+    case types.UPLOAD_BUS_STAT_PROGRESS:
+      return {
+        loading: true,
+        progress: action.payload,
+        success: false,
+        error: null,
+      };
+    case types.UPLOAD_BUS_STAT_SUCCESS:
+      return {
+        loading: false,
+        progress: 100,
+        success: true,
+        error: null,
+      };
+    case types.UPLOAD_BUS_STAT_FAILURE:
+      return {
+        progress: 100,
+        loading: false,
+        success: false,
+        error: action.payload,
+      };
+    case types.UPLOAD_BUS_STAT_RESET:
+      return { loading: false, progress: 0, success: false, error: null };
+  }
+  return state;
+};
