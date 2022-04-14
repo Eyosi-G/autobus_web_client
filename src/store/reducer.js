@@ -48,6 +48,7 @@ import {
 import { fetchStopsReducer } from "./stop/reducer";
 
 import { loginReducer } from "./auth/reducer";
+import { fetchDashboardReducer } from "./dashboard/reducer";
 
 export default combineReducers({
   createDriver: createDriverReducer,
@@ -81,4 +82,5 @@ export default combineReducers({
   getSchedules: getSchedulesReducer,
   fetchStops: fetchStopsReducer,
   login: loginReducer,
+  dashboard: fetchDashboardReducer
 });

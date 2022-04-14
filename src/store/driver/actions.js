@@ -11,10 +11,10 @@ export const createDriver = (data) => async (dispatch) => {
   }
 };
 
-export const fetchDrivers = (page, limit) => async (dispatch) => {
+export const fetchDrivers = (page, limit, name) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_DRIVERS_REQUEST });
-    const response = await axios.get(`/drivers?page=${page}&limit=${limit}`);
+    const response = await axios.get(`/drivers?page=${page}&limit=${limit}&name=${name}`);
     dispatch({ type: types.FETCH_DRIVERS_SUCCESS, payload: response.data });
   } catch (e) {
     dispatch({ type: types.FETCH_DRIVERS_FAILURE, payload: e.message });

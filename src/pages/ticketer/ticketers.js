@@ -31,6 +31,7 @@ const Ticketers = (props) => {
 
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(4);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const onPageChangeHandler = (_newPage) => {
@@ -41,11 +42,11 @@ const Ticketers = (props) => {
   };
 
   useEffect(() => {
-    dispatch(fetchTicketers(page, limit));
+    dispatch(fetchTicketers(page, limit, search));
     return () => {
       dispatch(resetFetchTicketers());
     };
-  }, [page, limit]);
+  }, [page, limit, search]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentTicketer, setCurrentTicketer] = useState(null);
@@ -106,11 +107,11 @@ const Ticketers = (props) => {
           <span className="lowercase">new ticketer</span>
         </button>
       </div>
+      <Search  search={search} onSearchChange={(value) => setSearch(value) }/>
       {!loading && ticketers.length === 0 ? (
         <Empty message="empty list of ticketers please add some." />
       ) : (
         <div>
-          <Search />
           <table className="w-full border border-collapse bg-white">
             <thead>
               <tr className="text-left">

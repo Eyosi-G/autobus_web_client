@@ -31,6 +31,11 @@ const Drivers = (props) => {
 
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(4);
+  const [search, setSearch] = useState('');
+
+  const onSearchChange = (value)=>{
+    setSearch(value);
+  }
   const navigate = useNavigate();
 
   const onPageChangeHandler = (_newPage) => {
@@ -41,11 +46,12 @@ const Drivers = (props) => {
   };
 
   useEffect(() => {
-    dispatch(fetchDrivers(page, limit));
+    console.log('here')
+    dispatch(fetchDrivers(page, limit, search));
     return () => {
       dispatch(resetFetchDrivers());
     };
-  }, [page, limit]);
+  }, [page, limit, search]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
@@ -104,11 +110,12 @@ const Drivers = (props) => {
           <span className="lowercase">new driver</span>
         </button>
       </div>
+      <Search  search={search} onSearchChange={onSearchChange} />
+
       {!loading && drivers.length === 0 ? (
         <Empty message="empty list of drivers please add some." />
       ) : (
         <div>
-          <Search />
           <table className="w-full border border-collapse bg-white">
             <thead>
               <tr className="text-left">

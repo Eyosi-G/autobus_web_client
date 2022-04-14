@@ -9,13 +9,13 @@ const SearchLocation = () => {
   const map = useMap();
 
   const loadPlaces = async () => {
-    const places = await axios.get("http://localhost:8080/api/v1/places");
+    const places = await axios.get(`http://localhost:8080/api/v1/places?name=${search}`);
     setPlaces(places.data || []);
   };
 
   useEffect(() => {
     loadPlaces()
-  }, []);
+  }, [search]);
 
   
 
@@ -51,7 +51,6 @@ const SearchLocation = () => {
       </div>
       <div className="space-y-2 overflow-y-scroll">
         {places
-          .filter((place) => place.name.includes(search))
           .map((place) => (
             <div
               onClick={() => {

@@ -21,10 +21,10 @@ export const editTicketer = (id, data) => async (dispatch) => {
   }
 };
 
-export const fetchTicketers = (page, limit) => async (dispatch) => {
+export const fetchTicketers = (page, limit, name) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_TICKETERS_REQUEST });
-    const response = await axios.get(`/ticketers?page=${page}&limit=${limit}`);
+    const response = await axios.get(`/ticketers?page=${page}&limit=${limit}&name=${name}`);
     dispatch({ type: types.FETCH_TICKETERS_SUCCESS, payload: response.data });
   } catch (e) {
     dispatch({ type: types.FETCH_TICKETERS_FAILURE, payload: e.message });
