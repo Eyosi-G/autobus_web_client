@@ -108,7 +108,7 @@ const UploadStat = ({ file, onCloseHandler }) => {
       {error && uploadMessage(false)}
       <button
         className={`px-2 py-1 bg-gray-600 text-gray-50 rounded-lg w-full ${
-          (loading || success || error) && "bg-gray-400 text-gray-500"
+          (loading || success || error) && "bg-slate-400 text-slate-600"
         }`}
         disabled={loading || success || error}
         onClick={onSubmit}

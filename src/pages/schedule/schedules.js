@@ -19,18 +19,6 @@ import {
 import { toLongDate } from "../../utils/date_format";
 const Schedules = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [products, setProducts] = useState([
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-    { id: 5 },
-    { id: 9 },
-  ]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
 
@@ -64,17 +52,20 @@ const Schedules = () => {
   useEffect(() => {
     const id = params.id;
     dispatch(fetchSingleTimeFrame(id));
-    dispatch(getSchedules(id));
+    dispatch(getSchedules(id, page, limit));
     return () => {
       dispatch(resetFetchSingleTimeFrame());
       dispatch(resetGenerateSchedule());
       dispatch(resetGetSchedule());
     };
-  }, []);
+  }, [page, limit]);
 
   useEffect(() => {
-    dispatch(getSchedules(id, page, limit));
-  }, [generateScheduleSuccess, page, limit]);
+    const id = params.id;
+    if(generateScheduleSuccess){
+      dispatch(getSchedules(id, page, limit));
+    }
+  }, [generateScheduleSuccess]);
 
   const generateScheduleHandler = () => {
     const id = params.id;
@@ -123,7 +114,7 @@ const Schedules = () => {
           disabled={count > 0}
           onClick={generateScheduleHandler}
           className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 ${
-            count > 0 && "bg-gray-200 text-slate-600"
+            count > 0 && "bg-slate-400 text-slate-600"
           }`}
         >
           <svg

@@ -6,15 +6,7 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "../../components/spinner";
 import { fetchDashBoard } from "../../store/dashboard/actions";
-ChartJS.defaults.backgroundColor = [
-  "#c44368",
-  "#1e648f",
-  "#04c908",
-  "#3ee0a8",
-  "#04c3be",
-  "#d38e81",
-  "#93d976",
-];
+
 ChartJS.register(...registerables);
 
 const Dashboard = () => {
@@ -81,6 +73,23 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
+          </div>
+          <h1 className="mt-5 font-semibold text-2xl capitalize">
+            daily bus data
+          </h1>
+          <div className="space-x-2 mt-2">
+            {data.buses.map((bus) => (
+              <button
+                onClick={() => dispatch(fetchDashBoard(bus))}
+                className={`px-3 py-1 rounded-md ${
+                  data.bus == bus
+                    ? "bg-gray-50 border border-gray-300"
+                    : "bg-gray-400"
+                }`}
+              >
+                {bus}
+              </button>
+            ))}
           </div>
           <div className="flex items-center mt-8 space-x-2">
             <div className="h-80" style={{ width: "100%" }}>

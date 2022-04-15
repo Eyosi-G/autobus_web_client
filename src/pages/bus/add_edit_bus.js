@@ -49,10 +49,14 @@ const selectedBackwardStopIcon = L.divIcon({
 });
 
 const AddEditBus = ({ edit = false }) => {
-  const [forwardStops, setForwardStops] = useState([]);
-  const [backwardStops, setBackwardStops] = useState([]);
+  const [forwardStops, setForwardStops] = useState({});
+  const [backwardStops, setBackwardStops] = useState({});
   const [forwardLayer, setForwardLayer] = useState(null);
   const [backwardLayer, setBackwardLayer] = useState(null);
+
+  const [forwardRouteLayer, setForwardRouteLayer] = useState(null);
+  const [backwardRouteLayer, setBackwardRouteLayer] = useState(null);
+
   // const [stops, setStops] = useState([]);
 
   const [forwardMap, setForwadMap] = useState();
@@ -61,7 +65,6 @@ const AddEditBus = ({ edit = false }) => {
   const [wayPoints, setWayPoints] = useState([]);
   const [busNumber, setBusNumber] = useState(0);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const {
     loading: createBusLoading,
@@ -81,28 +84,36 @@ const AddEditBus = ({ edit = false }) => {
     error: stopsError,
   } = useSelector((state) => state.fetchStops);
 
-  const addToForwardStop = (id) => {
-    setForwardStops((stops) => [...stops, id]);
+  const addToForwardStop = (id, lat, lng) => {
+    setForwardStops((stops) => ({ ...stops, [id]: { lat, lng } }));
   };
 
   const removeForwardStop = (id) => {
-    setForwardStops((stops) => stops.filter((stop) => stop !== id));
+    setForwardStops((stops) => {
+      let s = { ...stops };
+      delete s[`${id}`];
+      return s;
+    });
   };
 
-  const addToBackwardStop = (id) => {
-    setBackwardStops((stops) => [...stops, id]);
+  const addToBackwardStop = (id, lat, lng) => {
+    setBackwardStops((stops) => ({ ...stops, [id]: { lat, lng } }));
   };
 
   const removeBackwardStop = (id) => {
-    setBackwardStops((stops) => stops.filter((stop) => stop !== id));
+    setBackwardStops((stops) => {
+      let s = { ...stops };
+      delete s[`${id}`];
+      return s;
+    });
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
     const data = {
       bus_number: busNumber,
-      forward_stops: forwardStops,
-      backward_stops: backwardStops,
+      forward_stops: Object.keys(forwardStops),
+      backward_stops: Object.keys(backwardStops),
       waypoint_places: wayPoints,
     };
     dispatch(createBus(data));
@@ -125,6 +136,35 @@ const AddEditBus = ({ edit = false }) => {
   };
 
   const params = useParams();
+
+  useEffect(async () => {
+    if (forwardRouteLayer) forwardMap.removeLayer(forwardRouteLayer);
+    const response = await axios.get(
+      `http://router.project-osrm.org/route/v1/driving/${Object.values(
+        forwardStops
+      )
+        .map((forward) => `${forward.lng},${forward.lat}`)
+        .join(";")}?overview=full&geometries=geojson`
+    );
+    const layer = L.geoJSON(response.data.routes[0].geometry);
+    setForwardRouteLayer(layer);
+    layer.addTo(forwardMap);
+  }, [forwardStops]);
+
+  useEffect(async () => {
+    if (backwardRouteLayer) backwardMap.removeLayer(backwardRouteLayer);
+    const response = await axios.get(
+      `http://router.project-osrm.org/route/v1/driving/${Object.values(
+        backwardStops
+      )
+        .map((backward) => `${backward.lng},${backward.lat}`)
+        .join(";")}?overview=full&geometries=geojson`
+    );
+    const layer = L.geoJSON(response.data.routes[0].geometry);
+    setBackwardRouteLayer(layer);
+    layer.addTo(backwardMap);
+  }, [backwardStops]);
+  
   useEffect(() => {
     if (edit) {
       const { id } = params;
@@ -141,12 +181,12 @@ const AddEditBus = ({ edit = false }) => {
       if (forwardLayer) forwardMap.removeLayer(forwardLayer);
       const layer = L.geoJSON(stops, {
         pointToLayer: function (feature, latlng) {
-          if (backwardStops.includes(feature.id)) {
+          if (backwardStops[feature.id]) {
             return L.marker(latlng, {
               icon: selectedBackwardStopIcon,
             });
           }
-          if (forwardStops.includes(feature.id)) {
+          if (forwardStops[feature.id]) {
             return L.marker(latlng, {
               icon: selectedForwardStopIcon,
             });
@@ -157,11 +197,16 @@ const AddEditBus = ({ edit = false }) => {
         },
         onEachFeature: function (feature, layer) {
           layer.addEventListener("click", (e) => {
-            if (backwardStops.includes(feature.id)) {
+            if (backwardStops[feature.id]) {
               return;
             }
             if (!feature.isSelected) {
-              addToForwardStop(feature.id);
+              console.log(feature);
+              addToForwardStop(
+                feature.id,
+                feature.coordinates[1],
+                feature.coordinates[0]
+              );
               e.target.setIcon(selectedForwardStopIcon);
             } else {
               removeForwardStop(feature.id);
@@ -182,12 +227,12 @@ const AddEditBus = ({ edit = false }) => {
       if (backwardLayer) backwardMap.removeLayer(backwardLayer);
       const layer = L.geoJSON(stops, {
         pointToLayer: function (feature, latlng) {
-          if (forwardStops.includes(feature.id)) {
+          if (forwardStops[feature.id]) {
             return L.marker(latlng, {
               icon: selectedForwardStopIcon,
             });
           }
-          if (backwardStops.includes(feature.id)) {
+          if (backwardStops[feature.id]) {
             return L.marker(latlng, {
               icon: selectedBackwardStopIcon,
             });
@@ -197,13 +242,17 @@ const AddEditBus = ({ edit = false }) => {
           });
         },
         onEachFeature: function (feature, layer) {
-          if (forwardStops.includes(feature.id)) return;
+          if (forwardStops[feature.id]) return;
           layer.addEventListener("click", (e) => {
-            if (forwardStops.includes(feature.id)) {
+            if (forwardStops[feature.id]) {
               return;
             }
             if (!feature.isSelected) {
-              addToBackwardStop(feature.id);
+              addToBackwardStop(
+                feature.id,
+                feature.coordinates[1],
+                feature.coordinates[0]
+              );
               e.target.setIcon(selectedBackwardStopIcon);
             } else {
               removeBackwardStop(feature.id);
@@ -225,7 +274,7 @@ const AddEditBus = ({ edit = false }) => {
       setBusNumber(bus_number);
       setForwardStops(forward_stops);
       setBackwardStops(backward_stops);
-      setWayPoints(wayPoints);
+      setWayPoints(waypoint_places);
     }
   }, [singleBusData]);
 
