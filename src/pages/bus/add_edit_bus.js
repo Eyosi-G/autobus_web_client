@@ -138,33 +138,39 @@ const AddEditBus = ({ edit = false }) => {
   const params = useParams();
 
   useEffect(async () => {
-    if (forwardRouteLayer) forwardMap.removeLayer(forwardRouteLayer);
-    const response = await axios.get(
-      `http://router.project-osrm.org/route/v1/driving/${Object.values(
-        forwardStops
-      )
-        .map((forward) => `${forward.lng},${forward.lat}`)
-        .join(";")}?overview=full&geometries=geojson`
-    );
-    const layer = L.geoJSON(response.data.routes[0].geometry);
-    setForwardRouteLayer(layer);
-    layer.addTo(forwardMap);
+    try {
+      if (forwardRouteLayer) forwardMap.removeLayer(forwardRouteLayer);
+      const response = await axios.get(
+        `http://router.project-osrm.org/route/v1/driving/${Object.values(
+          forwardStops
+        )
+          .map((forward) => `${forward.lng},${forward.lat}`)
+          .join(";")}?overview=full&geometries=geojson`
+      );
+      if (response.status != 200) return;
+      const layer = L.geoJSON(response.data.routes[0].geometry);
+      setForwardRouteLayer(layer);
+      layer.addTo(forwardMap);
+    } catch (error) {}
   }, [forwardStops]);
 
   useEffect(async () => {
-    if (backwardRouteLayer) backwardMap.removeLayer(backwardRouteLayer);
-    const response = await axios.get(
-      `http://router.project-osrm.org/route/v1/driving/${Object.values(
-        backwardStops
-      )
-        .map((backward) => `${backward.lng},${backward.lat}`)
-        .join(";")}?overview=full&geometries=geojson`
-    );
-    const layer = L.geoJSON(response.data.routes[0].geometry);
-    setBackwardRouteLayer(layer);
-    layer.addTo(backwardMap);
+    try {
+      if (backwardRouteLayer) backwardMap.removeLayer(backwardRouteLayer);
+      const response = await axios.get(
+        `http://router.project-osrm.org/route/v1/driving/${Object.values(
+          backwardStops
+        )
+          .map((backward) => `${backward.lng},${backward.lat}`)
+          .join(";")}?overview=full&geometries=geojson`
+      );
+      if (response.status != 200) return;
+      const layer = L.geoJSON(response.data.routes[0].geometry);
+      setBackwardRouteLayer(layer);
+      layer.addTo(backwardMap);
+    } catch (e) {}
   }, [backwardStops]);
-  
+
   useEffect(() => {
     if (edit) {
       const { id } = params;
@@ -271,9 +277,21 @@ const AddEditBus = ({ edit = false }) => {
     if (edit && singleBusData) {
       const { bus_number, forward_stops, backward_stops, waypoint_places } =
         singleBusData;
+
+
+      const getStops = (stops) => {
+        let _stops = {};
+        for (let stop of stops) {
+          _stops[stop.id] = {
+            lat: stop.coordinates[1],
+            lng: stop.coordinates[0],
+          };
+        }
+        return _stops;
+      };
       setBusNumber(bus_number);
-      setForwardStops(forward_stops);
-      setBackwardStops(backward_stops);
+      setForwardStops(getStops(forward_stops));
+      setBackwardStops(getStops(backward_stops));
       setWayPoints(waypoint_places);
     }
   }, [singleBusData]);
