@@ -4,7 +4,12 @@ import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import { createTimeFrame, editTimeFrame } from "../../store/timeframe/actions";
 import { editTimeFrameReducer } from "../../store/timeframe/reducer";
-const AddEditTimeFrame = ({ setOpen, edit = false, timeFrame = null }) => {
+const AddEditTimeFrame = ({
+  setOpen,
+  edit = false,
+  setEdit,
+  timeFrame = null,
+}) => {
   const dispatch = useDispatch();
 
   const [startDate, setStartDate] = useState(() => {
@@ -49,7 +54,9 @@ const AddEditTimeFrame = ({ setOpen, edit = false, timeFrame = null }) => {
           };
           if (edit) {
             dispatch(editTimeFrame(timeFrame.id, data));
-            return setOpen(false);
+            setEdit(false);
+            setOpen(false);
+            return;
           }
           dispatch(createTimeFrame(data));
           setOpen(false);
@@ -76,7 +83,12 @@ const AddEditTimeFrame = ({ setOpen, edit = false, timeFrame = null }) => {
           </div>
         </div>
         <div className="flex space-x-3 justify-end mt-5">
-          <CancelButton onCancelHandler={() => setOpen(false)} />
+          <CancelButton
+            onCancelHandler={() => {
+              setEdit(false);
+              setOpen(false);
+            }}
+          />
           <SaveButton />
         </div>
       </form>

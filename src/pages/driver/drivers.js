@@ -15,6 +15,7 @@ import { baseURL } from "../../utils/axios";
 import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
+import defaultImage from "../../resources/images/default.jpg";
 const Drivers = (props) => {
   const dispatch = useDispatch();
   const {
@@ -31,11 +32,11 @@ const Drivers = (props) => {
 
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(4);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
-  const onSearchChange = (value)=>{
+  const onSearchChange = (value) => {
     setSearch(value);
-  }
+  };
   const navigate = useNavigate();
 
   const onPageChangeHandler = (_newPage) => {
@@ -46,7 +47,7 @@ const Drivers = (props) => {
   };
 
   useEffect(() => {
-    console.log('here')
+    console.log("here");
     dispatch(fetchDrivers(page, limit, search));
     return () => {
       dispatch(resetFetchDrivers());
@@ -60,7 +61,7 @@ const Drivers = (props) => {
     <div>
       <Modal open={deleteDriverLoading}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Spinner color="white"/>
+          <Spinner color="white" />
         </div>
       </Modal>
       <Modal open={openConfirmation}>
@@ -110,7 +111,7 @@ const Drivers = (props) => {
           <span className="lowercase">new driver</span>
         </button>
       </div>
-      <Search  search={search} onSearchChange={onSearchChange} />
+      <Search search={search} onSearchChange={onSearchChange} />
 
       {!loading && drivers.length === 0 ? (
         <Empty message="empty list of drivers please add some." />
@@ -144,16 +145,23 @@ const Drivers = (props) => {
                   <tr>
                     <td className="border p-2">
                       <div className="flex justify-center">
-                        <img
-                          src={`${baseURL}/images/${driver.image}`}
-                          className="h-12 w-12 object-cover rounded-full"
-                        />
+                        {driver.image ? (
+                          <img
+                            src={`${baseURL}/images/${driver.image}`}
+                            className="h-12 w-12 object-cover rounded-full"
+                          />
+                        ) : (
+                          <img
+                            src={defaultImage}
+                            className="h-12 w-12 object-cover rounded-full"
+                          />
+                        )}
                       </div>
                     </td>
                     <td className="border p-2">{driver.first_name}</td>
                     <td className="border p-2">{driver.last_name}</td>
-                    <td className="border p-2">{driver.phone_number}</td>
-                    <td className="border p-2">{driver.email}</td>
+                    <td className="border p-2">{driver.user.phone_number ||"--"}</td>
+                    <td className="border p-2">{driver.user.email || "--"}</td>
                     <td className="border p-2">{driver.gender}</td>
                     <td className="border p-2">
                       <div className="relative group flex justify-end">

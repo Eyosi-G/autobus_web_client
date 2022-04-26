@@ -89,7 +89,7 @@ export const fetchSingleTicketerReducer = (
         data: null,
         error: action.payload,
       };
-    case types.FETCH_TICKETERS_RESET:
+    case types.FETCH_SINGLE_TICKETER_RESET:
       return { loading: false, data: null, error: null };
   }
   return state;

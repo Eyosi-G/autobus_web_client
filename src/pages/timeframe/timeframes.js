@@ -108,6 +108,7 @@ const Timeframes = () => {
           <AddEditTimeFrame
             timeFrame={currentTimeFrame}
             edit={edit}
+            setEdit={setEdit}
             setOpen={setFormOpen}
           />
         </div>
@@ -144,6 +145,7 @@ const Timeframes = () => {
           message={successDialogMessage()}
           close={() => closeDialogHandler()}
         />
+
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">

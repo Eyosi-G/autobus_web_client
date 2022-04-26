@@ -80,7 +80,7 @@ export const fetchSingleDriverReducer = (
         data: null,
         error: action.payload,
       };
-    case types.FETCH_DRIVERS_RESET:
+    case types.FETCH_SINGLE_DRIVER_RESET:
       return { loading: false, data: null, error: null };
   }
   return state;

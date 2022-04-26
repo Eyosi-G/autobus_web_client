@@ -17,6 +17,7 @@ import Spinner from "../../components/spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../../components/back_button";
 import { baseURL } from "../../utils/axios";
+import PasswordVisiblity from "../../components/password_visiblity";
 
 const AddEditDriver = ({ edit = false }) => {
   const dispatch = useDispatch();
@@ -44,14 +45,18 @@ const AddEditDriver = ({ edit = false }) => {
   const imageRef = useRef(null);
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const initalValues = {
-    user_name: "",
+    birth_date: new Date().toISOString().split("T")[0],
     first_name: "",
     last_name: "",
     email: "",
     phone_number: "",
     gender: "male",
+    user_name: "",
+    password: "",
   };
+
   const formik = useFormik({
     initialValues: initalValues,
     onSubmit: async (values, action) => {
@@ -59,15 +64,19 @@ const AddEditDriver = ({ edit = false }) => {
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      formData.append("image", imageFile);
+
+      if ((imageFile && edit) || !edit) {
+        formData.append("image", imageFile);
+      }
+
       if (edit) {
         const { id } = params;
         dispatch(editDriver(id, formData));
       } else {
         dispatch(createDriver(formData));
+        action.resetForm();
+        setImage(null);
       }
-      action.resetForm();
-      setImage(null);
     },
   });
 
@@ -84,12 +93,14 @@ const AddEditDriver = ({ edit = false }) => {
 
   useEffect(() => {
     if (fetchSingleDriverData) {
-      const singleDriverData = { ...fetchSingleDriverData };
-      const { user_name } = singleDriverData.user;
-      delete singleDriverData.user;
-      singleDriverData.user_name = user_name;
+      const singleDriverData = {
+        ...fetchSingleDriverData,
+        ...fetchSingleDriverData.user,
+      };
+      singleDriverData.birth_date = singleDriverData.birth_date.split("T")[0];
       formik.setValues(singleDriverData);
-      setImage(`${baseURL}/images/${singleDriverData.image}`);
+      singleDriverData.image &&
+        setImage(`${baseURL}/images/${singleDriverData.image}`);
     }
   }, [fetchSingleDriverData]);
 
@@ -176,7 +187,7 @@ const AddEditDriver = ({ edit = false }) => {
         <BackButton />
       </div>
 
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} autoComplete="off">
         <div className="m-4 mb-2 capitalize font-semibold ">
           {edit ? (
             <div className="flex items-center space-x-2">
@@ -266,7 +277,7 @@ const AddEditDriver = ({ edit = false }) => {
 
           <div className="grid grid-cols-2 gap-x-2 gap-y-2">
             <div className="flex flex-col">
-              <label>first name</label>
+              <label>first name *</label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="text"
@@ -277,7 +288,7 @@ const AddEditDriver = ({ edit = false }) => {
               />
             </div>
             <div className="flex flex-col">
-              <label>last name</label>
+              <label>last name *</label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
                 type="text"
@@ -288,10 +299,11 @@ const AddEditDriver = ({ edit = false }) => {
               />
             </div>
             <div className="flex flex-col">
-              <label>email</label>
+              <label className={`${edit && "text-gray-600"}`}>email</label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="email"
+                disabled={edit}
                 placeholder="email"
                 name="email"
                 onChange={formik.handleChange}
@@ -299,30 +311,33 @@ const AddEditDriver = ({ edit = false }) => {
               />
             </div>
             <div className="flex flex-col">
-              <label>phonenumber</label>
+              <label className={`${edit && "text-gray-600"}`}>
+                phonenumber
+              </label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="number"
+                disabled={edit}
                 placeholder="phonenumber"
                 name="phone_number"
                 onChange={formik.handleChange}
                 value={formik.values.phone_number}
               />
             </div>
+
             <div className="flex flex-col">
-              <label>username</label>
+              <label>Birth Date *</label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-                type="text"
-                placeholder="e.g abebe"
-                name="user_name"
+                type="date"
+                name="birth_date"
                 onChange={formik.handleChange}
-                value={formik.values.user_name}
+                value={formik.values.birth_date}
               />
             </div>
             <div className="flex flex-col ">
-              <label>gender</label>
-              <div className="flex space-x-2">
+              <label>gender *</label>
+              <div className="flex space-x-2 items-center">
                 <div className="flex items-center space-x-2">
                   <input
                     name="gender"
@@ -345,6 +360,37 @@ const AddEditDriver = ({ edit = false }) => {
                 </div>
               </div>
             </div>
+            <div className="flex flex-col">
+              <label className={`${edit && "text-gray-600"}`}>Username *</label>
+              <input
+                className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
+                type="text"
+                disabled={edit}
+                placeholder="eg. abebe"
+                name="user_name"
+                onChange={formik.handleChange}
+                value={formik.values.user_name}
+              />
+            </div>
+
+            {!edit && (
+              <div className="flex flex-col">
+                <label>Password *</label>
+                <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
+                  <PasswordVisiblity
+                    passwordVisiblity={passwordVisibility}
+                    setPasswordVisibility={setPasswordVisibility}
+                  />
+                  <input
+                    className="bg-gray-50 w-full outline-none"
+                    type={passwordVisibility ? "text" : "password"}
+                    name="password"
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">

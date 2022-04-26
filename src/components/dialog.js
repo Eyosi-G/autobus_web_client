@@ -4,7 +4,7 @@ const Dialog = ({ close = () => {}, severity = "success", message = "" }) => {
   if (!(severity === "success" || severity === "failure"))
     throw new Error("illegal serverity");
   useEffect(() => {
-    const timeout = setTimeout(() => close(), 1000);
+    const timeout = setTimeout(() => close(), 2000);
     return () => clearTimeout(timeout);
   }, []);
   return (

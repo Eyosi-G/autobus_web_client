@@ -15,6 +15,8 @@ import { baseURL } from "../../utils/axios";
 import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
+import defaultImage from "../../resources/images/default.jpg";
+
 const Ticketers = (props) => {
   const dispatch = useDispatch();
   const {
@@ -107,7 +109,7 @@ const Ticketers = (props) => {
           <span className="lowercase">new ticketer</span>
         </button>
       </div>
-      <Search  search={search} onSearchChange={(value) => setSearch(value) }/>
+      <Search search={search} onSearchChange={(value) => setSearch(value)} />
       {!loading && ticketers.length === 0 ? (
         <Empty message="empty list of ticketers please add some." />
       ) : (
@@ -141,15 +143,19 @@ const Ticketers = (props) => {
                     <td className="border p-2">
                       <div className="flex justify-center">
                         <img
-                          src={`${baseURL}/images/${ticketer.image}`}
+                          src={
+                            ticketer.image
+                              ? `${baseURL}/images/${ticketer.image}`
+                              : defaultImage
+                          }
                           className="h-12 w-12 object-cover rounded-full"
                         />
                       </div>
                     </td>
                     <td className="border p-2">{ticketer.first_name}</td>
                     <td className="border p-2">{ticketer.last_name}</td>
-                    <td className="border p-2">{ticketer.phone_number}</td>
-                    <td className="border p-2">{ticketer.email}</td>
+                    <td className="border p-2">{ticketer.user.phone_number || "--"}</td>
+                    <td className="border p-2">{ticketer.user.email || "--"}</td>
                     <td className="border p-2">{ticketer.gender}</td>
                     <td className="border p-2">
                       <div className="relative group">
