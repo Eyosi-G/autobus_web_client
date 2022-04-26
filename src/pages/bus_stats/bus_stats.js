@@ -131,7 +131,7 @@ const BusSats = () => {
       <Modal open={error}>
         <Dialog
           severity="failure"
-          message={error}
+          message={"error"}
           close={() => dispatch(resetFetchBusStats())}
         />
       </Modal>

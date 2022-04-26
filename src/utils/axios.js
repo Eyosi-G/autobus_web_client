@@ -4,12 +4,13 @@ export const baseURL = "http://localhost:8080";
 
 const createInstance = () => {
   const data = localStorage.getItem("data");
-  if (data && data.token) {
+  console.log(data)
+  if (data && JSON.parse(data).token) {
     return axios.create({
       baseURL: `${baseURL}/api/v1`,
       headers: {
         "Content-type": "application/json",
-        authorization: data.token,
+        authorization: JSON.parse(data).token,
       },
     });
   }

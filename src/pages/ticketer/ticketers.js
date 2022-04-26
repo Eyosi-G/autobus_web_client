@@ -84,6 +84,13 @@ const Ticketers = (props) => {
           close={() => dispatch(resetDeleteTicketer())}
         />
       </Modal>
+      <Modal open={error}>
+        <Dialog
+          severity="failure"
+          message={error}
+          close={() => dispatch(resetFetchTicketers())}
+        />
+      </Modal>
       <Modal open={deleteTicketerSuccess}>
         <Dialog
           severity="success"

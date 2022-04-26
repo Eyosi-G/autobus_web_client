@@ -49,8 +49,11 @@ import { fetchStopsReducer } from "./stop/reducer";
 
 import { loginReducer } from "./auth/reducer";
 import { fetchDashboardReducer } from "./dashboard/reducer";
-
+import { changeEmailReducer, changePasswordReducer, changePhonenumberReducer} from './setting/reducer'
 export default combineReducers({
+  changeEmail:changeEmailReducer,
+  changePassword: changePasswordReducer,
+  changePhonenumber: changePhonenumberReducer,
   createDriver: createDriverReducer,
   driversList: driversListReducer,
   editDriver: editDriverReducer,

@@ -1,12 +1,36 @@
 import React, { useEffect, useState } from "react";
 import Menu from "./menu";
 import lion from "../resources/images/lion.png";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 const Nav = ({ menuOpen }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    const paths = location.pathname.split("/");
+    if (paths.includes("dashboard")) {
+      return setCurrentIndex(0);
+    }
+    if (paths.includes("drivers")) {
+      return setCurrentIndex(1);
+    }
+    if (paths.includes("ticketers")) {
+      return setCurrentIndex(2);
+    }
+    if (paths.includes("buses")) {
+      return setCurrentIndex(3);
+    }
+    if (paths.includes("timeframes")) {
+      return setCurrentIndex(4);
+    }
+
+    if (paths.includes("bus_stats")) {
+      return setCurrentIndex(5);
+    }
+    setCurrentIndex(-1);
+  }, [location]);
   return (
     <div
       className={`${

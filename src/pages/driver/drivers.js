@@ -126,6 +126,7 @@ const Drivers = (props) => {
                 <th className="p-2">phone number</th>
                 <th className="p-2">email</th>
                 <th className="p-2">gender</th>
+                <th className="p-2">birth date</th>
                 <th></th>
               </tr>
             </thead>
@@ -163,6 +164,8 @@ const Drivers = (props) => {
                     <td className="border p-2">{driver.user.phone_number ||"--"}</td>
                     <td className="border p-2">{driver.user.email || "--"}</td>
                     <td className="border p-2">{driver.gender}</td>
+                    <td className="border p-2">{driver.birth_date.split('T')[0]}</td>
+
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
                         <span>

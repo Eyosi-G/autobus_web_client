@@ -17,6 +17,24 @@ export const loginReducer = (state = initialState, action) => {
       return { loading: false, data: null, error: action.payload };
     case types.LOGIN_RESET:
       return { loading: false, data: null, error: null };
+    case types.CHANGE_EMAIL:
+      return {
+        loading: false,
+        data: {
+          ...state.data,
+          user: { ...state.data.user, email: action.payload },
+        },
+        error: null,
+      };
+      case types.CHANGE_PHONE_NUMBER:
+        return {
+          loading: false,
+          data: {
+            ...state.data,
+            user: { ...state.data.user, phone_number: action.payload },
+          },
+          error: null,
+        };
   }
   return state;
 };
