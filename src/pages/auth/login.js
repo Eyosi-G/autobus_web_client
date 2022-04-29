@@ -9,6 +9,8 @@ import PasswordVisiblity from "../../components/password_visiblity";
 import Spinner from "../../components/spinner";
 import lionLogo from "../../resources/images/lion.png";
 import { resetSignIn, signIn } from "../../store/auth/actions";
+import * as Yup from "yup";
+
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,6 +22,14 @@ const Login = () => {
   };
   const formik = useFormik({
     initialValues: initialValues,
+    validationSchema: Yup.object({
+      username: Yup.string()
+        .min(4, "Username should be mininum of 4")
+        .required("Username is required"),
+      password: Yup.string()
+        .min(8, "Password is too short")
+        .required("Password is required"),
+    }),
     onSubmit: (values, action) => {
       dispatch(signIn(values));
       action.resetForm();
@@ -77,8 +87,12 @@ const Login = () => {
                 name="username"
                 value={formik.values.username}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
+            {formik.touched.username && formik.errors.username && (
+              <div className="text-red-500 text-sm lowercase">{formik.errors.username}</div>
+            )}
           </div>
           <div>
             <div className="capitalize">password</div>
@@ -94,8 +108,12 @@ const Login = () => {
                 name="password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-sm lowercase">{formik.errors.password}</div>
+            )}
           </div>
           <div className="flex justify-end">forgot password ?</div>
           <div className="py-2"></div>

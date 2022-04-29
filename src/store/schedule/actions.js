@@ -3,7 +3,7 @@ import * as types from "./types";
 export const generateSchedule = (timeFrameId) => async (dispatch) => {
   try {
     dispatch({ type: types.GENERATE_SCHEDULE_REQUEST });
-    await axios.post(`/timeframes/schedules/generate`, {
+    await axios().post(`/timeframes/schedules/generate`, {
       timeframeId: timeFrameId,
     });
     dispatch({
@@ -20,7 +20,7 @@ export const generateSchedule = (timeFrameId) => async (dispatch) => {
 export const getSchedules = (timeframeId, page = 0, limit = 10) => async (dispatch) => {
   try {
     dispatch({ type: types.GET_SCHEDULE_REQUEST });
-    const schedule = await axios.get(
+    const schedule = await axios().get(
       `/timeframes/${timeframeId}/schedules?page=${page}&limit=${limit}`
     );
     dispatch({

@@ -4,7 +4,7 @@ import axios from "../../utils/axios";
 export const changeEmail = (email) => async (dispatch) => {
   try {
     dispatch({ type: types.CHANGE_EMAIL_REQUEST });
-    const response = await axios.patch("/settings/change-email", { email });
+    const response = await axios.patch("/settings/email", { email });
     dispatch({ type: types.CHANGE_EMAIL_SUCCESS, payload: response.data });
     let data =
       localStorage.getItem("data") && JSON.parse(localStorage.getItem("data"));
@@ -25,7 +25,7 @@ export const changePassword =
   (oldpassword, newpassword) => async (dispatch) => {
     try {
       dispatch({ type: types.CHANGE_PASSWORD_REQUEST });
-      const response = await axios.patch("/settings/change-password", {
+      const response = await axios.patch("/settings/password", {
         oldpassword,
         newpassword,
       });
@@ -38,7 +38,7 @@ export const changePassword =
 export const changePhonenumber = (phone_number) => async (dispatch) => {
   try {
     dispatch({ type: types.CHANGE_PHONE_NUMBER_REQUEST });
-    const response = await axios.patch("/settings/change-phone-number", {
+    const response = await axios.patch("/settings/phone-number", {
       phone_number,
     });
     dispatch({

@@ -4,7 +4,7 @@ import axios from "../../utils/axios";
 export const createBus = (data) => async (dispatch) => {
   try {
     dispatch({ type: types.CREATE_BUS_REQUEST });
-    await axios.post("/buses", data);
+    await axios().post("/buses", data);
     dispatch({ type: types.CREATE_BUS_SUCCESS });
   } catch (e) {
     dispatch({ type: types.CREATE_BUS_FAILURE, payload: e.message });
@@ -14,7 +14,7 @@ export const createBus = (data) => async (dispatch) => {
 export const fetchBuses = (page, limit) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_BUSES_REQUEST });
-    const response = await axios.get(`/buses?page=${page}&limit=${limit}`);
+    const response = await axios().get(`/buses?page=${page}&limit=${limit}`);
     dispatch({ type: types.FETCH_BUSES_SUCCESS, payload: response.data });
   } catch (e) {
     dispatch({ type: types.FETCH_BUSES_FAILURE, payload: e.message });
@@ -24,7 +24,7 @@ export const fetchBuses = (page, limit) => async (dispatch) => {
 export const fetchSingleBus = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_SINGLE_BUS_REQUEST });
-    const response = await axios.get(`/buses/${id}`);
+    const response = await axios().get(`/buses/${id}`);
     dispatch({
       type: types.FETCH_SINGLE_BUS_SUCCESS,
       payload: response.data,
@@ -37,7 +37,7 @@ export const fetchSingleBus = (id) => async (dispatch) => {
 export const deleteBus = (id) => async (dispatch) => {
   try {
     dispatch({ type: types.DELETE_BUS_REQUEST });
-    const response = await axios.delete(`/buses/${id}`);
+    const response = await axios().delete(`/buses/${id}`);
     dispatch({ type: types.DELETE_BUS_UPDATE_LIST, payload: id });
 
     dispatch({
@@ -51,7 +51,7 @@ export const deleteBus = (id) => async (dispatch) => {
 export const searchBuses = (data) => async (dispatch) => {
   try {
     dispatch({ type: types.SEARCH_BUS_REQUEST });
-    const response = await axios.post(`/buses/search`, data);
+    const response = await axios().post(`/buses/search`, data);
     dispatch({ type: types.SEARCH_BUS_SUCCESS, payload: response.data });
   } catch (e) {
     dispatch({ type: types.SEARCH_BUS_FAILURE, payload: e.message });

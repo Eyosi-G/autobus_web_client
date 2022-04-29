@@ -57,13 +57,44 @@ const AddEditBus = ({ edit = false }) => {
   const [forwardRouteLayer, setForwardRouteLayer] = useState(null);
   const [backwardRouteLayer, setBackwardRouteLayer] = useState(null);
 
-  // const [stops, setStops] = useState([]);
-
   const [forwardMap, setForwadMap] = useState();
   const [backwardMap, setBackwardMap] = useState();
 
   const [wayPoints, setWayPoints] = useState([]);
-  const [busNumber, setBusNumber] = useState(0);
+  const [busNumber, setBusNumber] = useState();
+
+  const [errors, setErrors] = useState({
+    bus_number: null,
+    forward_stops: null,
+    backward_stops: null,
+  });
+
+  const [blurs, setBlurs] = useState({
+    bus_number: false,
+    forward_stops: false,
+    backward_stops: false,
+  });
+
+  const validate = () => {
+    const errors = {
+      bus_number: null,
+      forward_stops: null,
+      backward_stops: null,
+    };
+    if (!busNumber) {
+      errors.bus_number = "bus number is required";
+    }
+
+    if (Object.values(forwardStops) <= 1) {
+      errors.forward_stops = "select at least 2 forward stops";
+    }
+
+    if (Object.values(backwardStops) <= 1) {
+      errors.backward_stops = "select at least 2 backward stops";
+    }
+    return errors;
+  };
+
   const dispatch = useDispatch();
 
   const {
@@ -110,17 +141,22 @@ const AddEditBus = ({ edit = false }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const data = {
-      bus_number: busNumber,
-      forward_stops: Object.keys(forwardStops),
-      backward_stops: Object.keys(backwardStops),
-      waypoint_places: wayPoints,
-    };
-    dispatch(createBus(data));
-    setBusNumber(0);
-    setForwardStops([]);
-    setBackwardStops([]);
-    setWayPoints([]);
+    if (Object.values(validate()).every((val) => val == null)) {
+      const data = {
+        bus_number: busNumber,
+        forward_stops: Object.keys(forwardStops),
+        backward_stops: Object.keys(backwardStops),
+        waypoint_places: wayPoints,
+      };
+      dispatch(createBus(data));
+      setBusNumber(0);
+      setForwardStops([]);
+      setBackwardStops([]);
+      setWayPoints([]);
+    } else {
+      setErrors(validate());
+      setBlurs({ backward_stops: true, bus_number: true, forward_stops: true });
+    }
   };
 
   const closeDialogHandler = () => {
@@ -278,7 +314,6 @@ const AddEditBus = ({ edit = false }) => {
       const { bus_number, forward_stops, backward_stops, waypoint_places } =
         singleBusData;
 
-
       const getStops = (stops) => {
         let _stops = {};
         for (let stop of stops) {
@@ -333,10 +368,18 @@ const AddEditBus = ({ edit = false }) => {
               className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
               type="number"
               placeholder="e.g 12"
+              onBlur={() => {
+                setBlurs({ ...blurs, bus_number: true });
+              }}
               onChange={(e) => setBusNumber(e.target.value)}
               value={busNumber}
             />
           </div>
+          {blurs.bus_number && errors.bus_number && (
+            <div className="text-red-500 text-sm lowercase">
+              {errors.bus_number}
+            </div>
+          )}
           <div>
             <div className="flex justify-end">
               <button
@@ -432,6 +475,11 @@ const AddEditBus = ({ edit = false }) => {
                 <SearchLocation />
               </MapContainer>
             </div>
+            {blurs.forward_stops && errors.forward_stops && (
+              <div className="text-red-500 text-sm lowercase">
+                {errors.forward_stops}
+              </div>
+            )}
           </div>
           <div className="flex flex-col">
             <label>backward stops</label>
@@ -451,6 +499,11 @@ const AddEditBus = ({ edit = false }) => {
                 <SearchLocation />
               </MapContainer>
             </div>
+            {blurs.backward_stops && errors.backward_stops && (
+              <div className="text-red-500 text-sm lowercase">
+                {errors.backward_stops}
+              </div>
+            )}
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">

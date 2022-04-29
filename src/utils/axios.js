@@ -4,7 +4,7 @@ export const baseURL = "http://localhost:8080";
 
 const createInstance = () => {
   const data = localStorage.getItem("data");
-  console.log(data)
+  console.log(data, "ceate instance")
   if (data && JSON.parse(data).token) {
     return axios.create({
       baseURL: `${baseURL}/api/v1`,
@@ -22,4 +22,4 @@ const createInstance = () => {
   });
 };
 
-export default createInstance();
+export default createInstance;

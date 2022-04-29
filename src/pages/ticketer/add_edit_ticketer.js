@@ -1,47 +1,29 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import { useFormik } from "formik";
 import Dialog from "../../components/dialog";
 import {
   createTicketer,
-  editTicketer,
-  fetchSingleTicketer,
   resetCreateTicketer,
-  resetEditTicketer,
-  resetFetchSingleTicketer,
 } from "../../store/ticketer/actions";
+
+import * as Yup from "yup";
 
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../components/modal";
 import Spinner from "../../components/spinner";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BackButton from "../../components/back_button";
-import { baseURL } from "../../utils/axios";
 import PasswordVisiblity from "../../components/password_visiblity";
 
-const AddEditTicketer = ({ edit = false }) => {
+const AddEditTicketer = () => {
   const dispatch = useDispatch();
   const {
     loading: createTicketerLoading,
     success: createTicketerSuccess,
     error: createTicketerError,
   } = useSelector((state) => state.createTicketer);
-
-  const {
-    loading: fetchSingleTicketerLoading,
-    data: fetchSingleTicketerData,
-    error: fetchSingleTicketerError,
-  } = useSelector((state) => state.fetchSingleTicketer);
-
-  const {
-    loading: editTicketerLoading,
-    success: editTicketerSuccess,
-    error: editTicketerError,
-  } = useSelector((state) => state.editTicketer);
-
-  const navigate = useNavigate();
-  const params = useParams();
 
   const imageRef = useRef(null);
   const [image, setImage] = useState(null);
@@ -60,53 +42,43 @@ const AddEditTicketer = ({ edit = false }) => {
   };
   const formik = useFormik({
     initialValues: initalValues,
+    validationSchema: new Yup.object({
+      email: Yup.string().email("Invalid email"),
+      phone_number:
+        Yup.string().matches(/^9\d{8}$/, "invalid phone number") ||
+        Yup.string().matches(/^09\d{8}$/, "invalid phone number"),
+      first_name: Yup.string()
+        .min("4", "first name too short")
+        .required("First name is required")
+        .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
+      last_name: Yup.string()
+        .min("4", "last name too short")
+        .required("Last name is required")
+        .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
+      user_name: Yup.string()
+        .min(4, "Username should be mininum of 4")
+        .required("Username is required"),
+      password: Yup.string()
+        .min(8, "Password is too short")
+        .required("Password is required"),
+    }),
     onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      if ((imageFile && edit) || !edit) {
-        formData.append("image", imageFile);
-      }
-
-      if (edit) {
-        const { id } = params;
-        dispatch(editTicketer(id, formData));
-      } else {
-        dispatch(createTicketer(formData));
-        action.resetForm();
-        setImage(null);
-      }
-
+      formData.append("image", imageFile);
+      dispatch(createTicketer(formData));
+      action.resetForm();
+      setImage(null);
     },
   });
 
   useEffect(() => {
-    if (edit) {
-      const { id } = params;
-      dispatch(fetchSingleTicketer(id));
-    }
     return () => {
       dispatch(resetCreateTicketer());
-      dispatch(resetFetchSingleTicketer());
     };
   }, []);
-
-  useEffect(() => {
-    if (fetchSingleTicketerData) {
-      const singleTicketerData = {
-        ...fetchSingleTicketerData,
-        ...fetchSingleTicketerData.user,
-      };
-      singleTicketerData.birth_date =
-        singleTicketerData.birth_date.split("T")[0];
-      delete singleTicketerData.user;
-      formik.setValues(singleTicketerData);
-
-      singleTicketerData.image &&
-        setImage(`${baseURL}/images/${singleTicketerData.image}`);
-    }
-  }, [fetchSingleTicketerData]);
 
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
@@ -116,54 +88,24 @@ const AddEditTicketer = ({ edit = false }) => {
   const closeDialogHandler = () => {
     if (createTicketerError || createTicketerSuccess)
       return dispatch(resetCreateTicketer());
-    if (editTicketerSuccess || editTicketerError)
-      return dispatch(resetEditTicketer());
   };
   const successDialogMessage = () => {
     if (createTicketerSuccess) return "ticketer created successfully !";
-    if (editTicketerSuccess) return "ticketer edited successfully !";
   };
   const errorDialogMessage = () => {
     if (createTicketerError) return "failed to create ticketer";
-    if (fetchSingleTicketerError) return "failed to load data";
-    if (editTicketerError) return "failed to edit ticketer";
   };
 
   useEffect(() => {
     return () => {
-      dispatch(resetFetchSingleTicketer());
       dispatch(resetCreateTicketer());
-      dispatch(resetEditTicketer());
     };
   }, []);
 
-  if (fetchSingleTicketerError) {
-    return (
-      <div className="flex  items-center justify-center mt-52 ">
-        <button
-          onClick={() => {
-            if (edit) {
-              const { id } = params;
-              dispatch(fetchSingleTicketer(id));
-            }
-          }}
-          className="px-2 py-1 border rounded-md capitalize"
-        >
-          retry
-        </button>
-      </div>
-    );
-  }
   return (
     <>
       <div className="m-4">
-        <Modal
-          open={
-            createTicketerLoading ||
-            editTicketerLoading ||
-            fetchSingleTicketerLoading
-          }
-        >
+        <Modal open={createTicketerLoading}>
           <div
             className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
             style={{ zIndex: 1000 }}
@@ -171,14 +113,14 @@ const AddEditTicketer = ({ edit = false }) => {
             <Spinner color="white" />
           </div>
         </Modal>
-        <Modal open={createTicketerError || editTicketerError}>
+        <Modal open={createTicketerError}>
           <Dialog
             severity="failure"
             message={errorDialogMessage()}
             close={() => closeDialogHandler()}
           />
         </Modal>
-        <Modal open={createTicketerSuccess || editTicketerSuccess}>
+        <Modal open={createTicketerSuccess}>
           <Dialog
             severity="success"
             message={successDialogMessage()}
@@ -191,39 +133,23 @@ const AddEditTicketer = ({ edit = false }) => {
       </div>
       <form onSubmit={formik.handleSubmit}>
         <div className="m-4 mb-2 capitalize font-semibold ">
-          {edit ? (
-            <div className="flex items-center space-x-2">
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-              </span>
-              <span>edit ticketer</span>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </span>
-              <span>new ticketer</span>
-            </div>
-          )}{" "}
+          <div className="flex items-center space-x-2">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span>new ticketer</span>
+          </div>
         </div>
         <div className="m-4 mt-0 space-y-2 bg-white p-3 font-normal rounded-md capitalize">
           <div className="flex flex-col mb-2 space-y-1">
@@ -278,51 +204,77 @@ const AddEditTicketer = ({ edit = false }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-x-2 gap-y-2">
-            <div className="flex flex-col">
-              <label>first name *</label>
-              <input
-                className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-                type="text"
-                placeholder="first name"
-                name="first_name"
-                onChange={formik.handleChange}
-                value={formik.values.first_name}
-              />
+            <div>
+              <div className="flex flex-col">
+                <label>first name *</label>
+                <input
+                  className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
+                  type="text"
+                  placeholder="first name"
+                  name="first_name"
+                  onChange={formik.handleChange}
+                  value={formik.values.first_name}
+                />
+              </div>
+              {formik.touched.first_name && formik.errors.first_name && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.first_name}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col">
-              <label>last name *</label>
-              <input
-                className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
-                type="text"
-                placeholder="last name"
-                name="last_name"
-                onChange={formik.handleChange}
-                value={formik.values.last_name}
-              />
+            <div>
+              <div className="flex flex-col">
+                <label>last name *</label>
+                <input
+                  className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
+                  type="text"
+                  placeholder="last name"
+                  name="last_name"
+                  onChange={formik.handleChange}
+                  value={formik.values.last_name}
+                />
+              </div>
+              {formik.touched.last_name && formik.errors.last_name && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.last_name}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col">
-              <label className={edit && "text-gray-600"}>email</label>
-              <input
-                className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-                type="email"
-                placeholder="email"
-                name="email"
-                disabled={edit}
-                onChange={formik.handleChange}
-                value={formik.values.email}
-              />
+            <div>
+              <div className="flex flex-col">
+                <label>email</label>
+                <input
+                  className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
+                  type="email"
+                  placeholder="email"
+                  name="email"
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                />
+              </div>
+              {formik.touched.email && formik.errors.email && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.email}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col">
-              <label className={edit && "text-gray-600"}>phonenumber</label>
-              <input
-                className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-                type="number"
-                disabled={edit}
-                placeholder="phonenumber"
-                name="phone_number"
-                onChange={formik.handleChange}
-                value={formik.values.phone_number}
-              />
+            <div>
+              <div className="flex flex-col">
+                <label>phonenumber</label>
+                <input
+                  className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
+                  type="number"
+                  placeholder="phonenumber"
+                  name="phone_number"
+                  onChange={formik.handleChange}
+                  value={formik.values.phone_number}
+                />
+              </div>
+              {formik.touched.phone_number && formik.errors.phone_number && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.phone_number}
+                </div>
+              )}
             </div>
             <div className="flex flex-col">
               <label>birth date *</label>
@@ -361,20 +313,26 @@ const AddEditTicketer = ({ edit = false }) => {
               </div>
             </div>
 
-            <div className="flex flex-col">
-              <label className={`${edit && "text-gray-600"}`}>Username *</label>
-              <input
-                className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-                type="text"
-                disabled={edit}
-                placeholder="eg. abebe"
-                name="user_name"
-                onChange={formik.handleChange}
-                value={formik.values.user_name}
-              />
+            <div>
+              <div className="flex flex-col">
+                <label>Username *</label>
+                <input
+                  className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
+                  type="text"
+                  placeholder="eg. abebe"
+                  name="user_name"
+                  onChange={formik.handleChange}
+                  value={formik.values.user_name}
+                />
+              </div>
+              {formik.touched.user_name && formik.errors.user_name && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.user_name}
+                </div>
+              )}
             </div>
 
-            {!edit && (
+            <div>
               <div className="flex flex-col">
                 <label>Password *</label>
                 <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
@@ -391,7 +349,12 @@ const AddEditTicketer = ({ edit = false }) => {
                   />
                 </div>
               </div>
-            )}
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-sm text-red-500 ">
+                  {formik.errors.password}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex space-x-3 justify-end mt-5">

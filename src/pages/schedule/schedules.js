@@ -152,6 +152,7 @@ const Schedules = () => {
                 <th className="p-2">shift</th>
                 <th className="p-2">driver</th>
                 <th className="p-2">ticketer</th>
+                <th className="p-2"></th>
               </tr>
             </thead>
             <tbody className="text-sm">
@@ -169,6 +170,7 @@ const Schedules = () => {
                     <td className="border p-2">{schedule.shift}</td>
                     <td className="border p-2">{`${schedule.driver.first_name} ${schedule.driver.last_name}`}</td>
                     <td className="border p-2">{`${schedule.ticketer.first_name} ${schedule.ticketer.last_name}`}</td>
+                    <td className="border p-2">{schedule.is_valid ? "" : "canceled"}</td>
                   </tr>
                 );
               })}

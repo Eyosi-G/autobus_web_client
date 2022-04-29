@@ -6,7 +6,7 @@ export const signIn = (data) => async (dispatch) => {
     dispatch({ type: types.LOGIN_REQUEST });
     const response = await new Promise((resolve, reject) => {
       setTimeout(async () => {
-        const response = await axios.post("/auth/login", data);
+        const response = await axios().post("/auth/login", data);
         resolve(response);
       }, 2000);
     });

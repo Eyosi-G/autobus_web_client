@@ -146,25 +146,28 @@ const Drivers = (props) => {
                   <tr>
                     <td className="border p-2">
                       <div className="flex justify-center">
-                        {driver.image ? (
-                          <img
-                            src={`${baseURL}/images/${driver.image}`}
-                            className="h-12 w-12 object-cover rounded-full"
-                          />
-                        ) : (
-                          <img
-                            src={defaultImage}
-                            className="h-12 w-12 object-cover rounded-full"
-                          />
-                        )}
+                        <img
+                          src={
+                            driver.image
+                              ? process.env.NODE_ENV === "production"
+                                ? driver.image
+                                : `${baseURL}/images/${driver.image}`
+                              : defaultImage
+                          }
+                          className="h-12 w-12 object-cover rounded-full"
+                        />
                       </div>
                     </td>
                     <td className="border p-2">{driver.first_name}</td>
                     <td className="border p-2">{driver.last_name}</td>
-                    <td className="border p-2">{driver.user.phone_number ||"--"}</td>
+                    <td className="border p-2">
+                      {driver.user.phone_number || "--"}
+                    </td>
                     <td className="border p-2">{driver.user.email || "--"}</td>
                     <td className="border p-2">{driver.gender}</td>
-                    <td className="border p-2">{driver.birth_date.split('T')[0]}</td>
+                    <td className="border p-2">
+                      {driver.birth_date.split("T")[0]}
+                    </td>
 
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
@@ -188,30 +191,6 @@ const Drivers = (props) => {
                           className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
                           style={{ zIndex: 100 }}
                         >
-                          <button
-                            className="flex space-x-2"
-                            onClick={() => {
-                              navigate(`/admin/drivers/${driver.id}/edit`);
-                            }}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                />
-                              </svg>
-                            </span>
-                            <span>edit</span>
-                          </button>
                           <button
                             className="text-red-600 flex space-x-2"
                             onClick={() => {

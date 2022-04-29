@@ -13,6 +13,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { loading, data, error } = useSelector((state) => state.dashboard);
   useEffect(() => {
+    console.log('from dashboard')
+    console.log(data)
     dispatch(fetchDashBoard());
   }, []);
   return (
