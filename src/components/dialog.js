@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-const Dialog = ({ close = () => {}, severity = "success", message = "" }) => {
+const Dialog = ({ close = () => {}, severity = "success", message = "", instantClose=true }) => {
   if (!(severity === "success" || severity === "failure"))
     throw new Error("illegal serverity");
   useEffect(() => {
-    const timeout = setTimeout(() => close(), 2000);
-    return () => clearTimeout(timeout);
+    let timeout;
+    if(instantClose){
+       timeout = setTimeout(() => close(), 2000);
+    }
+    return () => { if(instantClose) clearTimeout(timeout); };
   }, []);
   return (
     <div
+      data-cy="dialog"
       style={{ zIndex: 2000 }}
       className={`
        absolute right-10 bottom-10 drop-shadow-lg rounded border-l-8 ${

@@ -30,6 +30,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -53,6 +55,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",
+    "cypress": "^9.6.0",
+    "cypress-file-upload": "^5.0.8",
     "postcss": "^8.4.7",
     "tailwindcss": "^3.0.23"
   }

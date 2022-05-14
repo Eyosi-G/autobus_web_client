@@ -24,7 +24,6 @@ const Login = () => {
     initialValues: initialValues,
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(4, "Username should be mininum of 4")
         .required("Username is required"),
       password: Yup.string()
         .min(8, "Password is too short")
@@ -48,6 +47,7 @@ const Login = () => {
         <Dialog
           severity="failure"
           message={error}
+          instantClose={false}
           close={() => dispatch(resetSignIn())}
         />
       </Modal>
@@ -82,6 +82,7 @@ const Login = () => {
                 </svg>
               </span>
               <input
+                data-cy="username"
                 className="w-full outline-none"
                 placeholder="Enter Username"
                 name="username"
@@ -91,7 +92,7 @@ const Login = () => {
               />
             </div>
             {formik.touched.username && formik.errors.username && (
-              <div className="text-red-500 text-sm lowercase">{formik.errors.username}</div>
+              <div className="text-red-500 text-sm lowercase" data-cy="username-error">{formik.errors.username}</div>
             )}
           </div>
           <div>
@@ -106,13 +107,14 @@ const Login = () => {
                 placeholder="Enter Password"
                 type={passwordVisibility ? "text" : "password"}
                 name="password"
+                data-cy="password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
             </div>
             {formik.touched.password && formik.errors.password && (
-              <div className="text-red-500 text-sm lowercase">{formik.errors.password}</div>
+              <div className="text-red-500 text-sm lowercase" data-cy="password-error">{formik.errors.password}</div>
             )}
           </div>
           <div className="flex justify-end">forgot password ?</div>

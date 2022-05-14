@@ -1,0 +1,20 @@
+[
+    {
+
+        "first_name": "selam",
+        "last_name": "girma",
+        "image":"employee_1.jpg",
+        "username":"anbessa_employee",
+        "password":"password",
+        "gender": "female",
+        "birth_date": "1992-02-02"
+    },
+    {
+        "first_name": "tigist",
+        "last_name": "girma",
+        "username":"anbessa_employee",
+        "password":"password",
+        "gender": "female",
+        "birth_date": "1992-02-02"
+    }
+]

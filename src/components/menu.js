@@ -13,6 +13,7 @@ const Menu = ({
       }`}
     >
       <div
+        data-cy="nav-menu"
         className={`flex px-5 py-2 justify-between ${
           selected && "bg-gray-700"
         }`}

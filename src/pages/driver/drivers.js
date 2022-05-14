@@ -97,6 +97,7 @@ const Drivers = (props) => {
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Manage Drivers</p>
         <button
+          data-cy="add-driver"
           onClick={() => navigate("/admin/drivers/new")}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >

@@ -197,11 +197,12 @@ const AddEditDriver = () => {
                 </svg>
               )}
               {image && (
-                <img src={image} className="h-full w-full object-cover" />
+                <img src={image} className="h-full w-full object-cover" data-cy="image-error"/>
               )}
             </div>
 
             <input
+              data-cy="image"
               ref={imageRef}
               className="hidden"
               type="file"
@@ -215,6 +216,7 @@ const AddEditDriver = () => {
               <div className="flex flex-col">
                 <label>first name *</label>
                 <input
+                  data-cy="first-name"
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="text"
                   placeholder="first name"
@@ -225,7 +227,7 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.first_name && formik.errors.first_name && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="first-name-error">
                   {formik.errors.first_name}
                 </div>
               )}
@@ -238,13 +240,14 @@ const AddEditDriver = () => {
                   type="text"
                   placeholder="last name"
                   name="last_name"
+                  data-cy="last-name"
                   onChange={formik.handleChange}
                   value={formik.values.last_name}
                   onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.last_name && formik.errors.last_name && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="last-name-error" >
                   {formik.errors.last_name}
                 </div>
               )}
@@ -257,13 +260,14 @@ const AddEditDriver = () => {
                   type="text"
                   placeholder="email"
                   name="email"
+                  data-cy="email"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                   onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="email-error">
                   {formik.errors.email}
                 </div>
               )}
@@ -276,12 +280,13 @@ const AddEditDriver = () => {
                   type="number"
                   placeholder="phonenumber"
                   name="phone_number"
+                  data-cy="phone-number"
                   onChange={formik.handleChange}
                   value={formik.values.phone_number}
                 />
               </div>
               {formik.touched.phone_number && formik.errors.phone_number && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="phonenumber-error">
                   {formik.errors.phone_number}
                 </div>
               )}
@@ -292,6 +297,7 @@ const AddEditDriver = () => {
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="date"
                 name="birth_date"
+                data-cy="birth_date"
                 onChange={formik.handleChange}
                 value={formik.values.birth_date}
               />
@@ -306,6 +312,7 @@ const AddEditDriver = () => {
                     checked={formik.values.gender == "male"}
                     onChange={formik.handleChange}
                     value="male"
+                    data-cy="gender-male"
                   />
                   <label>male</label>
                 </div>
@@ -316,6 +323,7 @@ const AddEditDriver = () => {
                     checked={formik.values.gender == "female"}
                     onChange={formik.handleChange}
                     value="female"
+                    data-cy="gender-female"
                   />
                   <label>female</label>
                 </div>
@@ -332,10 +340,11 @@ const AddEditDriver = () => {
                   onChange={formik.handleChange}
                   value={formik.values.user_name}
                   onBlur={formik.handleBlur}
+                  data-cy="username"
                 />
               </div>
               {formik.touched.user_name && formik.errors.user_name && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="username-error">
                   {formik.errors.user_name}
                 </div>
               )}
@@ -354,11 +363,12 @@ const AddEditDriver = () => {
                     name="password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
+                    data-cy="password"
                   />
                 </div>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm lowercase">
+                <div className="text-red-500 text-sm lowercase" data-cy="password-error">
                   {formik.errors.password}
                 </div>
               )}
