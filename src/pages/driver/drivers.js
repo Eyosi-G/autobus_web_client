@@ -144,7 +144,7 @@ const Drivers = (props) => {
               </tr>
               {drivers.map((driver) => {
                 return (
-                  <tr>
+                  <tr data-cy="driver">
                     <td className="border p-2">
                       <div className="flex justify-center">
                         <img
@@ -193,6 +193,7 @@ const Drivers = (props) => {
                           style={{ zIndex: 100 }}
                         >
                           <button
+                            data-cy="delete-driver"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
                               setCurrentDriver(driver);

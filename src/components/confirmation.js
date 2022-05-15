@@ -34,6 +34,7 @@ const Confirmation = ({ handleCancel = () => {}, handleDelete = () => {} }) => {
           cancel
         </button>
         <button
+          data-cy="confirm-delete"
           className="bg-red-300 px-2 py-1 rounded-md mt-4 text-sm font-semibold"
           onClick={handleDelete}
         >

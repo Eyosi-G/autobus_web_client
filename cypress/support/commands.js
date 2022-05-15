@@ -35,9 +35,15 @@ Cypress.Commands.add("resetData", () => {
 
 Cypress.Commands.add("adminLogin", () => {
   cy.visit("/login");
+  cy.intercept("POST", `${Cypress.env("API")}/auth/login`).as("login");
   cy.fixture("auth.json").then(({ username, password }) => {
     cy.typeCredentials(username, password);
   });
+  cy.wait("@login").its("response.statusCode").should("eq", 200)
+  cy.location("pathname", { timeout: 10000 }).should(
+    "eq",
+    "/admin/dashboard"
+  );
 });
 
 Cypress.Commands.add("selectNavMenu", (_index) => {
@@ -55,7 +61,7 @@ Cypress.Commands.add(
     password,
     firstName,
     lastName,
-    gender = "female",
+    gender,
     birthDate,
     image,
     email,

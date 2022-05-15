@@ -5,6 +5,7 @@ const BackButton = () => {
   const navigate = useNavigate();
   return (
     <button
+      data-cy="back_button"
       type="button"
       onClick={() => navigate(-1)}
       className="flex space-x-2 items-center px-3 py-1  rounded-lg capitalize"

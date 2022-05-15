@@ -43,32 +43,33 @@ const AddEditDriver = () => {
   const formik = useFormik({
     initialValues: initalValues,
     validationSchema: new Yup.object({
-      email: Yup.string().email("Invalid email"),
+      email: Yup.string().email("invalid email"),
       phone_number:
         Yup.string().matches(/^9\d{8}$/, "invalid phone number") ||
         Yup.string().matches(/^09\d{8}$/, "invalid phone number"),
       first_name: Yup.string()
         .min("4", "first name too short")
-        .required("First name is required")
+        .required("first name is required")
         .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
       last_name: Yup.string()
         .min("4", "last name too short")
-        .required("Last name is required")
-        .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
+        .required("last name is required")
+        .matches(/^[A-Za-z]+$/, "should only contain alphabets"),
       user_name: Yup.string()
-        .min(4, "Username should be mininum of 4")
-        .required("Username is required"),
+        .min(4, "username should be mininum of 4")
+        .required("username is required"),
       password: Yup.string()
-        .min(8, "Password is too short")
-        .required("Password is required"),
+        .min(8, "password is too short")
+        .required("password is required"),
     }),
     onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-
-      formData.append("image", imageFile);
+      if(imageFile){
+        formData.append("image", imageFile);
+      }
       dispatch(createDriver(formData));
       action.resetForm();
       setImage(null);
