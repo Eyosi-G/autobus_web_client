@@ -43,31 +43,33 @@ const AddEditTicketer = () => {
   const formik = useFormik({
     initialValues: initalValues,
     validationSchema: new Yup.object({
-      email: Yup.string().email("Invalid email"),
+      email: Yup.string().email("invalid email"),
       phone_number:
         Yup.string().matches(/^9\d{8}$/, "invalid phone number") ||
         Yup.string().matches(/^09\d{8}$/, "invalid phone number"),
       first_name: Yup.string()
         .min("4", "first name too short")
-        .required("First name is required")
-        .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
+        .required("first name is required")
+        .matches(/^[A-Za-z]+$/, "should only contain alphabets"),
       last_name: Yup.string()
         .min("4", "last name too short")
-        .required("Last name is required")
-        .matches(/^[A-Za-z]+$/, "Should only contain alphabets"),
+        .required("last name is required")
+        .matches(/^[A-Za-z]+$/, "should only contain alphabets"),
       user_name: Yup.string()
-        .min(4, "Username should be mininum of 4")
-        .required("Username is required"),
+        .min(4, "username should be mininum of 4")
+        .required("username is required"),
       password: Yup.string()
-        .min(8, "Password is too short")
-        .required("Password is required"),
+        .min(8, "password is too short")
+        .required("password is required"),
     }),
     onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      formData.append("image", imageFile);
+      if(imageFile){
+        formData.append("image", imageFile);
+      }
       dispatch(createTicketer(formData));
       action.resetForm();
       setImage(null);
@@ -196,6 +198,7 @@ const AddEditTicketer = () => {
             </div>
 
             <input
+              data-cy="image"
               ref={imageRef}
               className="hidden"
               type="file"
@@ -208,6 +211,7 @@ const AddEditTicketer = () => {
               <div className="flex flex-col">
                 <label>first name *</label>
                 <input
+                  data-cy="first-name"
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="text"
                   placeholder="first name"
@@ -217,7 +221,7 @@ const AddEditTicketer = () => {
                 />
               </div>
               {formik.touched.first_name && formik.errors.first_name && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500" data-cy="first-name-error">
                   {formik.errors.first_name}
                 </div>
               )}
@@ -226,6 +230,7 @@ const AddEditTicketer = () => {
               <div className="flex flex-col">
                 <label>last name *</label>
                 <input
+                  data-cy="last-name"
                   className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
                   type="text"
                   placeholder="last name"
@@ -235,7 +240,7 @@ const AddEditTicketer = () => {
                 />
               </div>
               {formik.touched.last_name && formik.errors.last_name && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500" data-cy="last-name-error">
                   {formik.errors.last_name}
                 </div>
               )}
@@ -247,13 +252,14 @@ const AddEditTicketer = () => {
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="email"
                   placeholder="email"
+                  data-cy="email"
                   name="email"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500" data-cy="email-error">
                   {formik.errors.email}
                 </div>
               )}
@@ -264,6 +270,7 @@ const AddEditTicketer = () => {
                 <input
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="number"
+                  data-cy="phone-number"
                   placeholder="phonenumber"
                   name="phone_number"
                   onChange={formik.handleChange}
@@ -271,7 +278,7 @@ const AddEditTicketer = () => {
                 />
               </div>
               {formik.touched.phone_number && formik.errors.phone_number && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500 " data-cy="phonenumber-error">
                   {formik.errors.phone_number}
                 </div>
               )}
@@ -283,6 +290,7 @@ const AddEditTicketer = () => {
                 type="date"
                 placeholder="e.g abebe"
                 name="birth_date"
+                data-cy="birth_date"
                 onChange={formik.handleChange}
                 value={formik.values.birth_date}
               />
@@ -297,6 +305,7 @@ const AddEditTicketer = () => {
                     checked={formik.values.gender === "male"}
                     onChange={formik.handleChange}
                     value="male"
+                    data-cy="gender-male"
                   />
                   <label>male</label>
                 </div>
@@ -307,6 +316,7 @@ const AddEditTicketer = () => {
                     checked={formik.values.gender === "female"}
                     onChange={formik.handleChange}
                     value="female"
+                    data-cy="gender-female"
                   />
                   <label>female</label>
                 </div>
@@ -323,10 +333,11 @@ const AddEditTicketer = () => {
                   name="user_name"
                   onChange={formik.handleChange}
                   value={formik.values.user_name}
+                  data-cy="username"
                 />
               </div>
               {formik.touched.user_name && formik.errors.user_name && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500 " data-cy="username-error">
                   {formik.errors.user_name}
                 </div>
               )}
@@ -344,13 +355,14 @@ const AddEditTicketer = () => {
                     className="bg-gray-50 w-full outline-none"
                     type={passwordVisibility ? "text" : "password"}
                     name="password"
+                    data-cy="password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
                   />
                 </div>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="text-sm text-red-500 ">
+                <div className="text-sm text-red-500 " data-cy="password-error">
                   {formik.errors.password}
                 </div>
               )}

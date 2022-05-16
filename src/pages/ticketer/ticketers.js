@@ -102,6 +102,7 @@ const Ticketers = (props) => {
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Manage Ticketers</p>
         <button
+          data-cy="add-ticketer"
           onClick={() => navigate("/admin/ticketers/new")}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >
@@ -147,7 +148,7 @@ const Ticketers = (props) => {
               </tr>
               {ticketers.map((ticketer) => {
                 return (
-                  <tr>
+                  <tr data-cy="ticketer">
                     <td className="border p-2">
                       <div className="flex justify-center">
                         <img
@@ -194,6 +195,7 @@ const Ticketers = (props) => {
                         </span>
                         <div className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2 -left-10">
                           <button
+                            data-cy="delete-ticketer"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
                               setCurrentTicketer(ticketer);
