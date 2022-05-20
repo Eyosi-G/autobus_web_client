@@ -4,7 +4,7 @@ import * as action from "../../../src/store/auth/actions";
 
 describe("check authentication", () => {
   beforeEach(() => {
-    cy.request("POST", "http://localhost:8080/reset");
+    cy.resetData()
   });
 
   it("check login with valid username and valid password", () => {

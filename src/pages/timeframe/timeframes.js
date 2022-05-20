@@ -145,12 +145,12 @@ const Timeframes = () => {
           message={successDialogMessage()}
           close={() => closeDialogHandler()}
         />
-
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
         <p className="font-semibold capitalize">Timeframes</p>
         <button
+          data-cy="new_timeframe"
           onClick={() => setFormOpen(true)}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >
@@ -192,7 +192,7 @@ const Timeframes = () => {
               )}
               {timeFrames.map((timeFrame) => {
                 return (
-                  <tr className="hover:bg-gray-50">
+                  <tr className="hover:bg-gray-50" data-cy="timeframe">
                     <td
                       className="border p-2  hover:cursor-pointer"
                       onClick={() =>
@@ -232,6 +232,7 @@ const Timeframes = () => {
                           style={{ zIndex: 100 }}
                         >
                           <button
+                            data-cy="edit"
                             className="flex space-x-2"
                             onClick={() => {
                               setCurrentTimeFrame(timeFrame);

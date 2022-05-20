@@ -111,6 +111,7 @@ const Schedules = () => {
           </span>
         </p>
         <button
+          data-cy="generate-schedule"
           disabled={count > 0}
           onClick={generateScheduleHandler}
           className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 ${

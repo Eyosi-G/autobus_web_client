@@ -88,3 +88,9 @@ Cypress.Commands.add(
     cy.get("[data-cy=password").type(password);
   }
 );
+
+Cypress.Commands.add("typeTimeFrame", (startDate, endDate)=>{
+  cy.get("[data-cy=start_date]").type(startDate);
+  cy.get("[data-cy=end_date]").type(endDate);
+
+})

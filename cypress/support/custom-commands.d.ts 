@@ -15,5 +15,6 @@ declare namespace Cypress {
       email?: String,
       phonenumber?: String
     ): Chainable<any>;
+    typeTimeFrame(startDate:String, endDate: String): Chainable<any>
   }
 }

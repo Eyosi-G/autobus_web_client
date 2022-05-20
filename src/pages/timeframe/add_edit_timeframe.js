@@ -24,7 +24,7 @@ const AddEditTimeFrame = ({
   });
 
   useEffect(() => {
-    if (endDate <= startDate) {
+    if (endDate < startDate) {
       console.log("second");
       console.log(endDate);
       console.log(startDate);
@@ -35,7 +35,7 @@ const AddEditTimeFrame = ({
   }, [startDate]);
 
   useEffect(() => {
-    if (endDate <= startDate) {
+    if (endDate < startDate) {
       console.log("thrid");
       let date = new Date(endDate);
       date.setDate(date.getDate() - 1);
@@ -66,19 +66,24 @@ const AddEditTimeFrame = ({
           <div>
             <label>start date</label>
             <input
+              data-cy="start_date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className="w-full bg-gray-100 p-2"
               type="date"
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
           <div>
             <label>end date</label>
             <input
+              data-cy="end_date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="w-full bg-gray-100 p-2"
               type="date"
+              min={new Date().toISOString().split("T")[0]}
+
             />
           </div>
         </div>

@@ -56,7 +56,6 @@ const AddEditTicketer = () => {
         .required("last name is required")
         .matches(/^[A-Za-z]+$/, "should only contain alphabets"),
       user_name: Yup.string()
-        .min(4, "username should be mininum of 4")
         .required("username is required"),
       password: Yup.string()
         .min(8, "password is too short")
@@ -218,6 +217,7 @@ const AddEditTicketer = () => {
                   name="first_name"
                   onChange={formik.handleChange}
                   value={formik.values.first_name}
+                  onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.first_name && formik.errors.first_name && (
@@ -237,6 +237,7 @@ const AddEditTicketer = () => {
                   name="last_name"
                   onChange={formik.handleChange}
                   value={formik.values.last_name}
+                  onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.last_name && formik.errors.last_name && (
@@ -256,6 +257,7 @@ const AddEditTicketer = () => {
                   name="email"
                   onChange={formik.handleChange}
                   value={formik.values.email}
+                  onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
@@ -275,6 +277,7 @@ const AddEditTicketer = () => {
                   name="phone_number"
                   onChange={formik.handleChange}
                   value={formik.values.phone_number}
+                  onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.phone_number && formik.errors.phone_number && (
@@ -293,6 +296,7 @@ const AddEditTicketer = () => {
                 data-cy="birth_date"
                 onChange={formik.handleChange}
                 value={formik.values.birth_date}
+                onBlur={formik.handleBlur}
               />
             </div>
             <div className="flex flex-col ">
@@ -333,6 +337,7 @@ const AddEditTicketer = () => {
                   name="user_name"
                   onChange={formik.handleChange}
                   value={formik.values.user_name}
+                  onBlur={formik.handleBlur}
                   data-cy="username"
                 />
               </div>
@@ -358,6 +363,7 @@ const AddEditTicketer = () => {
                     data-cy="password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
+                    onBlur={formik.handleBlur}
                   />
                 </div>
               </div>
