@@ -3,8 +3,7 @@
 
         "first_name": "selam",
         "last_name": "girma",
-        "image":"employee_1.jpg",
-        "username":"anbessa_employee",
+        "user_name":"selam",
         "password":"password",
         "gender": "female",
         "birth_date": "1992-02-02"
@@ -12,10 +11,26 @@
     {
         "first_name": "tigist",
         "last_name": "girma",
-        "username":"anbessa_employee",
+        "user_name":"tigist",
         "password":"password",
         "gender": "female",
         "birth_date": "1992-02-02"
+    },
+    {
+        "first_name": "biruk",
+        "last_name": "girma",
+        "user_name":"biruk",
+        "password":"password",
+        "gender": "male",
+        "birth_date": "1993-02-02"
+    },
+    {
+        "first_name": "nahom",
+        "last_name": "tesfu",
+        "user_name":"nahom",
+        "password":"password",
+        "gender": "male",
+        "birth_date": "1993-01-02"
     }
 ]
 

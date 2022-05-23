@@ -14,6 +14,7 @@ const resetTicketerData = () => {
     birthDate: "2000-02-01",
     email: "ticketerOne@gmail.com",
     phoneNumber: "0913339048",
+    image: "employee_1.jpg"
   };
   ticketerTwo = {
     username: "ticketer_two",
@@ -42,7 +43,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      ticketerOne.image,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );
@@ -258,7 +259,7 @@ describe("delete ticketer", () => {
       .its("response.statusCode")
       .should("eq", 200);
 
-    cy.get("[data-cy=back_button").click();
+    cy.get("[data-cy=back_button]").click();
     cy.get("[data-cy=ticketer]").should("have.length", 1);
     cy.intercept("DELETE", `${Cypress.env("API")}/ticketers/*`).as(
       "deleteTicketer"

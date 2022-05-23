@@ -39,11 +39,8 @@ Cypress.Commands.add("adminLogin", () => {
   cy.fixture("auth.json").then(({ username, password }) => {
     cy.typeCredentials(username, password);
   });
-  cy.wait("@login").its("response.statusCode").should("eq", 200)
-  cy.location("pathname", { timeout: 10000 }).should(
-    "eq",
-    "/admin/dashboard"
-  );
+  cy.wait("@login").its("response.statusCode").should("eq", 200);
+  cy.location("pathname", { timeout: 10000 }).should("eq", "/admin/dashboard");
 });
 
 Cypress.Commands.add("selectNavMenu", (_index) => {
@@ -68,7 +65,7 @@ Cypress.Commands.add(
     phonenumber
   ) => {
     if (image) {
-      cy.get("[data-cy=image]").attachFile("images/"+image);
+      cy.get("[data-cy=image]").attachFile("images/" + image);
     }
     cy.get("[data-cy=first-name]").type(firstName);
     cy.get("[data-cy=last-name]").type(lastName);
@@ -78,10 +75,10 @@ Cypress.Commands.add(
     if (email) {
       cy.get("[data-cy=email]").type(email);
     }
-    if(gender === "male"){
-        cy.get("[data-cy=gender-male]").check()
-    }else{
-        cy.get("[data-cy=gender-female]").check()
+    if (gender === "male") {
+      cy.get("[data-cy=gender-male]").check();
+    } else {
+      cy.get("[data-cy=gender-female]").check();
     }
     cy.get("[data-cy=birth_date]").type(birthDate);
     cy.get("[data-cy=username").type(username);
@@ -89,8 +86,19 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add("typeTimeFrame", (startDate, endDate)=>{
+Cypress.Commands.add("typeTimeFrame", (startDate, endDate) => {
   cy.get("[data-cy=start_date]").type(startDate);
   cy.get("[data-cy=end_date]").type(endDate);
+});
 
-})
+Cypress.Commands.add(
+  "typeBusStat",
+  (date, busNumberIndex, morningCommuters, afternoonCommuters) => {
+    cy.get("[data-cy=stat-date]").type(date);
+    cy.get("[ data-cy=stat-bus-number]").select(busNumberIndex);
+    cy.get("[data-cy=stat-morning-commuters]").clear().type(morningCommuters);
+    cy.get("[data-cy=stat-afternoon-commuters]")
+      .clear()
+      .type(afternoonCommuters);
+  }
+);

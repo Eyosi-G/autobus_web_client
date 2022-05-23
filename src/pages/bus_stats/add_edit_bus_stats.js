@@ -9,6 +9,7 @@ import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import SaveButton from "../../components/save_button";
 import Spinner from "../../components/spinner";
+import * as Yup from "yup";
 import { fetchBuses, resetFetchBuses } from "../../store/bus/actions";
 import {
   createBusStat,
@@ -48,13 +49,14 @@ const AddEditBusStat = ({ edit = false }) => {
   } = useSelector((state) => state.fetchSingleBusStat);
 
   const initialValues = {
-    bus_number: 0,
-    morning_commuters: 0,
-    afternoon_commuters: 0,
+    bus_number: "",
+    morning_commuters: "",
+    afternoon_commuters: "",
     date: new Date().toISOString().split("T")[0],
   };
 
   const onSubmitHandler = (values, action) => {
+    console.log("here")
     if (edit) {
       const { id } = params;
       dispatch(editBusStat(id, values));
@@ -66,6 +68,12 @@ const AddEditBusStat = ({ edit = false }) => {
 
   const formik = useFormik({
     initialValues: initialValues,
+    validationSchema: new Yup.object({
+      morning_commuters: Yup.number().required("morning commuters required"),
+      afternoon_commuters: Yup.number().required(
+        "afternoon commuters required"
+      ),
+    }),
     onSubmit: onSubmitHandler,
   });
 
@@ -200,6 +208,7 @@ const AddEditBusStat = ({ edit = false }) => {
         <div className="flex flex-col">
           <label>date</label>
           <input
+            data-cy="stat-date"
             className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
             type="date"
             onChange={formik.handleChange}
@@ -218,6 +227,7 @@ const AddEditBusStat = ({ edit = false }) => {
                   className="appearance-none  w-full outline-none bg-gray-50 "
                   onChange={formik.handleChange}
                   name="bus_number"
+                  data-cy="stat-bus-number"
                   value={
                     formik.values.bus_number != 0
                       ? formik.values.bus_number
@@ -251,24 +261,35 @@ const AddEditBusStat = ({ edit = false }) => {
         <div className="flex flex-col">
           <label>morning commuters</label>
           <input
+            data-cy="stat-morning-commuters"
             className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
             type="number"
             placeholder="e.g 60"
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             name="morning_commuters"
             value={formik.values.morning_commuters}
           />
         </div>
+        <div className="text-red-500 text-sm">
+          {formik.touched.morning_commuters && formik.errors.morning_commuters}
+        </div>
         <div className="flex flex-col">
           <label>afternoon commuters</label>
           <input
+            data-cy="stat-afternoon-commuters"
             className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
             type="number"
             placeholder="e.g 60"
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             name="afternoon_commuters"
             value={formik.values.afternoon_commuters}
           />
+          <div className="text-red-500 text-sm">
+            {formik.touched.afternoon_commuters &&
+              formik.errors.afternoon_commuters}
+          </div>
         </div>
         <div className="flex space-x-3 justify-end mt-5">
           <CancelButton />

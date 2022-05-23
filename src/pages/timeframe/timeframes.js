@@ -259,6 +259,7 @@ const Timeframes = () => {
                             <span>edit</span>
                           </button>
                           <button
+                            data-cy="delete-timeframe"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
                               setCurrentTimeFrame(timeFrame);

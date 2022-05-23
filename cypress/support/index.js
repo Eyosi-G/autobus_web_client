@@ -14,8 +14,14 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-import 'cypress-file-upload';
+import "./commands";
+import "cypress-file-upload";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+function getDate(after = 0) {
+  const now = new Date();
+  now.setDate(now.getDate() + after);
+  return now.toISOString().split("T")[0];
+}

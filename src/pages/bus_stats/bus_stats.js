@@ -76,6 +76,7 @@ const BusSats = () => {
         <span className="font-semibold">Bus Stats </span>
         <div className="my-3 flex justify-end items-center">
           <button
+            data-cy="new-bus-stats"
             onClick={() => navigate("/admin/bus_stats/new")}
             className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white mr-2"
           >
@@ -187,7 +188,7 @@ const BusSats = () => {
               </tr>
               {stats.map((stat) => {
                 return (
-                  <tr>
+                  <tr data-cy="stat-item">
                     <td className="border p-2">{stat.date.split("T")[0]}</td>
                     <td className="border p-2">{stat.bus_number}</td>
                     <td className="border p-2">{stat.morning_commuters}</td>
@@ -215,6 +216,7 @@ const BusSats = () => {
                           style={{ zIndex: 100 }}
                         >
                           <button
+                            data-cy="stat-edit"
                             className="flex space-x-2"
                             onClick={() => {
                               navigate(`/admin/bus_stats/${stat.id}/edit`);
@@ -239,6 +241,7 @@ const BusSats = () => {
                             <span>edit</span>
                           </button>
                           <button
+                            data-cy="stat-delete"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
                               setCurretStat(stat);

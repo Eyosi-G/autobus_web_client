@@ -8,6 +8,7 @@ const resetData = ()=>{
     username: "driver_one",
     password: "password",
     firstName: "selam",
+    image: "employee_1.jpg",
     lastName: "girma",
     gender: "female",
     birthDate: "2000-02-01",
@@ -20,6 +21,7 @@ const resetData = ()=>{
     firstName: "tigit",
     lastName: "girma",
     gender: "female",
+    image: "employee_2.jpg",
     birthDate: "1999-02-01",
     email: "driverTwo@gmail.com",
     phoneNumber: "0911239048",
@@ -42,7 +44,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      driverOne.image,
       driverOne.email,
       driverOne.phoneNumber
     );
@@ -240,7 +242,7 @@ describe("delete driver", () => {
     cy.get("[data-cy=submit-button]").click();
     cy.wait("@createDriverForDelete").its("response.statusCode").should("eq", 200);
 
-    cy.get("[data-cy=back_button").click();
+    cy.get("[data-cy=back_button]").click();
     cy.get("[data-cy=driver]").should("have.length", 1);
     cy.intercept("DELETE", `${Cypress.env("API")}/drivers/*`).as(
       "deleteDriver"
