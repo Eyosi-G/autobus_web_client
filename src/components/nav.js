@@ -19,15 +19,18 @@ const Nav = ({ menuOpen }) => {
     if (paths.includes("ticketers")) {
       return setCurrentIndex(2);
     }
-    if (paths.includes("buses")) {
+    if (paths.includes("routes")) {
       return setCurrentIndex(3);
     }
-    if (paths.includes("timeframes")) {
+    if (paths.includes("buses")) {
       return setCurrentIndex(4);
+    }
+    if (paths.includes("schedules")) {
+      return setCurrentIndex(5);
     }
 
     if (paths.includes("bus_stats")) {
-      return setCurrentIndex(5);
+      return setCurrentIndex(6);
     }
     setCurrentIndex(-1);
   }, [location]);
@@ -121,6 +124,31 @@ const Nav = ({ menuOpen }) => {
           selected={currentIndex === 3}
           onClickHandler={() => {
             setCurrentIndex(3);
+            navigate("/admin/routes/list");
+          }}
+        >
+          <div className="flex space-x-2 justify-start items-center">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span>Routes</span>
+          </div>
+        </Menu>
+        <Menu
+          selected={currentIndex === 4}
+          onClickHandler={() => {
+            setCurrentIndex(4);
             navigate("/admin/buses/list");
           }}
         >
@@ -136,15 +164,15 @@ const Nav = ({ menuOpen }) => {
                 <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
               </svg>
             </span>
-            <span>Buses</span>
+            <span>buses</span>
           </div>
         </Menu>
 
         <Menu
-          selected={currentIndex === 4}
+          selected={currentIndex === 5}
           onClickHandler={() => {
-            setCurrentIndex(4);
-            navigate("/admin/timeframes/list");
+            setCurrentIndex(5);
+            navigate("/admin/schedules/list");
           }}
         >
           <div className="flex space-x-2 justify-start items-center">
@@ -166,9 +194,9 @@ const Nav = ({ menuOpen }) => {
           </div>
         </Menu>
         <Menu
-          selected={currentIndex === 5}
+          selected={currentIndex === 6}
           onClickHandler={() => {
-            setCurrentIndex(5);
+            setCurrentIndex(6);
             navigate("/admin/bus_stats/list");
           }}
         >

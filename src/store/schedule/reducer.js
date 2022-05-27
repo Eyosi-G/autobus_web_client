@@ -25,7 +25,7 @@ export const getSchedulesReducer = (
       return { loading: true, data: { count: 0, schedules: [] }, error: null };
     case types.GET_SCHEDULE_SUCCESS:
       return { loading: false, data: action.payload, error: null };
-    case types.GENERATE_SCHEDULE_FAILURE:
+    case types.GET_SCHEDULE_FAILURE:
       return {
         loading: false,
         data: { count: 0, schedules: [] },

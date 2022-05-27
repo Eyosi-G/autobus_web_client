@@ -1,5 +1,6 @@
 import * as types from "./types";
 import axios from "../../utils/axios";
+
 export const fetchBusStats = (page, limit) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_BUS_STATS_REQUEST });

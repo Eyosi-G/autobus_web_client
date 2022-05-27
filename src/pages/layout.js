@@ -1,22 +1,23 @@
 import React, { useState } from "react";
 import Nav from "../components/nav";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes as RootRoute, Route, useNavigate } from "react-router-dom";
 import Drivers from "./driver/drivers";
 import AddEditDriver from "./driver/add_edit_driver";
 import AddEditTicketer from "./ticketer/add_edit_ticketer";
 import Ticketers from "./ticketer/ticketers";
-import AddEditBus from "./bus/add_edit_bus";
-import Timeframes from "./timeframe/timeframes";
+import AddEditRoute from "./route/add_edit_route";
 import Schedules from "./schedule/schedules";
 
 import BusStats from "./bus_stats/bus_stats";
-import AddEditBusStat from "./bus_stats/add_edit_bus_stats";
+import AddEditRouteStat from "./bus_stats/add_edit_bus_stats";
 import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
-import Buses from "./bus/buses";
-import ScheduleDetail from "./schedule/schedule_detail";
+import Routes from "./route/routes";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/auth/actions";
+import AddEditBus from "./bus/add_edit_bus";
+import Buses from "./bus/buses";
+import AddEditSchedule from "./schedule/add_edit_schedule";
 const Layout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const Layout = () => {
   };
   const logoutHandler = () => {
     dispatch(logout());
-  }
+  };
   return (
     <div className="grid grid-cols-5 h-screen overflow-hidden">
       <Nav menuOpen={menuOpen} />
@@ -114,10 +115,7 @@ const Layout = () => {
                   </span>
                   <span>settings</span>
                 </button>
-                <button
-                  className="flex space-x-2"
-                  onClick={logoutHandler}
-                >
+                <button className="flex space-x-2" onClick={logoutHandler}>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -140,29 +138,35 @@ const Layout = () => {
             </div>
           </div>
           <div className="bg-gray-100 flex-grow p-4 ">
-            <Routes>
+            <RootRoute>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="settings" element={<Settings />} />
               <Route path="drivers/list" element={<Drivers />} />
               <Route path="drivers/new" element={<AddEditDriver />} />
               <Route path="ticketers/list" element={<Ticketers />} />
               <Route path="ticketers/new" element={<AddEditTicketer />} />
+              <Route path="routes/new" element={<AddEditRoute />} />
+              <Route path="routes/list" element={<Routes />} />
+              <Route
+                path="routes/:id/edit"
+                element={<AddEditRoute edit={true} />}
+              />
+              {/* buses routes */}
               <Route path="buses/new" element={<AddEditBus />} />
               <Route path="buses/list" element={<Buses />} />
               <Route
                 path="buses/:id/edit"
                 element={<AddEditBus edit={true} />}
               />
-              <Route path="timeframes/list" element={<Timeframes />} />
-              <Route path="timeframes/:id/schedules" element={<Schedules />} />
-              <Route path="schedules/:id" element={<ScheduleDetail />} />
+              <Route path="schedules/list" element={<Schedules />} />
+              <Route path="schedules/new" element={<AddEditSchedule />} />
               <Route path="bus_stats/list" element={<BusStats />} />
-              <Route path="bus_stats/new" element={<AddEditBusStat />} />
+              <Route path="bus_stats/new" element={<AddEditRouteStat />} />
               <Route
                 path="bus_stats/:id/edit"
-                element={<AddEditBusStat edit={true} />}
+                element={<AddEditRouteStat edit={true} />}
               />
-            </Routes>
+            </RootRoute>
           </div>
         </div>
       </div>

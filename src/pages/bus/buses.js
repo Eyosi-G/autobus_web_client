@@ -1,143 +1,226 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CancelButton from "../../components/cancel_button";
 import Dialog from "../../components/dialog";
+import Empty from "../../components/empty";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
+import PreviewBusUpload from "../../components/preview_bus_upload";
+import SaveButton from "../../components/save_button";
 import Spinner from "../../components/spinner";
-
-import Confirmation from "../../components/confirmation";
-import { deleteBus, fetchBuses, resetDeleteBus } from "../../store/bus/actions";
-import Empty from "../../components/empty";
+import {
+  deleteBus,
+  deleteBusReset,
+  fetchBuses,
+  fetchBusesReset,
+  uploadBus,
+  uploadBusReset,
+} from "../../store/bus/actions";
+import AddEditBus from "./add_edit_bus";
 
 const Buses = () => {
   const dispatch = useDispatch();
+  const [openAddEditBus, setOpenAddEditBus] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [singleBus, setSingleBus] = useState(null);
+  const uploadRef = useRef();
+  const [uploadFile, setUploadFile] = useState();
+  const [previewData, setPreviewData] = useState([]);
+  const [showUploadPreview, setUploadPreview] = useState(false);
 
-  const {
-    loading,
-    data: { count = 0, buses = [] },
-    error,
-  } = useSelector((state) => state.busesList);
-
-  const {
-    loading: deleteBusLoading,
-    success: deleteBusSuccess,
-    error: deleteBusError,
-  } = useSelector((state) => state.deleteBus);
-
-  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
 
-  const onPageChangeHandler = (newPage) => {
-    setPage(newPage);
+  const uploadHandler = (e) => {
+    uploadRef.current.click();
   };
-  const onLimitChangeHandler = (newLimit) => {
-    setLimit(newLimit);
+
+  function csvToArray(str) {
+    try {
+      let rows = str.slice(str.indexOf("\n") + 1).split("\n");
+      rows = rows.map((row) => row.split(","));
+      return rows;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  const onUploadChange = (e) => {
+    const input = e.target.files[0];
+    const reader = new FileReader();
+    setUploadFile(input);
+    reader.onload = function (e) {
+      const text = e.target.result;
+      const rows = csvToArray(text);
+      setPreviewData(rows);
+      setUploadPreview(true);
+    };
+
+    reader.readAsText(input);
   };
+
+  const {
+    loading: createBulkBusesLoading,
+    success: createBulkBusesSuccess,
+    error: createBulkBusesFailure,
+  } = useSelector((state) => state.createBulkBuses);
+
+  const {
+    loading: fetchBusesLoading,
+    data: { buses, count },
+    error: fetchBusesFailure,
+  } = useSelector((state) => state.fetchBuses);
+
+  const { success: deleteBusSuccess, error: deleteBusError } = useSelector(
+    (state) => state.deleteBus
+  );
 
   useEffect(() => {
     dispatch(fetchBuses(page, limit));
   }, [page, limit]);
 
-  const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [currentBus, setCurrentBus] = useState(null);
-
   return (
-    <div className="p-4">
-      <Modal open={openConfirmation}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Confirmation
-            handleDelete={() => {
-              if (currentBus) {
-                dispatch(deleteBus(currentBus.id));
-                setOpenConfirmation(false);
-              }
-            }}
-            handleCancel={() => {
-              setOpenConfirmation(false);
-              setCurrentBus(null);
-            }}
-          />
-        </div>
-      </Modal>
-
-      <Modal open={deleteBusLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-          </div>
-        </div>
-      </Modal>
+    <div>
+      {/* delete bus */}
       <Modal open={deleteBusError}>
         <Dialog
+          close={() => dispatch(deleteBusReset())}
+          message="deleting bus failed"
           severity="failure"
-          message="failed to delete bus !"
-          close={() => dispatch(resetDeleteBus())}
         />
       </Modal>
       <Modal open={deleteBusSuccess}>
         <Dialog
+          close={() => dispatch(deleteBusReset())}
+          message="bus successfully deleted"
           severity="success"
-          message="bus successfully deleted !"
-          close={() => dispatch(resetDeleteBus())}
+        />
+      </Modal>
+      {/* fetch buses */}
+      <Modal open={fetchBusesFailure}>
+        <Dialog
+          close={() => dispatch(fetchBusesReset())}
+          message="couldn't retrieve buses"
+          severity="failure"
+        />
+      </Modal>
+      {/* bulk upload buses */}
+      <Modal open={createBulkBusesLoading}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center">
+          <Spinner />
+        </div>
+      </Modal>
+      <Modal open={createBulkBusesFailure}>
+        <Dialog
+          close={() => dispatch(uploadBusReset())}
+          message="uploading bus failed"
+          severity="failure"
+        />
+      </Modal>
+      <Modal open={createBulkBusesSuccess}>
+        <Dialog
+          close={() => dispatch(uploadBusReset())}
+          message="buses uploaded successfully !"
+          severity="success"
+        />
+      </Modal>
+      <Modal open={showUploadPreview}>
+        <PreviewBusUpload
+          previewData={previewData}
+          setUploadPreview={setUploadPreview}
+          uploadFile={uploadFile}
+          setUploadFile={setUploadFile}
         />
       </Modal>
 
-      <div className="flex items-center justify-between mb-3 ">
-        <p className="font-semibold capitalize">Buses</p>
-        <button
-          onClick={() => {
-            navigate("/admin/buses/new");
-          }}
-          className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
+      <Modal open={openAddEditBus}>
+        <div
+          className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center"
+          style={{ zIndex: 200 }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-              clip-rule="evenodd"
+          <div className="w-1/2 bg-white p-4 rounded-md">
+            <AddEditBus
+              isEdit={isEdit}
+              setOpenAddEditBus={setOpenAddEditBus}
+              bus={singleBus}
             />
-          </svg>
-          <span className="lowercase">new bus</span>
-        </button>
-      </div>
+          </div>
+        </div>
+      </Modal>
 
-      {!loading && buses.length === 0 ? (
-        <Empty message="there are not buses registered !" />
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">Buses </span>
+        <div className="my-3 flex justify-end items-center">
+          <button
+            onClick={() => setOpenAddEditBus(true)}
+            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white mr-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span>new bus</span>
+          </button>
+          <button
+            onClick={uploadHandler}
+            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              />
+            </svg>
+            <span>upload bus</span>
+          </button>
+          <input
+            type="file"
+            className="hidden"
+            ref={uploadRef}
+            onChange={onUploadChange}
+            onClick={(e) => (e.value = null)}
+            value=""
+            accept=".csv"
+          />
+        </div>
+      </div>
+      {fetchBusesLoading ? (
+        <Spinner />
+      ) : buses.length == 0 ? (
+        <Empty message="no buses found" />
       ) : (
         <div>
           <table className="w-full border border-collapse bg-white">
-            <thead className="capitalize">
-              <tr className="text-left">
-                <th className="p-2">bus number</th>
-                <th></th>
+            <thead>
+              <tr className="font-semibold capitalize">
+                <td className="p-2">side number</td>
+                <td className="p-2">capacity</td>
               </tr>
             </thead>
-            <tbody className="text-sm">
-              {loading && (
-                <tr>
-                  <td colSpan={4}>
-                    <div className="flex justify-center my-2">
-                      <Spinner />
-                    </div>
-                  </td>
-                </tr>
-              )}
-              {buses.map((bus) => {
+            <tbody>
+              {buses.map((bus, index) => {
                 return (
-                  <tr className="hover:bg-gray-50">
-                    <td
-                      className="border p-2 hover:cursor-pointer"
-                      onClick={() => {}}
-                    >
-                      {bus.bus_number}
-                    </td>
+                  <tr>
+                    <td className="border p-2">{bus.side_number}</td>
+                    <td className="border p-2">{bus.capacity}</td>
+
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
                         <span>
@@ -161,10 +244,13 @@ const Buses = () => {
                           style={{ zIndex: 100 }}
                         >
                           <button
+                            data-cy="edit"
                             className="flex space-x-2"
-                            onClick={() =>
-                              navigate(`/admin/buses/${bus.id}/edit`)
-                            }
+                            onClick={() => {
+                              setIsEdit(true);
+                              setSingleBus(bus);
+                              setOpenAddEditBus(true);
+                            }}
                           >
                             <span>
                               <svg
@@ -185,10 +271,10 @@ const Buses = () => {
                             <span>edit</span>
                           </button>
                           <button
+                            data-cy="delete-driver"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
-                              setOpenConfirmation(true);
-                              setCurrentBus(bus);
+                              dispatch(deleteBus(bus.id));
                             }}
                           >
                             <span>
@@ -217,14 +303,18 @@ const Buses = () => {
               })}
             </tbody>
           </table>
-          <div className="flex justify-end mt-2">
+          <div className="flex space-x-3 justify-end mt-5">
             <Paginate
-              limits={[5, 10, 15]}
-              page={page}
               total={count}
+              page={page}
               limit={limit}
-              onPageChange={onPageChangeHandler}
-              onLimitChange={onLimitChangeHandler}
+              limits={[5, 10, 15]}
+              onLimitChange={(_newLimit) => {
+                setLimit(_newLimit);
+              }}
+              onPageChange={(_newPage) => {
+                setPage(_newPage);
+              }}
             />
           </div>
         </div>

@@ -5,49 +5,29 @@ import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
-import AddEditTimeFrame from "./add_edit_timeframe";
-import {
-  resetCreateTimeFrame,
-  fetchTimeFrames,
-  deleteTimeFrame,
-  resetDeleteTimeFrame,
-  resetEditTimeFrame,
-} from "../../store/timeframe/actions";
-import { toISOString, toLongDate } from "../../utils/date_format";
+
 import Confirmation from "../../components/confirmation";
+import { deleteRoute, fetchRoutes, resetDeleteRoute } from "../../store/route/actions";
 import Empty from "../../components/empty";
 
-const Timeframes = () => {
+const Routes = () => {
   const dispatch = useDispatch();
-  const {
-    loading: createTimeFrameLoading,
-    success: createTimeFrameSuccess,
-    error: createTimeFrameError,
-  } = useSelector((state) => state.createTimeFrame);
 
   const {
     loading,
-    data: { count = 0, timeFrames = [] },
+    data: { count = 0, routes = [] },
     error,
-  } = useSelector((state) => state.timeFrameList);
+  } = useSelector((state) => state.routesList);
 
   const {
-    loading: deleteTimeFrameLoading,
-    success: deleteTimeFrameSuccess,
-    error: deleteTimeFrameError,
-  } = useSelector((state) => state.deleteTimeFrame);
-
-  const {
-    loading: editTimeFrameLoading,
-    success: editTimeFrameSuccess,
-    error: editTimeFrameError,
-  } = useSelector((state) => state.editTimeFrame);
+    loading: deleteRouteLoading,
+    success: deleteRouteSuccess,
+    error: deleteRouteError,
+  } = useSelector((state) => state.deleteRoute);
 
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
-
-  const [formOpen, setFormOpen] = useState(false);
 
   const onPageChangeHandler = (newPage) => {
     setPage(newPage);
@@ -57,101 +37,59 @@ const Timeframes = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchTimeFrames(page, limit));
+    dispatch(fetchRoutes(page, limit));
   }, [page, limit]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [currentTimeFrame, setCurrentTimeFrame] = useState(null);
-  const [edit, setEdit] = useState(false);
-
-  const successDialogMessage = () => {
-    if (createTimeFrameSuccess) return "timeframe created successfully";
-    if (deleteTimeFrameSuccess) return "timeframe deleted successfully ";
-    if (editTimeFrameSuccess) return "timeframe edited successfully";
-  };
-
-  const errorDialogMessage = () => {
-    if (createTimeFrameError) return "failed to create timeframe";
-    if (deleteTimeFrameError) return "failed to delete timeframe";
-    if (editTimeFrameError) return "failed to edit timeframe";
-  };
-
-  const closeDialogHandler = () => {
-    if (createTimeFrameSuccess || createTimeFrameError)
-      return dispatch(resetCreateTimeFrame());
-    if (deleteTimeFrameSuccess || deleteTimeFrameError)
-      return dispatch(resetDeleteTimeFrame());
-    if (editTimeFrameSuccess || editTimeFrameError)
-      return dispatch(resetEditTimeFrame());
-  };
+  const [currentRoute, setCurrentRoute] = useState(null);
 
   return (
-    <div className=" p-4">
+    <div className="p-4">
       <Modal open={openConfirmation}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <Confirmation
             handleDelete={() => {
-              if (currentTimeFrame) {
-                dispatch(deleteTimeFrame(currentTimeFrame.id));
+              if (currentRoute) {
+                dispatch(deleteRoute(currentRoute.id));
                 setOpenConfirmation(false);
               }
             }}
             handleCancel={() => {
               setOpenConfirmation(false);
-              setCurrentTimeFrame(null);
+              setCurrentRoute(null);
             }}
           />
         </div>
       </Modal>
-      <Modal open={formOpen}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center z-10">
-          <AddEditTimeFrame
-            timeFrame={currentTimeFrame}
-            edit={edit}
-            setEdit={setEdit}
-            setOpen={setFormOpen}
-          />
-        </div>
-      </Modal>
 
-      <Modal
-        open={
-          createTimeFrameLoading ||
-          deleteTimeFrameLoading ||
-          editTimeFrameLoading
-        }
-      >
+      <Modal open={deleteRouteLoading}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <div className="bg-white p-10 rounded-lg">
             <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
           </div>
         </div>
       </Modal>
-
-      <Modal
-        open={
-          createTimeFrameError || deleteTimeFrameError || editTimeFrameError
-        }
-      >
+      <Modal open={deleteRouteError}>
         <Dialog
           severity="failure"
-          message={errorDialogMessage()}
-          close={() => closeDialogHandler()}
+          message="failed to delete route !"
+          close={() => dispatch(resetDeleteRoute())}
         />
       </Modal>
-      <Modal open={editTimeFrameSuccess}>
+      <Modal open={deleteRouteSuccess}>
         <Dialog
           severity="success"
-          message={successDialogMessage()}
-          close={() => closeDialogHandler()}
+          message="route successfully deleted !"
+          close={() => dispatch(resetDeleteRoute())}
         />
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
-        <p className="font-semibold capitalize">Timeframes</p>
+        <p className="font-semibold capitalize">Routes</p>
         <button
-          data-cy="new_timeframe"
-          onClick={() => setFormOpen(true)}
+          onClick={() => {
+            navigate("/admin/routes/new");
+          }}
           className="flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-white"
         >
           <svg
@@ -166,48 +104,39 @@ const Timeframes = () => {
               clip-rule="evenodd"
             />
           </svg>
-          <span className="lowercase">new timeframe</span>
+          <span className="lowercase">new route</span>
         </button>
       </div>
-      {!loading && timeFrames.length == 0 ? (
-        <Empty />
+
+      {!loading && routes.length === 0 ? (
+        <Empty message="there are not routes registered !" />
       ) : (
         <div>
           <table className="w-full border border-collapse bg-white">
             <thead className="capitalize">
               <tr className="text-left">
-                <th className="p-2">date</th>
+                <th className="p-2">route number</th>
                 <th></th>
               </tr>
             </thead>
             <tbody className="text-sm">
               {loading && (
                 <tr>
-                  <td colSpan={2}>
+                  <td colSpan={4}>
                     <div className="flex justify-center my-2">
                       <Spinner />
                     </div>
                   </td>
                 </tr>
               )}
-              {timeFrames.map((timeFrame) => {
+              {routes.map((route) => {
                 return (
-                  <tr className="hover:bg-gray-50" data-cy="timeframe">
+                  <tr className="hover:bg-gray-50">
                     <td
-                      className="border p-2  hover:cursor-pointer"
-                      onClick={() =>
-                        navigate(`/admin/timeframes/${timeFrame.id}/schedules`)
-                      }
+                      className="border p-2 hover:cursor-pointer"
+                      onClick={() => {}}
                     >
-                      <div className="space-x-2">
-                        <span className="bg-amber-100 px-2 py-2 rounded-lg">
-                          {toLongDate(new Date(timeFrame.start_date))}
-                        </span>
-                        <span className="font-bold">-</span>
-                        <span className="bg-amber-100 px-2 py-2 rounded-lg">
-                          {toLongDate(new Date(timeFrame.end_date))}
-                        </span>
-                      </div>
+                      {route.route_number}
                     </td>
                     <td className="border p-2">
                       <div className="relative group flex justify-end">
@@ -232,13 +161,10 @@ const Timeframes = () => {
                           style={{ zIndex: 100 }}
                         >
                           <button
-                            data-cy="edit"
                             className="flex space-x-2"
-                            onClick={() => {
-                              setCurrentTimeFrame(timeFrame);
-                              setEdit(true);
-                              setFormOpen(true);
-                            }}
+                            onClick={() =>
+                              navigate(`/admin/routes/${route.id}/edit`)
+                            }
                           >
                             <span>
                               <svg
@@ -259,11 +185,10 @@ const Timeframes = () => {
                             <span>edit</span>
                           </button>
                           <button
-                            data-cy="delete-timeframe"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
-                              setCurrentTimeFrame(timeFrame);
                               setOpenConfirmation(true);
+                              setCurrentRoute(route);
                             }}
                           >
                             <span>
@@ -308,4 +233,4 @@ const Timeframes = () => {
   );
 };
 
-export default Timeframes;
+export default Routes;

@@ -15,22 +15,16 @@ import {
   ticketerListReducer,
 } from "./ticketer/reducer";
 
-import {
-  createTimeFrameReducer,
-  deleteTimeFrameReducer,
-  editTimeFrameReducer,
-  timeFrameListReducer,
-  fetchSingleTimeFrameReducer,
-} from "./timeframe/reducer";
+
 
 import {
-  createBusReducer,
-  deleteBusReducer,
-  editBusReducer,
-  fetchSingleBusReducer,
-  busesListReducer,
-  searchBusReducer,
-} from "./bus/reducer";
+  createRouteReducer,
+  deleteRouteReducer,
+  editRouteReducer,
+  fetchSingleRouteReducer,
+  routesListReducer,
+  searchRouteReducer,
+} from "./route/reducer";
 
 import {
   fetchBusStatsReducer,
@@ -49,9 +43,21 @@ import { fetchStopsReducer } from "./stop/reducer";
 
 import { loginReducer } from "./auth/reducer";
 import { fetchDashboardReducer } from "./dashboard/reducer";
-import { changeEmailReducer, changePasswordReducer, changePhonenumberReducer} from './setting/reducer'
+import {
+  changeEmailReducer,
+  changePasswordReducer,
+  changePhonenumberReducer,
+} from "./setting/reducer";
+
+import {
+  createBulkBusesReducer,
+  fetchBusesReducer,
+  createBusReducer,
+  updateBusReducer,
+  deleteBusReducer
+} from "./bus/reducer";
 export default combineReducers({
-  changeEmail:changeEmailReducer,
+  changeEmail: changeEmailReducer,
   changePassword: changePasswordReducer,
   changePhonenumber: changePhonenumberReducer,
   createDriver: createDriverReducer,
@@ -64,17 +70,12 @@ export default combineReducers({
   deleteTicketer: deleteTicketerReducer,
   fetchSingleTicketer: fetchSingleTicketerReducer,
   ticketersList: ticketerListReducer,
-  createTimeFrame: createTimeFrameReducer,
-  editTimeFrame: editTimeFrameReducer,
-  deleteTimeFrame: deleteTimeFrameReducer,
-  timeFrameList: timeFrameListReducer,
-  singleTimeFrame: fetchSingleTimeFrameReducer,
-  createBus: createBusReducer,
-  deleteBus: deleteBusReducer,
-  searchBus: searchBusReducer,
-  editBus: editBusReducer,
-  singleBus: fetchSingleBusReducer,
-  busesList: busesListReducer,
+  createRoute: createRouteReducer,
+  deleteRoute: deleteRouteReducer,
+  searchRoute: searchRouteReducer,
+  editRoute: editRouteReducer,
+  singleRoute: fetchSingleRouteReducer,
+  routesList: routesListReducer,
   busStatsList: fetchBusStatsReducer,
   createBusStat: createBusStatsReducer,
   fetchSingleBusStat: fetchSingleBusStatReducer,
@@ -85,5 +86,10 @@ export default combineReducers({
   getSchedules: getSchedulesReducer,
   fetchStops: fetchStopsReducer,
   login: loginReducer,
-  dashboard: fetchDashboardReducer
+  dashboard: fetchDashboardReducer,
+  createBulkBuses: createBulkBusesReducer,
+  fetchBuses: fetchBusesReducer,
+  createBus: createBusReducer,
+  updateBus: updateBusReducer,
+  deleteBus: deleteBusReducer,
 });

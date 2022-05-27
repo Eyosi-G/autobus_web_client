@@ -14,6 +14,7 @@ import {
   resetDeleteBusStat,
   resetFetchBusStats,
 } from "../../store/bus_stat/actions";
+import { convertTo12 } from "../../utils/time";
 const BusSats = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
@@ -27,6 +28,11 @@ const BusSats = () => {
   const onLimitChangeHandler = (_newLimt) => {
     setLimit(_newLimt);
   };
+
+  const hours = [];
+  for (let i = 1; i < 25; i++) {
+    hours.push(i);
+  }
 
   const {
     loading,
@@ -166,114 +172,135 @@ const BusSats = () => {
         <Empty message="no bus stats found" />
       ) : (
         <div>
-          <table className="w-full border border-collapse bg-white">
-            <thead className="capitalize">
-              <tr className="text-left">
-                <th className="p-2">date</th>
-                <th className="p-2">bus number</th>
-                <th className="p-2">morning commmuters</th>
-                <th className="p-2">afternoon commmuters</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={7}>
-                  {loading && (
-                    <div className=" w-full flex items-center justify-center m-2">
-                      <Spinner />
-                    </div>
-                  )}
-                </td>
-              </tr>
-              {stats.map((stat) => {
-                return (
-                  <tr data-cy="stat-item">
-                    <td className="border p-2">{stat.date.split("T")[0]}</td>
-                    <td className="border p-2">{stat.bus_number}</td>
-                    <td className="border p-2">{stat.morning_commuters}</td>
-                    <td className="border p-2">{stat.afternoon_commuters}</td>
-                    <td className="border p-2">
-                      <div className="relative group flex justify-end">
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                            />
-                          </svg>
-                        </span>
-                        <div
-                          className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
-                          style={{ zIndex: 100 }}
-                        >
-                          <button
-                            data-cy="stat-edit"
-                            className="flex space-x-2"
-                            onClick={() => {
-                              navigate(`/admin/bus_stats/${stat.id}/edit`);
-                            }}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                />
-                              </svg>
-                            </span>
-                            <span>edit</span>
-                          </button>
-                          <button
-                            data-cy="stat-delete"
-                            className="text-red-600 flex space-x-2"
-                            onClick={() => {
-                              setCurretStat(stat);
-                              setOpenConfirmation(true);
-                            }}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </span>
-                            <span>delete</span>
-                          </button>
-                        </div>
+          <div className="w-full  overflow-auto h-96">
+            <table className=" border border-collapse bg-white overflow-clip ">
+              <thead className="capitalize">
+                <tr className="text-left whitespace-nowrap">
+                  <th className="p-2">date</th>
+                  <th className="p-2">day</th>
+                  <th className="p-2">route number</th>
+                  {hours.map((hour) => {
+                    let nextHour = (hour + 1) % 24;
+                    let timeslot =
+                      convertTo12(hour) + " - " + convertTo12(nextHour);
+                    return (
+                      <th className="p-2  w-1/100 uppercase">{timeslot}</th>
+                    );
+                  })}
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colSpan={7}>
+                    {loading && (
+                      <div className=" w-full flex items-center justify-center m-2">
+                        <Spinner />
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    )}
+                  </td>
+                </tr>
+                {stats.map((stat) => {
+                  return (
+                    <tr className="whitespace-nowrap" data-cy="stat-item">
+                      <td className="border p-2">{stat.date.split("T")[0]}</td>
+                      <td className="border p-2">{stat.day}</td>
+                      <td className="border p-2">{stat.route_number}</td>
+                      {hours.map((hour) => {
+                        let nextHour = (hour + 1) % 24;
+                        const _stat = stat.stats.find(
+                          (_data) =>
+                            _data.startTime == hour && _data.endTime == nextHour
+                        );
+                        if (_stat) {
+                          return (
+                            <td className="border p-2">{_stat.commuters}</td>
+                          );
+                        }
+                        return <td className="border p-2">--</td>;
+                      })}
+                      <td className="border p-2">
+                        <div className="relative group flex justify-end">
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                              />
+                            </svg>
+                          </span>
+                          <div
+                            className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
+                            style={{ zIndex: 100 }}
+                          >
+                            <button
+                              data-cy="stat-edit"
+                              className="flex space-x-2"
+                              onClick={() => {
+                                navigate(`/admin/bus_stats/${stat.id}/edit`);
+                              }}
+                            >
+                              <span>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="h-6 w-6"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                  />
+                                </svg>
+                              </span>
+                              <span>edit</span>
+                            </button>
+                            <button
+                              data-cy="stat-delete"
+                              className="text-red-600 flex space-x-2"
+                              onClick={() => {
+                                setCurretStat(stat);
+                                setOpenConfirmation(true);
+                              }}
+                            >
+                              <span>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="h-6 w-6"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </span>
+                              <span>delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           <div className="flex justify-end mt-2">
             <Paginate
               limits={[5, 10, 15]}

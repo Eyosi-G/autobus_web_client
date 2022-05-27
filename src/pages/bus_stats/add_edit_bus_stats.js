@@ -1,16 +1,15 @@
 import { useFormik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { ClipLoader, PulseLoader } from "react-spinners";
+import { useParams } from "react-router-dom";
+import { PulseLoader } from "react-spinners";
 import BackButton from "../../components/back_button";
 import CancelButton from "../../components/cancel_button";
 import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import SaveButton from "../../components/save_button";
 import Spinner from "../../components/spinner";
-import * as Yup from "yup";
-import { fetchBuses, resetFetchBuses } from "../../store/bus/actions";
+import { fetchRoutes, resetFetchRoutes } from "../../store/route/actions";
 import {
   createBusStat,
   editBusStat,
@@ -19,28 +18,55 @@ import {
   resetEditBusStat,
   resetFetchSingleBusStat,
 } from "../../store/bus_stat/actions";
+import Stat from "./stat";
 
 const AddEditBusStat = ({ edit = false }) => {
-  const dispatch = useDispatch();
+  const [stats, setStats] = useState([]);
+  const [error, setError] = useState("");
+  const onBusStatChange = (index, startTime, endTime, commuters) => {
+    console.log("here", commuters);
+    let _stats = [...stats];
+    _stats[index] = {
+      ..._stats[index],
+      startTime,
+      endTime,
+      commuters,
+    };
+    setStats(_stats);
+  };
 
+  const removeBusStat = (index) => {
+    let _stats = [...stats];
+    _stats.splice(index, 1);
+    setStats(_stats);
+  };
+
+  const validateBusStat = () => {
+    let starts = stats.map((busStat) => busStat.startTime);
+    let ends = stats.map((busStat) => busStat.endTime);
+    let _startSet = new Set(starts);
+    let _endSet = new Set(ends);
+    return _startSet.size < starts.length || _endSet.size < _endSet.length;
+  };
+  const dispatch = useDispatch();
   const {
     loading: createBusStatLoading,
-    success: createBusStatSuccess,
+    success: createstatsuccess,
     error: createBusStatError,
   } = useSelector((state) => state.createBusStat);
   const params = useParams();
 
   const {
     loading: editBusStatLoading,
-    success: editBusStatSuccess,
+    success: editstatsuccess,
     error: editBusStatError,
   } = useSelector((state) => state.editBusStat);
 
   const {
-    loading: busesListLoading,
-    data: { count, buses },
-    error: busesListError,
-  } = useSelector((state) => state.busesList);
+    loading: routesListLoading,
+    data: { count, routes },
+    error: routesListError,
+  } = useSelector((state) => state.routesList);
 
   const {
     loading: busStatLoading,
@@ -49,58 +75,60 @@ const AddEditBusStat = ({ edit = false }) => {
   } = useSelector((state) => state.fetchSingleBusStat);
 
   const initialValues = {
-    bus_number: "",
-    morning_commuters: "",
-    afternoon_commuters: "",
+    route_number: "",
     date: new Date().toISOString().split("T")[0],
   };
 
   const onSubmitHandler = (values, action) => {
-    console.log("here")
-    if (edit) {
-      const { id } = params;
-      dispatch(editBusStat(id, values));
+    if (validateBusStat()) {
+      setError("overlapping time slots");
     } else {
-      dispatch(createBusStat(values));
+      setError("");
+      const data = {
+        ...values,
+        stats: stats,
+      };
+      if (edit) {
+        const { id } = params;
+        dispatch(editBusStat(id, data));
+      } else {
+        dispatch(createBusStat(data));
+      }
+      setStats([]);
+      action.resetForm();
     }
-    action.resetForm();
   };
 
   const formik = useFormik({
     initialValues: initialValues,
-    validationSchema: new Yup.object({
-      morning_commuters: Yup.number().required("morning commuters required"),
-      afternoon_commuters: Yup.number().required(
-        "afternoon commuters required"
-      ),
-    }),
     onSubmit: onSubmitHandler,
   });
 
   const dialogMessage = () => {
-    if (createBusStatSuccess) return "Bus Stat Inserted Successfully !";
+    if (createstatsuccess) return "Bus Stat Inserted Successfully !";
     if (createBusStatError) return "Failed to insert bus stat !";
-    if (editBusStatSuccess) return "bus stat edited successfully !";
+    if (editstatsuccess) return "bus stat edited successfully !";
     if (editBusStatError) return "failed to edit bus stat !";
   };
 
   const closeDialog = () => {
-    if (createBusStatError || createBusStatSuccess)
+    if (createBusStatError || createstatsuccess)
       return dispatch(resetCreateBusStat());
-    if (editBusStatSuccess || editBusStatError)
+    if (editstatsuccess || editBusStatError)
       return dispatch(resetEditBusStat());
     if (busStatError) return dispatch(resetFetchSingleBusStat());
   };
 
   useEffect(() => {
-    dispatch(fetchBuses(0, 100));
+    dispatch(fetchRoutes(0, 100));
+
     if (edit) {
       const { id } = params;
       dispatch(fetchSingleBusStat(id));
     }
     return () => {
       dispatch(resetCreateBusStat());
-      dispatch(resetFetchBuses());
+      dispatch(resetFetchRoutes());
       dispatch(resetFetchSingleBusStat());
       dispatch(resetEditBusStat());
     };
@@ -110,25 +138,29 @@ const AddEditBusStat = ({ edit = false }) => {
     if (busStatData) {
       busStatData.date = busStatData.date.split("T")[0];
       formik.setValues(busStatData);
+      setStats(busStatData.stats);
     }
   }, [busStatData]);
 
   useEffect(() => {
-    if (buses.length > 0)
-      formik.setValues({ ...formik.values, bus_number: buses[0].bus_number });
-  }, [buses]);
+    if (routes.length > 0)
+      formik.setValues({
+        ...formik.values,
+        route_number: routes[0].route_number,
+      });
+  }, [routes]);
 
   const retryHandler = () => {
     if (busStatError) {
       const { id } = params;
       dispatch(fetchSingleBusStat(id));
     }
-    if (busesListError) {
-      dispatch(fetchBuses());
+    if (routesListError) {
+      dispatch(fetchRoutes());
     }
   };
 
-  if (busesListError || busStatError) {
+  if (routesListError || busStatError) {
     return (
       <div className="flex justify-center mt-40">
         <button
@@ -159,7 +191,7 @@ const AddEditBusStat = ({ edit = false }) => {
           close={() => closeDialog()}
         />
       </Modal>
-      <Modal open={createBusStatSuccess || editBusStatSuccess}>
+      <Modal open={createstatsuccess || editstatsuccess}>
         <Dialog
           severity="success"
           message={dialogMessage()}
@@ -217,26 +249,28 @@ const AddEditBusStat = ({ edit = false }) => {
           />
         </div>
         <div className="flex flex-col">
-          <label>bus number</label>
+          <label>route number</label>
           <div className="flex space-x-2 border w-full p-2 rounded-md  bg-gray-50 items-center">
             <div className="w-full">
-              {busesListLoading ? (
+              {routesListLoading ? (
                 <PulseLoader size={5} />
               ) : (
                 <select
                   className="appearance-none  w-full outline-none bg-gray-50 "
                   onChange={formik.handleChange}
-                  name="bus_number"
+                  name="route_number"
                   data-cy="stat-bus-number"
                   value={
-                    formik.values.bus_number != 0
-                      ? formik.values.bus_number
+                    formik.values.route_number != 0
+                      ? formik.values.route_number
                       : null
                   }
                 >
-                  {buses.map((bus) => {
+                  {routes.map((route) => {
                     return (
-                      <option value={bus.bus_number}>{bus.bus_number}</option>
+                      <option value={route.route_number}>
+                        {route.route_number}
+                      </option>
                     );
                   })}
                 </select>
@@ -258,42 +292,55 @@ const AddEditBusStat = ({ edit = false }) => {
             </span>
           </div>
         </div>
-        <div className="flex flex-col">
-          <label>morning commuters</label>
-          <input
-            data-cy="stat-morning-commuters"
-            className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-            type="number"
-            placeholder="e.g 60"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            name="morning_commuters"
-            value={formik.values.morning_commuters}
-          />
-        </div>
-        <div className="text-red-500 text-sm">
-          {formik.touched.morning_commuters && formik.errors.morning_commuters}
-        </div>
-        <div className="flex flex-col">
-          <label>afternoon commuters</label>
-          <input
-            data-cy="stat-afternoon-commuters"
-            className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
-            type="number"
-            placeholder="e.g 60"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            name="afternoon_commuters"
-            value={formik.values.afternoon_commuters}
-          />
-          <div className="text-red-500 text-sm">
-            {formik.touched.afternoon_commuters &&
-              formik.errors.afternoon_commuters}
+        <div className="flex justify-end">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="bg-gray-100 rounded-full p-2 flex items-center space-x-2"
+              onClick={() => {
+                setStats([...stats, {}]);
+              }}
+            >
+              <span className="text-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </span>
+              <span>add bus stat</span>
+            </button>
           </div>
         </div>
+        <div>
+          {stats.map((busStat, index) => {
+            return (
+              <Stat
+                outCommuters={busStat.commuters}
+                outStartTime={busStat.startTime}
+                edit={edit}
+                outEndTime={busStat.endTime}
+                index={index}
+                onBusStatChange={onBusStatChange}
+                removeBusStat={removeBusStat}
+              />
+            );
+          })}
+        </div>
+
+        <div className="text-sm text-red-500">{error}</div>
         <div className="flex space-x-3 justify-end mt-5">
           <CancelButton />
-          <SaveButton disable={buses.length < 1} />
+          <SaveButton disable={routes.length < 1} />
         </div>
       </div>
     </form>

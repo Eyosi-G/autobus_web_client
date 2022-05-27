@@ -1,6 +1,6 @@
 import React from "react";
 
-const SaveButton = ({disable = false}) => {
+const SaveButton = ({ disable = false, name = "save" }) => {
   return (
     <button
       type="submit"
@@ -10,7 +10,7 @@ const SaveButton = ({disable = false}) => {
       }`}
       disabled={disable}
     >
-      save
+      {name}
     </button>
   );
 };

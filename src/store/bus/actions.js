@@ -1,83 +1,106 @@
 import * as types from "./types";
 import axios from "../../utils/axios";
 
-export const createBus = (data) => async (dispatch) => {
+export const uploadBus = (data) => async (dispatch) => {
   try {
-    dispatch({ type: types.CREATE_BUS_REQUEST });
-    await axios().post("/buses", data);
-    dispatch({ type: types.CREATE_BUS_SUCCESS });
+    dispatch({
+      type: types.UPLOAD_BUS_REQUEST,
+    });
+    await axios().post("/buses/upload", data);
+    dispatch({ type: types.UPLOAD_BUS_SUCCESS });
   } catch (e) {
-    dispatch({ type: types.CREATE_BUS_FAILURE, payload: e.message });
+    dispatch({
+      type: types.UPLOAD_BUS_FAILURE,
+      payload: e.message,
+    });
   }
 };
 
 export const fetchBuses = (page, limit) => async (dispatch) => {
   try {
-    dispatch({ type: types.FETCH_BUSES_REQUEST });
+    dispatch({
+      type: types.FETCH_BUSES_REQUEST,
+    });
     const response = await axios().get(`/buses?page=${page}&limit=${limit}`);
     dispatch({ type: types.FETCH_BUSES_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.FETCH_BUSES_FAILURE, payload: e.message });
+    dispatch({
+      type: types.FETCH_BUSES_FAILURE,
+      payload: e.message,
+    });
   }
 };
 
-export const fetchSingleBus = (id) => async (dispatch) => {
+export const createBus = (data) => async (dispatch) => {
   try {
-    dispatch({ type: types.FETCH_SINGLE_BUS_REQUEST });
-    const response = await axios().get(`/buses/${id}`);
     dispatch({
-      type: types.FETCH_SINGLE_BUS_SUCCESS,
-      payload: response.data,
+      type: types.CREATE_BUS_REQUEST,
     });
+    await axios().post(`/buses`, data);
+    dispatch({ type: types.CREATE_BUS_SUCCESS });
+    dispatch(fetchBuses(0, 5));
   } catch (e) {
-    dispatch({ type: types.FETCH_SINGLE_BUS_RESET, payload: e.message });
+    dispatch({
+      type: types.CREATE_BUS_FAILURE,
+      payload: e.message,
+    });
+  }
+};
+
+export const updateBus = (id, data) => async (dispatch) => {
+  try {
+    dispatch({
+      type: types.UPDATE_BUS_REQUEST,
+    });
+    await axios().put(`/buses/${id}`, data);
+    dispatch({ type: types.UPDATE_BUS_SUCCESS });
+    dispatch(fetchBuses(0, 5));
+  } catch (e) {
+    dispatch({
+      type: types.UPDATE_BUS_FAILURE,
+      payload: e.message,
+    });
   }
 };
 
 export const deleteBus = (id) => async (dispatch) => {
   try {
-    dispatch({ type: types.DELETE_BUS_REQUEST });
-    const response = await axios().delete(`/buses/${id}`);
-    dispatch({ type: types.DELETE_BUS_UPDATE_LIST, payload: id });
-
+    await axios().delete(`/buses/${id}`);
+    dispatch({ type: types.DELETE_BUS_SUCCESS, payload: id });
+    dispatch(fetchBuses(0, 5));
+  } catch (e) {
     dispatch({
-      type: types.DELETE_BUS_SUCCESS,
+      type: types.DELETE_BUS_FAILURE,
+      payload: e.message,
     });
-  } catch (e) {
-    dispatch({ type: types.DELETE_BUS_FAILURE, payload: e.message });
   }
 };
 
-export const searchBuses = (data) => async (dispatch) => {
-  try {
-    dispatch({ type: types.SEARCH_BUS_REQUEST });
-    const response = await axios().post(`/buses/search`, data);
-    dispatch({ type: types.SEARCH_BUS_SUCCESS, payload: response.data });
-  } catch (e) {
-    dispatch({ type: types.SEARCH_BUS_FAILURE, payload: e.message });
-  }
-};
-
-export const resetCreateBus = () => {
+export const uploadBusReset = () => {
   return {
-    type: types.CREATE_BUS_RESET,
+    type: types.UPLOAD_BUS_RESET,
   };
 };
-
-export const resetFetchBuses = () => {
+export const fetchBusesReset = () => {
   return {
     type: types.FETCH_BUSES_RESET,
   };
 };
 
-export const resetFetchSingleBus = () => ({
-  type: types.FETCH_SINGLE_BUS_RESET,
-});
+export const createBusReset = () => {
+  return {
+    type: types.CREATE_BUS_RESET,
+  };
+};
 
-export const resetDeleteBus = () => ({
-  type: types.DELETE_BUS_RESET,
-});
+export const updateBusReset = () => {
+  return {
+    type: types.UPDATE_BUS_RESET,
+  };
+};
 
-export const resetSearchBus = () => ({
-  type: types.SEARCH_BUS_RESET,
-});
+export const deleteBusReset = () => {
+  return {
+    type: types.DELETE_BUS_RESET,
+  };
+};
