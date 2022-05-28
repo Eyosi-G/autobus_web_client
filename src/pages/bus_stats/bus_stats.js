@@ -123,6 +123,7 @@ const BusSats = () => {
           <input
             type="file"
             className="hidden"
+            accept=".csv"
             ref={uploadRef}
             onChange={(e) => {
               console.log(e.target.files);
@@ -172,10 +173,10 @@ const BusSats = () => {
         <Empty message="no bus stats found" />
       ) : (
         <div>
-          <div className="w-full  overflow-auto h-96">
-            <table className=" border border-collapse bg-white overflow-clip ">
+          <div className="overflow-auto pb-10 bg-white ">
+            <table className=" bg-white block whitespace-nowrap">
               <thead className="capitalize">
-                <tr className="text-left whitespace-nowrap">
+                <tr className="text-left">
                   <th className="p-2">date</th>
                   <th className="p-2">day</th>
                   <th className="p-2">route number</th>
@@ -202,8 +203,8 @@ const BusSats = () => {
                 </tr>
                 {stats.map((stat) => {
                   return (
-                    <tr className="whitespace-nowrap" data-cy="stat-item">
-                      <td className="border p-2">{stat.date.split("T")[0]}</td>
+                    <tr data-cy="stat-item">
+                      <td className="border p-2 ">{stat.date.split("T")[0]}</td>
                       <td className="border p-2">{stat.day}</td>
                       <td className="border p-2">{stat.route_number}</td>
                       {hours.map((hour) => {

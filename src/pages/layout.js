@@ -160,6 +160,10 @@ const Layout = () => {
               />
               <Route path="schedules/list" element={<Schedules />} />
               <Route path="schedules/new" element={<AddEditSchedule />} />
+              <Route
+                path="schedules/:id/edit"
+                element={<AddEditSchedule edit="true" />}
+              />
               <Route path="bus_stats/list" element={<BusStats />} />
               <Route path="bus_stats/new" element={<AddEditRouteStat />} />
               <Route

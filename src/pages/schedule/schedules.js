@@ -4,13 +4,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
-import { getSchedules, resetGetSchedules } from "../../store/schedule/actions";
+import {
+  deleteSchedule,
+  getSchedules,
+  resetDeleteSchedule,
+  resetGetSchedules,
+} from "../../store/schedule/actions";
 import { toLongDate } from "../../utils/date_format";
 import { convertTo12 } from "../../utils/time";
 import defaultImage from "../../resources/images/default.jpg";
 import { baseURL } from "../../utils/axios";
 import GenerateSchedule from "./generate_schedule";
 import Spinner from "../../components/spinner";
+import Confirmation from "../../components/confirmation";
 const Schedules = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
@@ -19,6 +25,8 @@ const Schedules = () => {
   const params = useParams();
   const dispatch = useDispatch();
   const [generateScheduleMenu, setGenerateScheduleMenu] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const [schedule, setSchedule] = useState(null);
 
   const {
     loading: schedulesLoading,
@@ -44,8 +52,57 @@ const Schedules = () => {
     setGenerateScheduleMenu(false);
   };
 
+  const {
+    loading: deleteScheduleLoading,
+    success: deleteScheduleSuccess,
+    error: deleteScheduleError,
+  } = useSelector((state) => state.deleteSchedule);
   return (
     <div>
+      <Modal open={confirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (schedule) {
+                setConfirmation(false);
+                dispatch(deleteSchedule(schedule.id));
+                setSchedule(null);
+              }
+            }}
+            handleCancel={() => {
+              setConfirmation(false);
+              setSchedule(null);
+            }}
+          />
+        </div>
+      </Modal>
+
+      {/* delete schedule */}
+      <Modal open={deleteScheduleLoading}>
+        <div
+          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
+          style={{ zIndex: 1000 }}
+        >
+          <Spinner color="white" />
+        </div>
+      </Modal>
+
+      <Modal open={deleteScheduleError}>
+        <Dialog
+          severity="failure"
+          message="deleting schedules failed"
+          close={() => dispatch(resetDeleteSchedule())}
+        />
+      </Modal>
+      <Modal open={deleteScheduleSuccess}>
+        <Dialog
+          severity="success"
+          message="schedule successfully deleted"
+          close={() => dispatch(resetDeleteSchedule())}
+        />
+      </Modal>
+
+      {/* fetch schedules */}
       <Modal open={schedulesError}>
         <Dialog
           severity="failure"
@@ -198,7 +255,9 @@ const Schedules = () => {
                           <button
                             data-cy="edit"
                             className="flex space-x-2"
-                            onClick={() => {}}
+                            onClick={() => {
+                              navigate(`/admin/schedules/${schedule.id}/edit`)
+                            }}
                           >
                             <span>
                               <svg
@@ -221,7 +280,10 @@ const Schedules = () => {
                           <button
                             data-cy="delete-timeframe"
                             className="text-red-600 flex space-x-2"
-                            onClick={() => {}}
+                            onClick={() => {
+                              setConfirmation(true);
+                              setSchedule(schedule);
+                            }}
                           >
                             <span>
                               <svg

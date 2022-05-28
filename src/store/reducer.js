@@ -15,8 +15,6 @@ import {
   ticketerListReducer,
 } from "./ticketer/reducer";
 
-
-
 import {
   createRouteReducer,
   deleteRouteReducer,
@@ -38,6 +36,10 @@ import {
 import {
   generateScheduleReducer,
   getSchedulesReducer,
+  createScheduleReducer,
+  deleteScheduleReducer,
+  singleScheduleReducer,
+  updateScheduleReducer,
 } from "./schedule/reducer";
 import { fetchStopsReducer } from "./stop/reducer";
 
@@ -54,7 +56,7 @@ import {
   fetchBusesReducer,
   createBusReducer,
   updateBusReducer,
-  deleteBusReducer
+  deleteBusReducer,
 } from "./bus/reducer";
 export default combineReducers({
   changeEmail: changeEmailReducer,
@@ -84,6 +86,10 @@ export default combineReducers({
   uploadBusStat: uploadBusStatReducer,
   generateSchedule: generateScheduleReducer,
   getSchedules: getSchedulesReducer,
+  createSchedule: createScheduleReducer,
+  deleteSchedule: deleteScheduleReducer,
+  singleSchedule: singleScheduleReducer,
+  updateSchedule: updateScheduleReducer,
   fetchStops: fetchStopsReducer,
   login: loginReducer,
   dashboard: fetchDashboardReducer,
