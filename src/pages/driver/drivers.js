@@ -54,8 +54,20 @@ const Drivers = (props) => {
     };
   }, [page, limit, search]);
 
+
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
+
+  const [driversToBeDeleted, setDriversToBeDeleted] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  useEffect(()=>{
+    if(drivers.length > 0 && drivers.length == driversToBeDeleted.length){
+      setSelectAll(true)
+    }else{
+      setSelectAll(false)
+    }
+  },[selectAll, driversToBeDeleted])
 
   return (
     <div>
@@ -118,10 +130,48 @@ const Drivers = (props) => {
         <Empty message="empty list of drivers please add some." />
       ) : (
         <div>
+          <div className="flex justify-end my-2">
+            <button
+              onClick={(e) => {
+                console.log(driversToBeDeleted);
+              }}
+              className={`bg-red-100 p-2 rounded-full ${
+                driversToBeDeleted.length > 0 ? "" : "hidden"
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
           <table className="w-full border border-collapse bg-white">
             <thead>
               <tr className="text-left">
-                <th></th>
+                <th className="p-2">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        let _drivers = drivers.map((driver) => driver.id);
+                        setDriversToBeDeleted(_drivers);
+                      } else {
+                        setDriversToBeDeleted([]);
+                      }
+                    }}
+                  />
+                </th>
                 <th className="p-2">first name</th>
                 <th className="p-2">last name</th>
                 <th className="p-2">phone number</th>
@@ -145,6 +195,26 @@ const Drivers = (props) => {
               {drivers.map((driver) => {
                 return (
                   <tr data-cy="driver">
+                    <td className="border p-2">
+                      <input
+                        type="checkbox"
+                        checked={driversToBeDeleted.includes(driver.id)}
+                        onChange={(e) => {
+                          if (driversToBeDeleted.includes(driver.id)) {
+                            let _filtered = driversToBeDeleted.filter(
+                              (_driverId) => _driverId != driver.id
+                            );
+                            setDriversToBeDeleted(_filtered);
+                          } else {
+                            setDriversToBeDeleted([
+                              ...driversToBeDeleted,
+                              driver.id,
+                            ]);
+                          }
+                        }}
+                      />
+                    </td>
+
                     <td className="border p-2">
                       <div className="flex justify-center">
                         <img
