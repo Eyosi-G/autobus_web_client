@@ -25,6 +25,9 @@ import Modal from "../../components/modal";
 import Dialog from "../../components/dialog";
 import { useParams } from "react-router-dom";
 import { resetFetchBusStats } from "../../store/bus_stat/actions";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
+import Loading from "../../components/loading";
 const hours = [];
 for (let i = 1; i < 25; i++) {
   hours.push(i);
@@ -60,7 +63,7 @@ const AddEditSchedule = ({ edit = false }) => {
         dispatch(updateSchedule(id, values));
       } else {
         dispatch(createSchedule(values));
-        action.resetForm();
+        // action.resetForm();
       }
     },
   });
@@ -120,48 +123,37 @@ const AddEditSchedule = ({ edit = false }) => {
 
   return (
     <div>
-      {/* update schedule */}
-      <Modal open={updateScheduleSuccess}>
-        <Dialog
-          severity="success"
-          message="schedule updated successfully !"
-          close={() => dispatch(resetUpdateSchedule())}
-        />
-      </Modal>
-      <Modal open={updateScheduleError}>
-        <Dialog
-          severity="failure"
-          message="updating schedule failed !"
-          close={() => dispatch(resetUpdateSchedule())}
-        />
-      </Modal>
-      {/* create schedule */}
-      <Modal open={createScheduleSuccess}>
-        <Dialog
-          severity="success"
-          message="schedule created successfully !"
-          close={() => dispatch(resetCreateSchedule())}
-        />
-      </Modal>
-      <Modal open={createScheduleError}>
-        <Dialog
-          severity="failure"
-          message="creating schedule failed !"
-          close={() => dispatch(resetCreateSchedule())}
-        />
-      </Modal>
-      <Modal open={createScheduleLoading || updateScheduleLoading}>
-        <div
-          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
-          style={{ zIndex: 1000 }}
-        >
-          <Spinner color="white" />
-        </div>
-      </Modal>
+      <Loading open={createScheduleLoading || updateScheduleLoading} />
       <div className="flex justify-end my-2">
         <BackButton />
       </div>
       <div className="m-4 mb-2 capitalize font-semibold ">
+        {/* create schedule */}
+        {createScheduleSuccess && (
+          <SuccessMessage
+            onClickHandler={() => dispatch(resetCreateSchedule())}
+            message="schedule created succesfully"
+          />
+        )}
+        {createScheduleError && (
+          <ErrorMessage
+            message={createScheduleError}
+            onClickHandler={() => dispatch(resetCreateSchedule())}
+          />
+        )}
+        {/* update schedule */}
+        {updateScheduleSuccess && (
+          <SuccessMessage
+            message="schedules updated"
+            onClickHandler={() => dispatch(resetUpdateSchedule())}
+          />
+        )}
+        {updateScheduleError && (
+          <ErrorMessage
+            message={updateScheduleError}
+            onClickHandler={() => dispatch(resetUpdateSchedule())}
+          />
+        )}
         <div className="flex items-center space-x-2">
           <span>
             {edit ? (

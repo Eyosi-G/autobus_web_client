@@ -7,8 +7,16 @@ import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
 
 import Confirmation from "../../components/confirmation";
-import { deleteRoute, fetchRoutes, resetDeleteRoute } from "../../store/route/actions";
+import {
+  deleteRoute,
+  fetchRoutes,
+  resetCreateRoute,
+  resetDeleteRoute,
+} from "../../store/route/actions";
 import Empty from "../../components/empty";
+import Loading from "../../components/loading";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
 
 const Routes = () => {
   const dispatch = useDispatch();
@@ -40,6 +48,12 @@ const Routes = () => {
     dispatch(fetchRoutes(page, limit));
   }, [page, limit]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetDeleteRoute());
+    };
+  }, []);
+
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentRoute, setCurrentRoute] = useState(null);
 
@@ -62,29 +76,21 @@ const Routes = () => {
         </div>
       </Modal>
 
-      <Modal open={deleteRouteLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
-          </div>
-        </div>
-      </Modal>
-      <Modal open={deleteRouteError}>
-        <Dialog
-          severity="failure"
-          message="failed to delete route !"
-          close={() => dispatch(resetDeleteRoute())}
+      <Loading open={deleteRouteLoading} />
+      {deleteRouteSuccess && (
+        <SuccessMessage
+          message="route deleted successfully "
+          onClickHandler={() => dispatch(resetDeleteRoute())}
         />
-      </Modal>
-      <Modal open={deleteRouteSuccess}>
-        <Dialog
-          severity="success"
-          message="route successfully deleted !"
-          close={() => dispatch(resetDeleteRoute())}
+      )}
+      {deleteRouteError && (
+        <ErrorMessage
+          message={deleteRouteError}
+          onClickHandler={() => dispatch(resetDeleteRoute())}
         />
-      </Modal>
+      )}
 
-      <div className="flex items-center justify-between mb-3 ">
+      <div className="flex items-center justify-between my-3 ">
         <p className="font-semibold capitalize">Routes</p>
         <button
           onClick={() => {
@@ -113,7 +119,7 @@ const Routes = () => {
       ) : (
         <div>
           <table className="w-full border border-collapse bg-white">
-            <thead className="capitalize">
+            <thead className="capitalize bg-gray-700 text-white">
               <tr className="text-left">
                 <th className="p-2">route number</th>
                 <th></th>

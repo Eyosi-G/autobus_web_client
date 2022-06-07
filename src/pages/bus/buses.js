@@ -4,11 +4,15 @@ import { useNavigate } from "react-router-dom";
 import CancelButton from "../../components/cancel_button";
 import Dialog from "../../components/dialog";
 import Empty from "../../components/empty";
+import Loading from "../../components/loading";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import PreviewBusUpload from "../../components/preview_bus_upload";
 import SaveButton from "../../components/save_button";
 import Spinner from "../../components/spinner";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
+
 import {
   deleteBus,
   deleteBusReset,
@@ -82,49 +86,42 @@ const Buses = () => {
 
   return (
     <div>
+      <Loading open={createBulkBusesLoading || fetchBusesLoading} />
       {/* delete bus */}
-      <Modal open={deleteBusError}>
-        <Dialog
-          close={() => dispatch(deleteBusReset())}
-          message="deleting bus failed"
-          severity="failure"
+      {deleteBusError && (
+        <ErrorMessage
+          message={deleteBusError}
+          onClickHandler={() => dispatch(deleteBusReset())}
         />
-      </Modal>
-      <Modal open={deleteBusSuccess}>
-        <Dialog
-          close={() => dispatch(deleteBusReset())}
+      )}
+      {deleteBusSuccess && (
+        <SuccessMessage
           message="bus successfully deleted"
-          severity="success"
+          onClickHandler={() => dispatch(deleteBusReset())}
         />
-      </Modal>
+      )}
+
       {/* fetch buses */}
-      <Modal open={fetchBusesFailure}>
-        <Dialog
-          close={() => dispatch(fetchBusesReset())}
-          message="couldn't retrieve buses"
-          severity="failure"
+      {fetchBusesFailure && (
+        <ErrorMessage
+          message={fetchBusesFailure}
+          onClickHandler={() => dispatch(fetchBusesReset())}
         />
-      </Modal>
+      )}
       {/* bulk upload buses */}
-      <Modal open={createBulkBusesLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center">
-          <Spinner />
-        </div>
-      </Modal>
-      <Modal open={createBulkBusesFailure}>
-        <Dialog
-          close={() => dispatch(uploadBusReset())}
-          message="uploading bus failed"
-          severity="failure"
+      {createBulkBusesFailure && (
+        <ErrorMessage
+          message={createBulkBusesFailure}
+          onClickHandler={() => dispatch(uploadBusReset())}
         />
-      </Modal>
-      <Modal open={createBulkBusesSuccess}>
-        <Dialog
-          close={() => dispatch(uploadBusReset())}
-          message="buses uploaded successfully !"
-          severity="success"
+      )}
+      {createBulkBusesSuccess && (
+        <SuccessMessage
+          message="buses uploaded successfully"
+          onClickHandler={() => dispatch(uploadBusReset())}
         />
-      </Modal>
+      )}
+
       <Modal open={showUploadPreview}>
         <PreviewBusUpload
           previewData={previewData}
@@ -201,17 +198,18 @@ const Buses = () => {
           />
         </div>
       </div>
-      {fetchBusesLoading ? (
-        <Spinner />
-      ) : buses.length == 0 ? (
-        <Empty message="no buses found" />
-      ) : (
+
+      {buses.length == 0 && !fetchBusesLoading && (
+        <Empty message="empty buses" />
+      )}
+      {buses.length > 0 && (
         <div>
           <table className="w-full border border-collapse bg-white">
-            <thead>
+            <thead className="bg-gray-700 text-white capitalize">
               <tr className="font-semibold capitalize">
                 <td className="p-2">side number</td>
                 <td className="p-2">capacity</td>
+                <td className="p-2"></td>
               </tr>
             </thead>
             <tbody>

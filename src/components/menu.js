@@ -8,7 +8,7 @@ const Menu = ({
 }) => {
   return (
     <div
-      className={`border-l-4  ${
+      className={`border-l-4 hover:cursor-pointer  ${
         selected ? "border-green-300" : "border-gray-800"
       }`}
     >

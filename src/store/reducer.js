@@ -40,6 +40,7 @@ import {
   deleteScheduleReducer,
   singleScheduleReducer,
   updateScheduleReducer,
+  deleteBulkScheduleReducer
 } from "./schedule/reducer";
 import { fetchStopsReducer } from "./stop/reducer";
 
@@ -90,6 +91,7 @@ export default combineReducers({
   deleteSchedule: deleteScheduleReducer,
   singleSchedule: singleScheduleReducer,
   updateSchedule: updateScheduleReducer,
+  scheduleBulkDelete: deleteBulkScheduleReducer,
   fetchStops: fetchStopsReducer,
   login: loginReducer,
   dashboard: fetchDashboardReducer,

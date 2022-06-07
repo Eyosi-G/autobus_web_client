@@ -7,7 +7,17 @@ export const createTicketer = (data) => async (dispatch) => {
     const ticketer = await axios().post("/ticketers", data);
     dispatch({ type: types.CREATE_TICKETER_SUCCESS, payload: ticketer });
   } catch (e) {
-    dispatch({ type: types.CREATE_TICKETER_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.CREATE_TICKETER_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.CREATE_TICKETER_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -24,10 +34,22 @@ export const editTicketer = (id, data) => async (dispatch) => {
 export const fetchTicketers = (page, limit, name) => async (dispatch) => {
   try {
     dispatch({ type: types.FETCH_TICKETERS_REQUEST });
-    const response = await axios().get(`/ticketers?page=${page}&limit=${limit}&name=${name}`);
+    const response = await axios().get(
+      `/ticketers?page=${page}&limit=${limit}&name=${name}`
+    );
     dispatch({ type: types.FETCH_TICKETERS_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.FETCH_TICKETERS_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_TICKETERS_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.FETCH_TICKETERS_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -40,7 +62,17 @@ export const fetchSingleTicketer = (id) => async (dispatch) => {
       payload: response.data,
     });
   } catch (e) {
-    dispatch({ type: types.FETCH_SINGLE_TICKETER_RESET, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_SINGLE_TICKETER_RESET,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.FETCH_SINGLE_TICKETER_RESET,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -57,7 +89,14 @@ export const deleteTicketer = (id) => async (dispatch) => {
       payload: response.data,
     });
   } catch (e) {
-    dispatch({ type: types.DELETE_TICKETER_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.DELETE_TICKETER_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({ type: types.DELETE_TICKETER_FAILURE, payload: e.message });
+    }
   }
 };
 

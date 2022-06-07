@@ -9,10 +9,18 @@ export const uploadBus = (data) => async (dispatch) => {
     await axios().post("/buses/upload", data);
     dispatch({ type: types.UPLOAD_BUS_SUCCESS });
   } catch (e) {
-    dispatch({
-      type: types.UPLOAD_BUS_FAILURE,
-      payload: e.message,
-    });
+    if(e.response && e.response.data){
+      dispatch({
+        type: types.UPLOAD_BUS_FAILURE,
+        payload: e.response.data.message,
+      });
+    }else{
+      dispatch({
+        type: types.UPLOAD_BUS_FAILURE,
+        payload: e.message,
+      });
+    }
+
   }
 };
 
@@ -24,10 +32,17 @@ export const fetchBuses = (page, limit) => async (dispatch) => {
     const response = await axios().get(`/buses?page=${page}&limit=${limit}`);
     dispatch({ type: types.FETCH_BUSES_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({
-      type: types.FETCH_BUSES_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_BUSES_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.FETCH_BUSES_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -40,10 +55,17 @@ export const createBus = (data) => async (dispatch) => {
     dispatch({ type: types.CREATE_BUS_SUCCESS });
     dispatch(fetchBuses(0, 5));
   } catch (e) {
-    dispatch({
-      type: types.CREATE_BUS_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.CREATE_BUS_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.CREATE_BUS_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -56,10 +78,17 @@ export const updateBus = (id, data) => async (dispatch) => {
     dispatch({ type: types.UPDATE_BUS_SUCCESS });
     dispatch(fetchBuses(0, 5));
   } catch (e) {
-    dispatch({
-      type: types.UPDATE_BUS_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.UPDATE_BUS_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.UPDATE_BUS_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -69,10 +98,18 @@ export const deleteBus = (id) => async (dispatch) => {
     dispatch({ type: types.DELETE_BUS_SUCCESS, payload: id });
     dispatch(fetchBuses(0, 5));
   } catch (e) {
-    dispatch({
-      type: types.DELETE_BUS_FAILURE,
-      payload: e.message,
-    });
+    if(e.response && e.response.data){
+      dispatch({
+        type: types.DELETE_BUS_FAILURE,
+        payload: e.response.data.message,
+      });
+    }else{
+      dispatch({
+        type: types.DELETE_BUS_FAILURE,
+        payload: e.message,
+      });
+    }
+
   }
 };
 

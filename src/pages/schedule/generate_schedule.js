@@ -18,28 +18,10 @@ const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const GenerateSchedule = ({ closeGenerateMenu }) => {
   const [startWorkingHour, setStartWorkingHour] = useState(1);
   const [endWorkingHour, setEndWorkingHour] = useState(2);
-  const [workingDays, setWorkingDays] = useState(() => hours.map((_) => false));
-  const [breaks, setBreaks] = useState([]);
+  const [workingDays, setWorkingDays] = useState(() => hours.map((_) => true));
 
   const dispatch = useDispatch();
 
-  const removeBreak = (index) => {
-    let _breaks = [...breaks];
-    _breaks.splice(index, 1);
-    setBreaks(_breaks);
-  };
-
-  const onStartHourChange = (index, val) => {
-    let _breaks = [...breaks];
-    _breaks[index].startTime = val;
-    setBreaks(_breaks);
-  };
-
-  const onEndHourChange = (index, val) => {
-    let _breaks = [...breaks];
-    _breaks[index].endTime = val;
-    setBreaks(_breaks);
-  };
   const onSubmitHandler = (e) => {
     e.preventDefault();
     let _workingDays = [];
@@ -49,9 +31,7 @@ const GenerateSchedule = ({ closeGenerateMenu }) => {
       }
     });
 
-    dispatch(
-      generateSchedule(_workingDays, startWorkingHour, endWorkingHour, breaks)
-    );
+    dispatch(generateSchedule(_workingDays, startWorkingHour, endWorkingHour));
   };
 
   const {
@@ -67,7 +47,7 @@ const GenerateSchedule = ({ closeGenerateMenu }) => {
   }, []);
   return (
     <div>
-      <div className="flex justify-end my-2">
+      <div className="flex justify-end pb-2 mb-2 border-b ">
         <button onClick={() => closeGenerateMenu()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -86,9 +66,9 @@ const GenerateSchedule = ({ closeGenerateMenu }) => {
         </button>
       </div>
       <form onSubmit={onSubmitHandler}>
-        <div className="font-semibold capitalize">working hours</div>
+        <div className="font-semibold capitalize mt-3">working hours</div>
         <div className="flex space-x-2 items-center my-2">
-          <div className="flex flex-col ml-2">
+          <div className="flex flex-col ml-4">
             <div>starts at</div>
             <div className="flex ">
               <select
@@ -122,7 +102,7 @@ const GenerateSchedule = ({ closeGenerateMenu }) => {
           </div>
         </div>
         <div className="font-semibold text-black capitalize">working days</div>
-        <div className="flex space-x-4 items-center ml-2 mt-2">
+        <div className="flex space-x-4 items-center ml-4 mt-2">
           {days.map((day, index) => {
             return (
               <div className="flex items-center space-x-1 text-gray-600">
@@ -140,89 +120,7 @@ const GenerateSchedule = ({ closeGenerateMenu }) => {
             );
           })}
         </div>
-        <div className="font-semibold text-black capitalize mt-2">breaks</div>
-        <div className="flex justify-end">
-          <button
-            onClick={() =>
-              setBreaks([
-                ...breaks,
-                {
-                  startTime: 1,
-                  endTime: 2,
-                },
-              ])
-            }
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-        {breaks.map((val, index) => {
-          return (
-            <div className="flex space-x-2 items-center my-2">
-              <div className="flex flex-col ml-2">
-                <div>starts at</div>
-                <div className="flex ">
-                  <select
-                    className="outline-none border p-1  w-full rounded-md text-gray-600 bg-gray-50"
-                    onChange={(e) => {
-                      onStartHourChange(index, e.target.value);
-                    }}
-                    value={breaks[index].startTime}
-                  >
-                    {hours.map((hour) => (
-                      <option value={hour}>{convertTo12(hour)}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="w-5"></div>
-              <div className="flex flex-col ml-2 ">
-                <div>ends at</div>
-                <div className="flex">
-                  <select
-                    className="outline-none  border p-1  w-full rounded-md text-gray-600 bg-gray-50"
-                    value={breaks[index].endTime}
-                    onChange={(e) => {
-                      onEndHourChange(index, e.target.value);
-                    }}
-                  >
-                    {hours.map((hour) => (
-                      <option value={hour}>{convertTo12(hour)}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="flex flex-grow justify-end">
-                <div>&nbsp;</div>
-                <button onClick={() => removeBreak(index)}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          );
-        })}
+
         <div className="flex space-x-3 justify-end mt-5">
           <CancelButton
             onCancelHandler={() => {

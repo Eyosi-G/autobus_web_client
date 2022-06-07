@@ -41,7 +41,7 @@ const Nav = ({ menuOpen }) => {
       } flex-col min-w-max col-span-1 bg-gray-800  `}
       style={{ zIndex: 150 }}
     >
-      <div className="h-36 p-2 flex justify-center items-center">
+      <div className="h-36 p-2 py-2 mt-4 flex justify-center items-center">
         <img src={lion} className="h-full  object-cover text-white" />
       </div>
       <div className="space-y-3 flex-grow mt-5 text-white">

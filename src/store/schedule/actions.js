@@ -1,14 +1,12 @@
 import axios from "../../utils/axios";
 import * as types from "./types";
 export const generateSchedule =
-  (workingDays, startWorkingTime, endWorkingTime, breaks) =>
-  async (dispatch) => {
+  (workingDays, startWorkingTime, endWorkingTime) => async (dispatch) => {
     try {
       dispatch({ type: types.GENERATE_SCHEDULE_REQUEST });
       await axios().post(`/schedules/generate`, {
         startWorkingTime,
         endWorkingTime,
-        breaks,
         workingDays,
       });
       dispatch({
@@ -16,10 +14,17 @@ export const generateSchedule =
       });
       dispatch(getSchedules(0, 5));
     } catch (e) {
-      dispatch({
-        type: types.GENERATE_SCHEDULE_FAILURE,
-        payload: e.message,
-      });
+      if (e.response && e.response.data) {
+        dispatch({
+          type: types.GENERATE_SCHEDULE_FAILURE,
+          payload: e.response.data.message,
+        });
+      } else {
+        dispatch({
+          type: types.GENERATE_SCHEDULE_FAILURE,
+          payload: e.message,
+        });
+      }
     }
   };
 
@@ -36,10 +41,17 @@ export const getSchedules =
         payload: schedule.data,
       });
     } catch (e) {
-      dispatch({
-        type: types.GET_SCHEDULE_FAILURE,
-        payload: e.message,
-      });
+      if (e.response && e.response.data) {
+        dispatch({
+          type: types.GET_SCHEDULE_FAILURE,
+          payload: e.response.data.message,
+        });
+      } else {
+        dispatch({
+          type: types.GET_SCHEDULE_FAILURE,
+          payload: e.message,
+        });
+      }
     }
   };
 
@@ -51,10 +63,17 @@ export const createSchedule = (data) => async (dispatch) => {
       type: types.CREATE_SCHEDULE_SUCCESS,
     });
   } catch (e) {
-    dispatch({
-      type: types.CREATE_SCHEDULE_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.CREATE_SCHEDULE_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.CREATE_SCHEDULE_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -67,10 +86,17 @@ export const deleteSchedule = (id) => async (dispatch) => {
     });
     dispatch(getSchedules(0, 5));
   } catch (e) {
-    dispatch({
-      type: types.DELETE_SCHEDULE_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.DELETE_SCHEDULE_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.DELETE_SCHEDULE_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -83,10 +109,17 @@ export const fetchSingleSchedule = (id) => async (dispatch) => {
       payload: response.data,
     });
   } catch (e) {
-    dispatch({
-      type: types.FETCH_SINGLE_SCHEDULE_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_SINGLE_SCHEDULE_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.FETCH_SINGLE_SCHEDULE_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -98,12 +131,47 @@ export const updateSchedule = (id, data) => async (dispatch) => {
       type: types.UPDATE_SCHEDULE_SUCCESS,
     });
   } catch (e) {
-    dispatch({
-      type: types.UPDATE_SCHEDULE_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.UPDATE_SCHEDULE_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.UPDATE_SCHEDULE_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
+
+export const deleteBulkSchedule = (schedules) => async (dispatch) => {
+  try {
+    dispatch({ type: types.DELETE_BULK_SCHEDULE_REQUEST });
+    console.log(schedules)
+    await axios().delete(`/schedules/bulk?ids=${schedules}`);
+    dispatch({
+      type: types.DELETE_BULK_SCHEDULE_SUCCESS,
+    });
+    dispatch(getSchedules(0, 5));
+  } catch (e) {
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.DELETE_BULK_SCHEDULE_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.DELETE_BULK_SCHEDULE_FAILURE,
+        payload: e.message,
+      });
+    }
+  }
+};
+
+export const resetDeleteBulkSchedule = () => ({
+  type: types.DELETE_BULK_SCHEDULE_RESET,
+});
 
 export const resetGenerateSchedule = () => ({
   type: types.GENERATE_SCHEDULE_RESET,

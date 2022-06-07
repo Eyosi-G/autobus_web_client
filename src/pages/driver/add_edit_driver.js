@@ -3,10 +3,7 @@ import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import { useFormik } from "formik";
 import Dialog from "../../components/dialog";
-import {
-  createDriver,
-  resetCreateDriver,
-} from "../../store/driver/actions";
+import { createDriver, resetCreateDriver } from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../components/modal";
 import Spinner from "../../components/spinner";
@@ -14,6 +11,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../../components/back_button";
 import PasswordVisiblity from "../../components/password_visiblity";
 import * as Yup from "yup";
+import { getDate } from "../../utils/date_format";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
+import Loading from "../../components/loading";
 
 const AddEditDriver = () => {
   const dispatch = useDispatch();
@@ -29,8 +30,10 @@ const AddEditDriver = () => {
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [repeatPasswordVisibility, setRepeatPasswordVisibility] =
+    useState(false);
   const initalValues = {
-    birth_date: new Date().toISOString().split("T")[0],
+    birth_date: getDate(-365 * 18),
     first_name: "",
     last_name: "",
     email: "",
@@ -38,6 +41,7 @@ const AddEditDriver = () => {
     gender: "male",
     user_name: "",
     password: "",
+    repeat_password: "",
   };
 
   const formik = useFormik({
@@ -59,21 +63,30 @@ const AddEditDriver = () => {
         .min(4, "username should be mininum of 4")
         .required("username is required"),
       password: Yup.string()
-        .min(8, "password is too short")
-        .required("password is required"),
+        .required("Please Enter your password")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        ),
+      repeat_password: Yup.string()
+        .required("Please Enter your password")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        )
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
     }),
     onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      if(imageFile){
+      if (imageFile) {
         formData.append("image", imageFile);
       }
       dispatch(createDriver(formData));
-      action.resetForm();
-      setImage(null);
-  
+      // action.resetForm();
+      // setImage(null);
     },
   });
 
@@ -88,18 +101,6 @@ const AddEditDriver = () => {
     setImageFile(e.target.files[0]);
   };
 
-  const successMessage = () => {
-    if (createDriverSuccess) return "driver created successfully !";
-  };
-
-  const errorMessage = () => {
-    if (createDriverError) return "creating driver failed !";
-  };
-
-  const closeDialog = () => {
-    if (createDriverSuccess || createDriverError)
-      return dispatch(resetCreateDriver());
-  };
 
   useEffect(() => {
     return () => {
@@ -109,31 +110,6 @@ const AddEditDriver = () => {
 
   return (
     <>
-      <div className="m-4">
-        <Modal open={createDriverLoading}>
-          <div
-            className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
-            style={{ zIndex: 1000 }}
-          >
-            <Spinner color="white" />
-          </div>
-        </Modal>
-        <Modal open={createDriverError}>
-          <Dialog
-            severity="failure"
-            message={errorMessage()}
-            close={closeDialog}
-          />
-        </Modal>
-        <Modal open={createDriverSuccess}>
-          <Dialog
-            severity="success"
-            message={successMessage()}
-            close={closeDialog}
-          />
-        </Modal>
-      </div>
-
       <div className="m-4 flex justify-end">
         <BackButton />
       </div>
@@ -159,6 +135,24 @@ const AddEditDriver = () => {
           </div>
         </div>
         <div className="m-4 mt-0 space-y-2 bg-white p-3 font-normal rounded-md capitalize">
+          <Loading open={createDriverLoading} />
+          {createDriverError && (
+            <ErrorMessage
+              message={createDriverError}
+              onClickHandler={() => {
+                dispatch(resetCreateDriver());
+              }}
+            />
+          )}
+          {createDriverSuccess && (
+            <SuccessMessage
+              message="driver created successfully"
+              onClickHandler={() => {
+                dispatch(resetCreateDriver());
+              }}
+            />
+          )}
+
           <div className="flex flex-col mb-2 space-y-1">
             <label>profile photo</label>
             <div
@@ -198,7 +192,11 @@ const AddEditDriver = () => {
                 </svg>
               )}
               {image && (
-                <img src={image} className="h-full w-full object-cover" data-cy="image-error"/>
+                <img
+                  src={image}
+                  className="h-full w-full object-cover"
+                  data-cy="image-error"
+                />
               )}
             </div>
 
@@ -211,11 +209,12 @@ const AddEditDriver = () => {
               accept=".jpg,.png"
             />
           </div>
-
           <div className="grid grid-cols-2 gap-x-2 gap-y-2">
             <div>
               <div className="flex flex-col">
-                <label>first name *</label>
+                <label>
+                  first name <span className="text-red-500">*</span>
+                </label>
                 <input
                   data-cy="first-name"
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
@@ -228,14 +227,19 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.first_name && formik.errors.first_name && (
-                <div className="text-red-500 text-sm lowercase" data-cy="first-name-error">
+                <div
+                  className="text-red-500 text-sm lowercase"
+                  data-cy="first-name-error"
+                >
                   {formik.errors.first_name}
                 </div>
               )}
             </div>
             <div>
               <div className="flex flex-col">
-                <label>last name *</label>
+                <label>
+                  last name <span className="text-red-500">*</span>
+                </label>
                 <input
                   className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
                   type="text"
@@ -248,7 +252,10 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.last_name && formik.errors.last_name && (
-                <div className="text-red-500 text-sm lowercase" data-cy="last-name-error" >
+                <div
+                  className="text-red-500 text-sm lowercase"
+                  data-cy="last-name-error"
+                >
                   {formik.errors.last_name}
                 </div>
               )}
@@ -268,18 +275,21 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="text-red-500 text-sm lowercase" data-cy="email-error">
+                <div
+                  className="text-red-500 text-sm lowercase"
+                  data-cy="email-error"
+                >
                   {formik.errors.email}
                 </div>
               )}
             </div>
             <div>
               <div className="flex flex-col">
-                <label>phonenumber</label>
+                <label>phone number</label>
                 <input
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="number"
-                  placeholder="phonenumber"
+                  placeholder="phone number"
                   name="phone_number"
                   data-cy="phone-number"
                   onChange={formik.handleChange}
@@ -287,24 +297,32 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.phone_number && formik.errors.phone_number && (
-                <div className="text-red-500 text-sm lowercase" data-cy="phonenumber-error">
+                <div
+                  className="text-red-500 text-sm lowercase"
+                  data-cy="phonenumber-error"
+                >
                   {formik.errors.phone_number}
                 </div>
               )}
             </div>
             <div className="flex flex-col">
-              <label>Birth Date *</label>
+              <label>
+                Birth Date <span className="text-red-500">*</span>
+              </label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="date"
                 name="birth_date"
                 data-cy="birth_date"
                 onChange={formik.handleChange}
+                max={getDate(-365 * 18)}
                 value={formik.values.birth_date}
               />
             </div>
             <div className="flex flex-col ">
-              <label>gender *</label>
+              <label>
+                gender <span className="text-red-500">*</span>
+              </label>
               <div className="flex space-x-2 items-center">
                 <div className="flex items-center space-x-2">
                   <input
@@ -332,7 +350,9 @@ const AddEditDriver = () => {
             </div>
             <div>
               <div className="flex flex-col">
-                <label>Username *</label>
+                <label>
+                  Username <span className="text-red-500">*</span>
+                </label>
                 <input
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="text"
@@ -345,37 +365,78 @@ const AddEditDriver = () => {
                 />
               </div>
               {formik.touched.user_name && formik.errors.user_name && (
-                <div className="text-red-500 text-sm lowercase" data-cy="username-error">
+                <div
+                  className="text-red-500 text-sm lowercase"
+                  data-cy="username-error"
+                >
                   {formik.errors.user_name}
                 </div>
               )}
             </div>
-            <div>
-              <div className="flex flex-col">
-                <label>Password *</label>
-                <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
-                  <PasswordVisiblity
-                    passwordVisiblity={passwordVisibility}
-                    setPasswordVisibility={setPasswordVisibility}
-                  />
-                  <input
-                    className="bg-gray-50 w-full outline-none"
-                    type={passwordVisibility ? "text" : "password"}
-                    name="password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                    data-cy="password"
-                  />
+            <div className="flex space-x-2">
+              <div>
+                <div className="flex flex-col">
+                  <label>
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
+                    <PasswordVisiblity
+                      passwordVisiblity={passwordVisibility}
+                      setPasswordVisibility={setPasswordVisibility}
+                    />
+                    <input
+                      className="bg-gray-50 w-full outline-none"
+                      type={passwordVisibility ? "text" : "password"}
+                      name="password"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.password}
+                      data-cy="password"
+                    />
+                  </div>
                 </div>
+                {formik.touched.password && formik.errors.password && (
+                  <div
+                    className="text-red-500 text-sm lowercase"
+                    data-cy="password-error"
+                  >
+                    {formik.errors.password}
+                  </div>
+                )}
               </div>
-              {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm lowercase" data-cy="password-error">
-                  {formik.errors.password}
+              <div>
+                <div className="flex flex-col">
+                  <label>
+                    Confirm Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
+                    <PasswordVisiblity
+                      passwordVisiblity={repeatPasswordVisibility}
+                      setPasswordVisibility={setRepeatPasswordVisibility}
+                    />
+                    <input
+                      className="bg-gray-50 w-full outline-none"
+                      type={passwordVisibility ? "text" : "password"}
+                      name="repeat_password"
+                      onChange={formik.handleChange}
+                      value={formik.values.repeat_password}
+                      onBlur={formik.handleBlur}
+                      data-cy="repeat_password"
+                    />
+                  </div>
                 </div>
-              )}
+                {formik.touched.repeat_password &&
+                  formik.errors.repeat_password && (
+                    <div
+                      className="text-red-500 text-sm lowercase"
+                      data-cy="password-error"
+                    >
+                      {formik.errors.repeat_password}
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
-
           <div className="flex space-x-3 justify-end mt-5">
             <CancelButton
               onCancelHandler={() => navigate("/admin/drivers/list")}

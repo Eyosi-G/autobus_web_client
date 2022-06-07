@@ -15,6 +15,7 @@ const createInstance = () => {
         "Content-type": "application/json",
         authorization: JSON.parse(data).token,
       },
+      timeout: 5000
     });
   }
   return axios.create({
@@ -22,6 +23,7 @@ const createInstance = () => {
     headers: {
       "Content-type": "application/json",
     },
+    timeout: 5000
   });
 };
 

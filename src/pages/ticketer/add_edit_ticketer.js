@@ -16,6 +16,10 @@ import Spinner from "../../components/spinner";
 import { useParams } from "react-router-dom";
 import BackButton from "../../components/back_button";
 import PasswordVisiblity from "../../components/password_visiblity";
+import { getDate } from "../../utils/date_format";
+import Loading from "../../components/loading";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
 
 const AddEditTicketer = () => {
   const dispatch = useDispatch();
@@ -29,6 +33,8 @@ const AddEditTicketer = () => {
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
+    useState(false);
 
   const initalValues = {
     user_name: "",
@@ -37,8 +43,9 @@ const AddEditTicketer = () => {
     email: "",
     phone_number: "",
     gender: "male",
-    birth_date: new Date().toISOString().split("T")[0],
+    birth_date: getDate(-365 * 18),
     password: "",
+    confirm_password: "",
   };
   const formik = useFormik({
     initialValues: initalValues,
@@ -55,23 +62,32 @@ const AddEditTicketer = () => {
         .min("4", "last name too short")
         .required("last name is required")
         .matches(/^[A-Za-z]+$/, "should only contain alphabets"),
-      user_name: Yup.string()
-        .required("username is required"),
+      user_name: Yup.string().required("username is required"),
       password: Yup.string()
-        .min(8, "password is too short")
-        .required("password is required"),
+        .required("Please Enter your password")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        ),
+      confirm_password: Yup.string()
+        .required("Please Enter your password")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+        )
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
     }),
     onSubmit: async (values, action) => {
       const formData = new FormData();
       for (let val in values) {
         formData.append(`${val}`, values[val]);
       }
-      if(imageFile){
+      if (imageFile) {
         formData.append("image", imageFile);
       }
       dispatch(createTicketer(formData));
-      action.resetForm();
-      setImage(null);
+      // action.resetForm();
+      // setImage(null);
     },
   });
 
@@ -86,17 +102,6 @@ const AddEditTicketer = () => {
     setImageFile(e.target.files[0]);
   };
 
-  const closeDialogHandler = () => {
-    if (createTicketerError || createTicketerSuccess)
-      return dispatch(resetCreateTicketer());
-  };
-  const successDialogMessage = () => {
-    if (createTicketerSuccess) return "ticketer created successfully !";
-  };
-  const errorDialogMessage = () => {
-    if (createTicketerError) return "failed to create ticketer";
-  };
-
   useEffect(() => {
     return () => {
       dispatch(resetCreateTicketer());
@@ -105,30 +110,6 @@ const AddEditTicketer = () => {
 
   return (
     <>
-      <div className="m-4">
-        <Modal open={createTicketerLoading}>
-          <div
-            className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
-            style={{ zIndex: 1000 }}
-          >
-            <Spinner color="white" />
-          </div>
-        </Modal>
-        <Modal open={createTicketerError}>
-          <Dialog
-            severity="failure"
-            message={errorDialogMessage()}
-            close={() => closeDialogHandler()}
-          />
-        </Modal>
-        <Modal open={createTicketerSuccess}>
-          <Dialog
-            severity="success"
-            message={successDialogMessage()}
-            close={() => closeDialogHandler()}
-          />
-        </Modal>
-      </div>
       <div className="m-4 flex justify-end">
         <BackButton />
       </div>
@@ -153,6 +134,19 @@ const AddEditTicketer = () => {
           </div>
         </div>
         <div className="m-4 mt-0 space-y-2 bg-white p-3 font-normal rounded-md capitalize">
+          <Loading open={createTicketerLoading} />
+          {createTicketerSuccess && (
+            <SuccessMessage
+              message="ticketer successfully created"
+              onClickHandler={() => dispatch(resetCreateTicketer())}
+            />
+          )}
+          {createTicketerError && (
+            <ErrorMessage
+              message={createTicketerError}
+              onClickHandler={() => dispatch(resetCreateTicketer())}
+            />
+          )}
           <div className="flex flex-col mb-2 space-y-1">
             <label>profile photo</label>
             <div
@@ -208,7 +202,9 @@ const AddEditTicketer = () => {
           <div className="grid grid-cols-2 gap-x-2 gap-y-2">
             <div>
               <div className="flex flex-col">
-                <label>first name *</label>
+                <label>
+                  first name <span className="text-red-500">*</span>
+                </label>
                 <input
                   data-cy="first-name"
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
@@ -221,14 +217,19 @@ const AddEditTicketer = () => {
                 />
               </div>
               {formik.touched.first_name && formik.errors.first_name && (
-                <div className="text-sm text-red-500" data-cy="first-name-error">
+                <div
+                  className="text-sm text-red-500"
+                  data-cy="first-name-error"
+                >
                   {formik.errors.first_name}
                 </div>
               )}
             </div>
             <div>
               <div className="flex flex-col">
-                <label>last name *</label>
+                <label>
+                  last name <span className="text-red-500">*</span>
+                </label>
                 <input
                   data-cy="last-name"
                   className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
@@ -268,12 +269,12 @@ const AddEditTicketer = () => {
             </div>
             <div>
               <div className="flex flex-col">
-                <label>phonenumber</label>
+                <label>phone number</label>
                 <input
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="number"
                   data-cy="phone-number"
-                  placeholder="phonenumber"
+                  placeholder="phone number"
                   name="phone_number"
                   onChange={formik.handleChange}
                   value={formik.values.phone_number}
@@ -281,26 +282,34 @@ const AddEditTicketer = () => {
                 />
               </div>
               {formik.touched.phone_number && formik.errors.phone_number && (
-                <div className="text-sm text-red-500 " data-cy="phonenumber-error">
+                <div
+                  className="text-sm text-red-500 "
+                  data-cy="phonenumber-error"
+                >
                   {formik.errors.phone_number}
                 </div>
               )}
             </div>
             <div className="flex flex-col">
-              <label>birth date *</label>
+              <label>
+                birth date <span className="text-red-500">*</span>
+              </label>
               <input
                 className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                 type="date"
                 placeholder="e.g abebe"
                 name="birth_date"
                 data-cy="birth_date"
+                max={getDate(-365 * 18)}
                 onChange={formik.handleChange}
                 value={formik.values.birth_date}
                 onBlur={formik.handleBlur}
               />
             </div>
             <div className="flex flex-col ">
-              <label>gender *</label>
+              <label>
+                gender <span className="text-red-500">*</span>
+              </label>
               <div className="flex space-x-2">
                 <div className="flex items-center space-x-2">
                   <input
@@ -329,7 +338,9 @@ const AddEditTicketer = () => {
 
             <div>
               <div className="flex flex-col">
-                <label>Username *</label>
+                <label>
+                  Username <span className="text-red-500">*</span>
+                </label>
                 <input
                   className="border w-full p-2 rounded-md text-gray-600 bg-gray-50"
                   type="text"
@@ -348,30 +359,68 @@ const AddEditTicketer = () => {
               )}
             </div>
 
-            <div>
-              <div className="flex flex-col">
-                <label>Password *</label>
-                <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
-                  <PasswordVisiblity
-                    passwordVisiblity={passwordVisibility}
-                    setPasswordVisibility={setPasswordVisibility}
-                  />
-                  <input
-                    className="bg-gray-50 w-full outline-none"
-                    type={passwordVisibility ? "text" : "password"}
-                    name="password"
-                    data-cy="password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                    onBlur={formik.handleBlur}
-                  />
+            <div className="flex space-x-2">
+              <div>
+                <div className="flex flex-col">
+                  <label>
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
+                    <PasswordVisiblity
+                      passwordVisiblity={passwordVisibility}
+                      setPasswordVisibility={setPasswordVisibility}
+                    />
+                    <input
+                      className="bg-gray-50 w-full outline-none"
+                      type={passwordVisibility ? "text" : "password"}
+                      name="password"
+                      data-cy="password"
+                      onChange={formik.handleChange}
+                      value={formik.values.password}
+                      onBlur={formik.handleBlur}
+                    />
+                  </div>
                 </div>
+                {formik.touched.password && formik.errors.password && (
+                  <div
+                    className="text-sm text-red-500 "
+                    data-cy="password-error"
+                  >
+                    {formik.errors.password}
+                  </div>
+                )}
               </div>
-              {formik.touched.password && formik.errors.password && (
-                <div className="text-sm text-red-500 " data-cy="password-error">
-                  {formik.errors.password}
+              <div>
+                <div className="flex flex-col">
+                  <label>
+                    Confirm Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border w-full p-2 rounded-md text-gray-600 bg-gray-50 flex space-x-2 items-center">
+                    <PasswordVisiblity
+                      passwordVisiblity={confirmPasswordVisibility}
+                      setPasswordVisibility={setConfirmPasswordVisibility}
+                    />
+                    <input
+                      className="bg-gray-50 w-full outline-none"
+                      type={confirmPasswordVisibility ? "text" : "password"}
+                      name="confirm_password"
+                      data-cy="confirm_password"
+                      onChange={formik.handleChange}
+                      value={formik.values.confirm_password}
+                      onBlur={formik.handleBlur}
+                    />
+                  </div>
                 </div>
-              )}
+                {formik.touched.confirm_password &&
+                  formik.errors.confirm_password && (
+                    <div
+                      className="text-sm text-red-500 "
+                      data-cy="confirm_password-error"
+                    >
+                      {formik.errors.confirm_password}
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
 

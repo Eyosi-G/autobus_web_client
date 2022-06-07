@@ -10,6 +10,9 @@ import {
   updateBus,
   updateBusReset,
 } from "../../store/bus/actions";
+import Spinner from "../../components/spinner";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
 const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
   const dispatch = useDispatch();
   const initalValues = {
@@ -40,7 +43,6 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
       } else {
         dispatch(createBus(values));
       }
-      action.resetForm();
     },
   });
 
@@ -57,8 +59,8 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
     };
   }, []);
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <div className="flex justify-end">
+    <form onSubmit={formik.handleSubmit} >
+      <div className="flex justify-end border-b pb-3">
         <button type="button" onClick={() => setOpenAddEditBus(false)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +73,7 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              d="M6 18L18 6M6 6l12 12"
             />
           </svg>
         </button>
@@ -91,14 +93,14 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
         </svg>
         <span>new bus</span>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         <label>
           side number <span className="text-red-500">*</span>
         </label>
         <input
           className="border w-full p-2 rounded-md text-gray-600  bg-gray-50"
           type="text"
-          placeholder="side_number"
+          placeholder="side number"
           name="side_number"
           onChange={formik.handleChange}
           value={formik.values.side_number}
@@ -135,20 +137,32 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
       </div>
       <div className="my-2">
         <div className="flex justify-center">
-          {updateBusLoading && createBusLoading && "loading...."}
+          {updateBusLoading && createBusLoading && <Spinner />}
         </div>
-        <div className="flex justify-center text-sm text-red-500 capitalize">
-          {createBusFailure && "failed to create bus !"}
-        </div>
-        <div className="flex justify-center text-sm text-green-500 capitalize">
-          {createBusSuccess && "bus successfully created !"}
-        </div>
-        <div className="flex justify-center text-sm text-red-500 capitalize">
-          {updateBusFailure && "failed to update bus !"}
-        </div>
-        <div className="flex justify-center text-sm text-green-500 capitalize">
-          {updateBusSuccess && "bus successfully updated !"}
-        </div>
+        {createBusSuccess && (
+          <SuccessMessage
+            message="bus successfully created"
+            onClickHandler={() => dispatch(createBusReset())}
+          />
+        )}
+        {createBusFailure && (
+          <ErrorMessage
+            message={createBusFailure}
+            onClickHandler={() => dispatch(createBusReset())}
+          />
+        )}
+        {updateBusSuccess && (
+          <SuccessMessage
+            message="bus successfully updated"
+            onClickHandler={() => dispatch(updateBusReset())}
+          />
+        )}
+        {updateBusFailure && (
+          <ErrorMessage
+            message={updateBusFailure}
+            onClickHandler={() => dispatch(updateBusReset())}
+          />
+        )}
       </div>
     </form>
   );

@@ -144,3 +144,29 @@ export const deleteScheduleReducer = (
   }
   return state;
 };
+
+export const deleteBulkScheduleReducer = (
+  state = { loading: false, success: false, error: null },
+  action
+) => {
+  switch (action.type) {
+    case types.DELETE_BULK_SCHEDULE_REQUEST:
+      return { loading: true, success: false, error: null };
+    case types.DELETE_BULK_SCHEDULE_SUCCESS:
+      return { loading: false, success: true, error: null };
+    case types.DELETE_BULK_SCHEDULE_FAILURE:
+      return {
+        loading: false,
+        success: false,
+        error: action.payload,
+      };
+
+    case types.DELETE_BULK_SCHEDULE_RESET:
+      return {
+        loading: false,
+        success: false,
+        error: null,
+      };
+  }
+  return state;
+};

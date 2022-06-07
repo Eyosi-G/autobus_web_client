@@ -16,6 +16,9 @@ import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
 import defaultImage from "../../resources/images/default.jpg";
+import Loading from "../../components/loading";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
 const Drivers = (props) => {
   const dispatch = useDispatch();
   const {
@@ -54,28 +57,23 @@ const Drivers = (props) => {
     };
   }, [page, limit, search]);
 
-
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
 
   const [driversToBeDeleted, setDriversToBeDeleted] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
-  useEffect(()=>{
-    if(drivers.length > 0 && drivers.length == driversToBeDeleted.length){
-      setSelectAll(true)
-    }else{
-      setSelectAll(false)
+  useEffect(() => {
+    if (drivers.length > 0 && drivers.length == driversToBeDeleted.length) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
     }
-  },[selectAll, driversToBeDeleted])
+  }, [selectAll, driversToBeDeleted]);
 
   return (
     <div>
-      <Modal open={deleteDriverLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Spinner color="white" />
-        </div>
-      </Modal>
+      <Loading open={deleteDriverLoading} />
       <Modal open={openConfirmation}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <Confirmation
@@ -90,20 +88,6 @@ const Drivers = (props) => {
             }}
           />
         </div>
-      </Modal>
-      <Modal open={deleteDriverError}>
-        <Dialog
-          severity="failure"
-          message="failed to delete driver."
-          close={() => dispatch(resetDeleteDriver())}
-        />
-      </Modal>
-      <Modal open={deleteDriverSuccess}>
-        <Dialog
-          severity="success"
-          message="driver deleted successfully !"
-          close={() => dispatch(resetDeleteDriver())}
-        />
       </Modal>
 
       <div className="flex items-center justify-between mb-3 ">
@@ -125,12 +109,26 @@ const Drivers = (props) => {
         </button>
       </div>
       <Search search={search} onSearchChange={onSearchChange} />
-
       {!loading && drivers.length === 0 ? (
-        <Empty message="empty list of drivers please add some." />
+        <Empty message="empty list of drivers" />
       ) : (
         <div>
-          <div className="flex justify-end my-2">
+          <div className="my-2">
+            {deleteDriverError && (
+              <ErrorMessage
+                message={deleteDriverError}
+                onClickHandler={() => dispatch(resetDeleteDriver())}
+              />
+            )}
+
+            {deleteDriverSuccess && (
+              <SuccessMessage
+                message="driver successfully deleted"
+                onClickHandler={() => dispatch(resetDeleteDriver())}
+              />
+            )}
+          </div>
+          <div className={"flex justify-end my-2" + (driversToBeDeleted.length > 0 ? "" : "hidden")}>
             <button
               onClick={(e) => {
                 console.log(driversToBeDeleted);
@@ -156,8 +154,8 @@ const Drivers = (props) => {
             </button>
           </div>
           <table className="w-full border border-collapse bg-white">
-            <thead>
-              <tr className="text-left">
+            <thead className="bg-gray-700 text-white">
+              <tr className="text-left capitalize">
                 <th className="p-2">
                   <input
                     type="checkbox"
@@ -172,6 +170,7 @@ const Drivers = (props) => {
                     }}
                   />
                 </th>
+                <th></th>
                 <th className="p-2">first name</th>
                 <th className="p-2">last name</th>
                 <th className="p-2">phone number</th>

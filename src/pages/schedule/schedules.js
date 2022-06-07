@@ -5,8 +5,10 @@ import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import {
+  deleteBulkSchedule,
   deleteSchedule,
   getSchedules,
+  resetDeleteBulkSchedule,
   resetDeleteSchedule,
   resetGetSchedules,
 } from "../../store/schedule/actions";
@@ -17,16 +19,22 @@ import { baseURL } from "../../utils/axios";
 import GenerateSchedule from "./generate_schedule";
 import Spinner from "../../components/spinner";
 import Confirmation from "../../components/confirmation";
+import Loading from "../../components/loading";
+import Empty from "../../components/empty";
+import SuccessMessage from "../../components/success_message";
+import ErrorMessage from "../../components/error_message";
 const Schedules = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
 
-  const params = useParams();
   const dispatch = useDispatch();
   const [generateScheduleMenu, setGenerateScheduleMenu] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
+  const [bulkDeleteConfirmation, setBulkDeleteConfirmation] = useState(false);
   const [schedule, setSchedule] = useState(null);
+  const [selectAll, setSelectAll] = useState(false);
+  const [schedulesToBeDeleted, setSchedulesToBeDeleted] = useState([]);
 
   const {
     loading: schedulesLoading,
@@ -57,6 +65,22 @@ const Schedules = () => {
     success: deleteScheduleSuccess,
     error: deleteScheduleError,
   } = useSelector((state) => state.deleteSchedule);
+
+  const {
+    loading: scheduleBulkDeleteLoading,
+    success: scheduleBulkDeleteSuccess,
+    error: scheduleBulkDeleteError,
+  } = useSelector((state) => state.scheduleBulkDelete);
+  useEffect(() => {
+    if (
+      schedules.length > 0 &&
+      schedules.length == schedulesToBeDeleted.length
+    ) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
+    }
+  }, [selectAll, schedulesToBeDeleted]);
   return (
     <div>
       <Modal open={confirmation}>
@@ -76,40 +100,60 @@ const Schedules = () => {
           />
         </div>
       </Modal>
-
-      {/* delete schedule */}
-      <Modal open={deleteScheduleLoading}>
-        <div
-          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
-          style={{ zIndex: 1000 }}
-        >
-          <Spinner color="white" />
+      <Modal open={bulkDeleteConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              dispatch(deleteBulkSchedule(schedulesToBeDeleted));
+              setBulkDeleteConfirmation(false);
+              setSchedulesToBeDeleted([])
+            }}
+            handleCancel={() => {
+              setBulkDeleteConfirmation(false);
+              setSchedulesToBeDeleted([])
+            }}
+          />
         </div>
       </Modal>
 
-      <Modal open={deleteScheduleError}>
-        <Dialog
-          severity="failure"
-          message="deleting schedules failed"
-          close={() => dispatch(resetDeleteSchedule())}
+      {/* schedule bulk delete */}
+      {scheduleBulkDeleteError && (
+        <ErrorMessage
+          message={scheduleBulkDeleteError}
+          onClickHandler={() => dispatch(resetDeleteBulkSchedule())}
         />
-      </Modal>
-      <Modal open={deleteScheduleSuccess}>
-        <Dialog
-          severity="success"
+      )}
+      {scheduleBulkDeleteSuccess && (
+        <SuccessMessage
+          message="schedules successfully deleted"
+          onClickHandler={() => dispatch(resetDeleteBulkSchedule())}
+        />
+      )}
+      {/* delete schedule */}
+      <Loading
+        open={
+          deleteScheduleLoading || schedulesLoading || scheduleBulkDeleteLoading
+        }
+      />
+      {deleteScheduleError && (
+        <ErrorMessage
+          message={deleteScheduleError}
+          onClickHandler={() => dispatch(resetDeleteSchedule())}
+        />
+      )}
+      {deleteScheduleSuccess && (
+        <SuccessMessage
           message="schedule successfully deleted"
-          close={() => dispatch(resetDeleteSchedule())}
+          onClickHandler={() => dispatch(resetDeleteSchedule())}
         />
-      </Modal>
-
+      )}
       {/* fetch schedules */}
-      <Modal open={schedulesError}>
-        <Dialog
-          severity="failure"
-          message="fetching schedules failed"
-          close={() => dispatch(resetGetSchedules())}
+      {schedulesError && (
+        <ErrorMessage
+          message={schedulesError}
+          onClickHandler={() => dispatch(resetGetSchedules())}
         />
-      </Modal>
+      )}
       <Modal open={generateScheduleMenu}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-60 flex justify-center items-center z-10">
           <div className="w-1/2 bg-white p-4 rounded-md">
@@ -117,60 +161,100 @@ const Schedules = () => {
           </div>
         </div>
       </Modal>
-      <div className="flex justify-between items-center mt-10">
-        <div className="capitalize font-bold">schedules</div>
-        <div className="flex items-center justify-end mb-3 space-x-2 ">
+      {schedulesToBeDeleted.length == 0 && (
+        <div className="flex justify-between items-center mt-5 relative">
+          <div className="capitalize font-bold">schedules</div>
+          <div className="flex items-center justify-end mb-3 space-x-2 ">
+            <button
+              onClick={() => {
+                navigate("/admin/schedules/new");
+              }}
+              className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 `}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>new schedule</span>
+            </button>
+            <button
+              onClick={() => {
+                openGenerateMenu();
+              }}
+              className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 `}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>generate schedule</span>
+            </button>
+          </div>
+        </div>
+      )}
+      {schedulesToBeDeleted.length > 0 && (
+        <div className="flex justify-end">
           <button
-            onClick={() => {
-              navigate("/admin/schedules/new");
-            }}
-            className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 `}
+            onClick={() => setBulkDeleteConfirmation(true)}
+            className="text-red-500 my-2 mx-2 bg-red-50 p-1 rounded-full"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
             >
               <path
-                fill-rule="evenodd"
-                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                clip-rule="evenodd"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-            <span>new schedule</span>
-          </button>
-          <button
-            onClick={() => {
-              openGenerateMenu();
-            }}
-            className={`flex space-x-2 items-center px-3 py-1 rounded-md bg-gray-700 text-gray-50 `}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <span>generate schedule</span>
           </button>
         </div>
-      </div>
-      {schedulesLoading ? (
-        <div className="items-center justify-center mt-40">
-          <Spinner />
-        </div>
-      ) : (
+      )}
+      {schedules.length == 0 && !schedulesLoading && (
+        <Empty message="empty schedules" />
+      )}
+      {schedules.length > 0 && (
         <div>
           <table className="w-full border border-collapse bg-white">
-            <thead>
+            <thead className="bg-gray-700 capitalize text-white">
               <tr className="text-left capitalize">
+                <th className="p-2">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        let _schedules = schedules.map(
+                          (schedule) => schedule.id
+                        );
+                        setSchedulesToBeDeleted(_schedules);
+                      } else {
+                        setSchedulesToBeDeleted([]);
+                      }
+                    }}
+                  />
+                </th>
                 <th className="p-2">day</th>
                 <th className="p-2">start time</th>
                 <th className="p-2">end time</th>
@@ -185,6 +269,26 @@ const Schedules = () => {
               {schedules.map((schedule) => {
                 return (
                   <tr className="hover:bg-gray-50 hover:cursor-pointer">
+                    <td className="border p-2">
+                      <input
+                        type="checkbox"
+                        checked={schedulesToBeDeleted.includes(schedule.id)}
+                        onChange={(e) => {
+                          console.log("here");
+                          if (schedulesToBeDeleted.includes(schedule.id)) {
+                            let _filtered = schedulesToBeDeleted.filter(
+                              (_scheduleId) => _scheduleId != schedule.id
+                            );
+                            setSchedulesToBeDeleted(_filtered);
+                          } else {
+                            setSchedulesToBeDeleted([
+                              ...schedulesToBeDeleted,
+                              schedule.id,
+                            ]);
+                          }
+                        }}
+                      />
+                    </td>
                     <td className="border p-2">{schedule.day}</td>
                     <td className="border p-2">
                       {convertTo12(schedule.startTime)}
@@ -196,7 +300,7 @@ const Schedules = () => {
                       <div className="flex justify-start items-center">
                         <img
                           src={
-                            schedule.driver.image
+                            schedule.driver && schedule.driver.image
                               ? process.env.NODE_ENV === "production"
                                 ? schedule.driver.image
                                 : `${baseURL}/images/${schedule.driver.image}`
@@ -256,7 +360,7 @@ const Schedules = () => {
                             data-cy="edit"
                             className="flex space-x-2"
                             onClick={() => {
-                              navigate(`/admin/schedules/${schedule.id}/edit`)
+                              navigate(`/admin/schedules/${schedule.id}/edit`);
                             }}
                           >
                             <span>

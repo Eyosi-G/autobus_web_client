@@ -2,7 +2,7 @@ import React from "react";
 
 const Search = ({search, onSearchChange}) => {
   return (
-    <div className="p-2 border rounded-md bg-white mb-2 flex space-x-2 items-center">
+    <div className="p-2 border rounded-md bg-white mb flex space-x-2 items-center">
       <span className="text-gray-500">
         <svg
           xmlns="http://www.w3.org/2000/svg"

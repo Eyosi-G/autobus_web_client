@@ -122,8 +122,8 @@ const Ticketers = (props) => {
         <Empty message="empty list of ticketers please add some." />
       ) : (
         <div>
-          <table className="w-full border border-collapse bg-white">
-            <thead>
+          <table className="w-full border border-collapse bg-white mt-2">
+            <thead className="bg-gray-700 text-white capitalize">
               <tr className="text-left">
                 <th></th>
                 <th className="p-2">first name</th>
