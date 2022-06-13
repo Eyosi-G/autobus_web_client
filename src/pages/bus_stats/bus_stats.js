@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
 import Empty from "../../components/empty";
+import ErrorMessage from "../../components/error_message";
+import Loading from "../../components/loading";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import Spinner from "../../components/spinner";
-import UploadStat from "../../components/upload_stat";
+import SuccessMessage from "../../components/success_message";
 import {
   deleteBusStat,
   fetchBusStats,
@@ -21,7 +23,6 @@ const BusSats = () => {
   const [limit, setLimit] = useState(5);
   const navigate = useNavigate();
 
-  const uploadRef = useRef(null);
   const onPageChangeHandler = (_newPage) => {
     setPage(_newPage);
   };
@@ -53,16 +54,8 @@ const BusSats = () => {
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentStat, setCurretStat] = useState(null);
 
-  const [openUpload, setOpenUpload] = useState(false);
-  const [uploadFile, setUploadFile] = useState(null);
-
   return (
-    <div className="p-4">
-      <Modal open={deleteBusStatLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <Spinner color="white" />
-        </div>
-      </Modal>
+    <div className="p-4 ">
       <Modal open={openConfirmation}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <Confirmation
@@ -78,13 +71,34 @@ const BusSats = () => {
           />
         </div>
       </Modal>
+      {/* load bus stat */}
+      {error && (
+        <ErrorMessage
+          message={error}
+          onClickHandler={() => dispatch(resetFetchBusStats())}
+        />
+      )}
+      {/* delete bus stat */}
+      {deleteBusStatSuccess && (
+        <SuccessMessage
+          message="bus stat successfully deleted !"
+          onClickHandler={() => dispatch(resetDeleteBusStat())}
+        />
+      )}
+      {deleteBusStatError && (
+        <ErrorMessage
+          message={deleteBusStatError}
+          onClickHandler={() => dispatch(resetDeleteBusStat())}
+        />
+      )}
+      <Loading open={loading || deleteBusStatLoading} />
       <div className="flex items-center justify-between">
         <span className="font-semibold">Bus Stats </span>
         <div className="my-3 flex justify-end items-center">
           <button
             data-cy="new-bus-stats"
             onClick={() => navigate("/admin/bus_stats/new")}
-            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white mr-2"
+            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -100,82 +114,14 @@ const BusSats = () => {
             </svg>
             <span>new stat</span>
           </button>
-          <button
-            className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white"
-            onClick={() => uploadRef.current.click()}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-              />
-            </svg>
-            <span>upload stats</span>
-          </button>
-          <input
-            type="file"
-            className="hidden"
-            accept=".csv"
-            ref={uploadRef}
-            onChange={(e) => {
-              console.log(e.target.files);
-              setUploadFile(e.target.files[0]);
-              setOpenUpload(true);
-            }}
-            onClick={(e) => {
-              e.target.value = null;
-            }}
-          />
         </div>
       </div>
-      <Modal open={error}>
-        <Dialog
-          severity="failure"
-          message={"error"}
-          close={() => dispatch(resetFetchBusStats())}
-        />
-      </Modal>
-      <Modal open={deleteBusStatError}>
-        <Dialog
-          severity="failure"
-          message={deleteBusStatError}
-          close={() => dispatch(resetDeleteBusStat())}
-        />
-      </Modal>
-      <Modal open={deleteBusStatSuccess}>
-        <Dialog
-          severity="success"
-          message={"bus stat deleted successfully"}
-          close={() => dispatch(resetDeleteBusStat())}
-        />
-      </Modal>
-
-      <Modal open={openUpload}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-2 w-1/2 rounded-lg">
-            <UploadStat
-              file={uploadFile}
-              onCloseHandler={() => setOpenUpload(false)}
-            />
-          </div>
-        </div>
-      </Modal>
-
-      {!loading && stats.length == 0 ? (
-        <Empty message="no bus stats found" />
-      ) : (
+      {!loading && stats.length == 0 && <Empty  message="empty bus stats"/>}
+      {!loading && stats.length > 0 && (
         <div>
           <div className="overflow-auto pb-10 bg-white ">
             <table className=" bg-white block whitespace-nowrap">
-              <thead className="capitalize">
+              <thead className="capitalize bg-gray-700 text-white">
                 <tr className="text-left">
                   <th className="p-2">date</th>
                   <th className="p-2">day</th>

@@ -87,7 +87,10 @@ const Layout = () => {
                   />
                 </svg>
               </div>
-              <div className="hidden group-hover:flex flex-col absolute bg-gray-50   space-y-3 right-3 px-3 py-3 drop-shadow-lg rounded-md">
+              <div
+                className="hidden group-hover:flex flex-col absolute bg-gray-50   space-y-3 right-3 px-3 py-3 drop-shadow-lg rounded-md"
+                style={{ zIndex: 2000 }}
+              >
                 <button
                   className="flex space-x-2"
                   onClick={() => navigate("/admin/settings")}
@@ -113,7 +116,7 @@ const Layout = () => {
                       />
                     </svg>
                   </span>
-                  <span>settings</span>
+                  <span>account</span>
                 </button>
                 <button className="flex space-x-2" onClick={logoutHandler}>
                   <span>

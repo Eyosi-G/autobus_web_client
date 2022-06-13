@@ -7,7 +7,14 @@ export const fetchBusStats = (page, limit) => async (dispatch) => {
     const response = await axios().get(`/stats?page=${page}&limit=${limit}`);
     dispatch({ type: types.FETCH_BUS_STATS_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.FETCH_BUS_STATS_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_BUS_STATS_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({ type: types.FETCH_BUS_STATS_FAILURE, payload: e.message });
+    }
   }
 };
 
@@ -17,7 +24,14 @@ export const createBusStat = (data) => async (dispatch) => {
     await axios().post(`/stats`, data);
     dispatch({ type: types.CREATE_BUS_STAT_SUCCESS });
   } catch (e) {
-    dispatch({ type: types.CREATE_BUS_STAT_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.CREATE_BUS_STAT_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({ type: types.CREATE_BUS_STAT_FAILURE, payload: e.message });
+    }
   }
 };
 
@@ -30,7 +44,17 @@ export const fetchSingleBusStat = (id) => async (dispatch) => {
       payload: response.data,
     });
   } catch (e) {
-    dispatch({ type: types.FETCH_SINGLE_BUS_STAT_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.FETCH_SINGLE_BUS_STAT_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.FETCH_SINGLE_BUS_STAT_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -42,7 +66,14 @@ export const editBusStat = (id, data) => async (dispatch) => {
       type: types.EDIT_BUS_STAT_SUCCESS,
     });
   } catch (e) {
-    dispatch({ type: types.EDIT_BUS_STAT_FAILURE, payload: e.message });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.EDIT_BUS_STAT_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({ type: types.EDIT_BUS_STAT_FAILURE, payload: e.message });
+    }
   }
 };
 
@@ -58,10 +89,17 @@ export const deleteBusStat = (id) => async (dispatch) => {
       payload: id,
     });
   } catch (e) {
-    dispatch({
-      type: types.DELETE_BUS_STAT_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.DELETE_BUS_STAT_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.DELETE_BUS_STAT_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -83,10 +121,17 @@ export const uploadBusStat = (data) => async (dispatch) => {
       type: types.UPLOAD_BUS_STAT_SUCCESS,
     });
   } catch (e) {
-    dispatch({
-      type: types.UPLOAD_BUS_STAT_FAILURE,
-      payload: e.message,
-    });
+    if (e.response && e.response.data) {
+      dispatch({
+        type: types.UPLOAD_BUS_STAT_FAILURE,
+        payload: e.response.data.message,
+      });
+    } else {
+      dispatch({
+        type: types.UPLOAD_BUS_STAT_FAILURE,
+        payload: e.message,
+      });
+    }
   }
 };
 
@@ -110,7 +155,6 @@ export const resetDeleteBusStat = () => ({
   type: types.DELETE_BUS_STAT_RESET,
 });
 
-
-export const resetUploadBusStat = ()=>({
-  type: types.UPLOAD_BUS_STAT_RESET
-})
+export const resetUploadBusStat = () => ({
+  type: types.UPLOAD_BUS_STAT_RESET,
+});

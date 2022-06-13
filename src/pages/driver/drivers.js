@@ -19,6 +19,7 @@ import defaultImage from "../../resources/images/default.jpg";
 import Loading from "../../components/loading";
 import ErrorMessage from "../../components/error_message";
 import SuccessMessage from "../../components/success_message";
+import ChangePassword from "../../components/change_password";
 const Drivers = (props) => {
   const dispatch = useDispatch();
   const {
@@ -58,18 +59,8 @@ const Drivers = (props) => {
   }, [page, limit, search]);
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
   const [currentDriver, setCurrentDriver] = useState(null);
-
-  const [driversToBeDeleted, setDriversToBeDeleted] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-
-  useEffect(() => {
-    if (drivers.length > 0 && drivers.length == driversToBeDeleted.length) {
-      setSelectAll(true);
-    } else {
-      setSelectAll(false);
-    }
-  }, [selectAll, driversToBeDeleted]);
 
   return (
     <div>
@@ -87,6 +78,21 @@ const Drivers = (props) => {
               setOpenConfirmation(false);
             }}
           />
+        </div>
+      </Modal>
+      <Modal open={openChangePassword}>
+        <div
+          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
+          style={{ zIndex: 1000 }}
+        >
+          <div className="w-1/2 bg-white rounded-md">
+            <ChangePassword
+              cancelHandler={() => {
+                setCurrentDriver(null);
+                setOpenChangePassword(false);
+              }}
+            />
+          </div>
         </div>
       </Modal>
 
@@ -128,48 +134,10 @@ const Drivers = (props) => {
               />
             )}
           </div>
-          <div className={"flex justify-end my-2" + (driversToBeDeleted.length > 0 ? "" : "hidden")}>
-            <button
-              onClick={(e) => {
-                console.log(driversToBeDeleted);
-              }}
-              className={`bg-red-100 p-2 rounded-full ${
-                driversToBeDeleted.length > 0 ? "" : "hidden"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            </button>
-          </div>
+
           <table className="w-full border border-collapse bg-white">
             <thead className="bg-gray-700 text-white">
               <tr className="text-left capitalize">
-                <th className="p-2">
-                  <input
-                    type="checkbox"
-                    checked={selectAll}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        let _drivers = drivers.map((driver) => driver.id);
-                        setDriversToBeDeleted(_drivers);
-                      } else {
-                        setDriversToBeDeleted([]);
-                      }
-                    }}
-                  />
-                </th>
                 <th></th>
                 <th className="p-2">first name</th>
                 <th className="p-2">last name</th>
@@ -194,26 +162,6 @@ const Drivers = (props) => {
               {drivers.map((driver) => {
                 return (
                   <tr data-cy="driver">
-                    <td className="border p-2">
-                      <input
-                        type="checkbox"
-                        checked={driversToBeDeleted.includes(driver.id)}
-                        onChange={(e) => {
-                          if (driversToBeDeleted.includes(driver.id)) {
-                            let _filtered = driversToBeDeleted.filter(
-                              (_driverId) => _driverId != driver.id
-                            );
-                            setDriversToBeDeleted(_filtered);
-                          } else {
-                            setDriversToBeDeleted([
-                              ...driversToBeDeleted,
-                              driver.id,
-                            ]);
-                          }
-                        }}
-                      />
-                    </td>
-
                     <td className="border p-2">
                       <div className="flex justify-center">
                         <img
@@ -261,6 +209,31 @@ const Drivers = (props) => {
                           className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
                           style={{ zIndex: 100 }}
                         >
+                          <button
+                            className="flex space-x-2"
+                            onClick={() => {
+                              setCurrentDriver(driver);
+                              setOpenChangePassword(true);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                              </svg>
+                            </span>
+                            <span>change password</span>
+                          </button>
                           <button
                             data-cy="delete-driver"
                             className="text-red-600 flex space-x-2"

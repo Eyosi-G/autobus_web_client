@@ -10,6 +10,8 @@ import Spinner from "../../components/spinner";
 import lionLogo from "../../resources/images/lion.png";
 import { resetSignIn, signIn } from "../../store/auth/actions";
 import * as Yup from "yup";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,13 +24,6 @@ const Login = () => {
   };
   const formik = useFormik({
     initialValues: initialValues,
-    validationSchema: Yup.object({
-      username: Yup.string()
-        .required("Username is required"),
-      password: Yup.string()
-        .min(8, "Password is too short")
-        .required("Password is required"),
-    }),
     onSubmit: (values, action) => {
       dispatch(signIn(values));
       action.resetForm();
@@ -43,14 +38,6 @@ const Login = () => {
 
   return (
     <div className="grid grid-cols-4 h-screen ">
-      <Modal open={error}>
-        <Dialog
-          severity="failure"
-          message={error}
-          instantClose={false}
-          close={() => dispatch(resetSignIn())}
-        />
-      </Modal>
       <div className="col-span-1 bg-gray-900 flex flex-col items-center justify-center">
         <img src={lionLogo} className="h-36 w-36" />
         <div className="font-semibold italic text-lg text-gray-50">
@@ -63,6 +50,12 @@ const Login = () => {
           className="w-2/3 space-y-3 flex flex-col"
           onSubmit={formik.handleSubmit}
         >
+          {error && (
+            <ErrorMessage
+              message="invalid credentials"
+              onClickHandler={() => dispatch(resetSignIn())}
+            />
+          )}
           <div className="text-xl font-semibold my-5 text-center">Log in</div>
           <div>
             <div className="capitalize">username</div>
@@ -91,9 +84,6 @@ const Login = () => {
                 onBlur={formik.handleBlur}
               />
             </div>
-            {formik.touched.username && formik.errors.username && (
-              <div className="text-red-500 text-sm lowercase" data-cy="username-error">{formik.errors.username}</div>
-            )}
           </div>
           <div>
             <div className="capitalize">password</div>
@@ -113,9 +103,6 @@ const Login = () => {
                 onBlur={formik.handleBlur}
               />
             </div>
-            {formik.touched.password && formik.errors.password && (
-              <div className="text-red-500 text-sm lowercase" data-cy="password-error">{formik.errors.password}</div>
-            )}
           </div>
           <div className="flex justify-end">forgot password ?</div>
           <div className="py-2"></div>

@@ -19,11 +19,16 @@ import {
   resetFetchSingleBusStat,
 } from "../../store/bus_stat/actions";
 import Stat from "./stat";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
+import Loading from "../../components/loading";
 
 const AddEditBusStat = ({ edit = false }) => {
   const [stats, setStats] = useState([]);
   const [error, setError] = useState("");
-  const onBusStatChange = (index, startTime, endTime, commuters) => {
+  const [errors, setErrors] = useState([]);
+  const [sumitted, setSubmited] = useState(false);
+  const onBusStatChange = (index, startTime, endTime, commuters, error) => {
     console.log("here", commuters);
     let _stats = [...stats];
     _stats[index] = {
@@ -32,6 +37,16 @@ const AddEditBusStat = ({ edit = false }) => {
       endTime,
       commuters,
     };
+
+    if (Object.keys(errors).includes(index)) {
+      let _errors = [...errors];
+      _errors = _errors.filter((_error) => _error != index);
+      setErrors(_errors);
+    } else {
+      let _errors = [...errors];
+      _errors[index] = error;
+      setErrors(_errors);
+    }
     setStats(_stats);
   };
 
@@ -51,20 +66,20 @@ const AddEditBusStat = ({ edit = false }) => {
   const dispatch = useDispatch();
   const {
     loading: createBusStatLoading,
-    success: createstatsuccess,
+    success: createBusStatSuccess,
     error: createBusStatError,
   } = useSelector((state) => state.createBusStat);
   const params = useParams();
 
   const {
     loading: editBusStatLoading,
-    success: editstatsuccess,
+    success: editBusStatSuccess,
     error: editBusStatError,
   } = useSelector((state) => state.editBusStat);
 
   const {
     loading: routesListLoading,
-    data: { count, routes },
+    data: { routes },
     error: routesListError,
   } = useSelector((state) => state.routesList);
 
@@ -80,6 +95,13 @@ const AddEditBusStat = ({ edit = false }) => {
   };
 
   const onSubmitHandler = (values, action) => {
+    setSubmited(true);
+    // check for error
+    if(errors.length < 0) return
+    if(stats.length == 0){
+      setError("stats are required")
+      return
+    }
     if (validateBusStat()) {
       setError("overlapping time slots");
     } else {
@@ -94,8 +116,8 @@ const AddEditBusStat = ({ edit = false }) => {
       } else {
         dispatch(createBusStat(data));
       }
-      setStats([]);
-      action.resetForm();
+      // setStats([]);
+      // action.resetForm();
     }
   };
 
@@ -103,21 +125,6 @@ const AddEditBusStat = ({ edit = false }) => {
     initialValues: initialValues,
     onSubmit: onSubmitHandler,
   });
-
-  const dialogMessage = () => {
-    if (createstatsuccess) return "Bus Stat Inserted Successfully !";
-    if (createBusStatError) return "Failed to insert bus stat !";
-    if (editstatsuccess) return "bus stat edited successfully !";
-    if (editBusStatError) return "failed to edit bus stat !";
-  };
-
-  const closeDialog = () => {
-    if (createBusStatError || createstatsuccess)
-      return dispatch(resetCreateBusStat());
-    if (editstatsuccess || editBusStatError)
-      return dispatch(resetEditBusStat());
-    if (busStatError) return dispatch(resetFetchSingleBusStat());
-  };
 
   useEffect(() => {
     dispatch(fetchRoutes(0, 100));
@@ -174,30 +181,35 @@ const AddEditBusStat = ({ edit = false }) => {
   }
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Modal
-        open={createBusStatLoading || busStatLoading || editBusStatLoading}
-      >
-        <div
-          style={{ zIndex: 200 }}
-          className=" absolute h-screen w-screen bg-black bg-opacity-40 flex items-center justify-center"
-        >
-          <Spinner color="white" />
-        </div>
-      </Modal>
-      <Modal open={createBusStatError || editBusStatError}>
-        <Dialog
-          severity="failure"
-          message={dialogMessage()}
-          close={() => closeDialog()}
+      <Loading
+        open={createBusStatLoading || editBusStatLoading || busStatLoading}
+      />
+      {/* edit bus stat */}
+      {editBusStatError && (
+        <ErrorMessage
+          message={editBusStatError}
+          onClickHandler={() => dispatch(resetEditBusStat())}
         />
-      </Modal>
-      <Modal open={createstatsuccess || editstatsuccess}>
-        <Dialog
-          severity="success"
-          message={dialogMessage()}
-          close={() => closeDialog()}
+      )}
+      {editBusStatSuccess && (
+        <SuccessMessage
+          message="Bus stat successfully edited"
+          onClickHandler={() => dispatch(resetEditBusStat())}
         />
-      </Modal>
+      )}
+      {/* create bus stat */}
+      {createBusStatError && (
+        <ErrorMessage
+          message={createBusStatError}
+          onClickHandler={() => dispatch(resetCreateBusStat())}
+        />
+      )}
+      {createBusStatSuccess && (
+        <SuccessMessage
+          message="Bus stat successfully created "
+          onClickHandler={() => dispatch(resetCreateBusStat())}
+        />
+      )}
       <div className="flex justify-end my-2">
         <BackButton />
       </div>
@@ -298,6 +310,7 @@ const AddEditBusStat = ({ edit = false }) => {
               type="button"
               className="bg-gray-100 rounded-full p-2 flex items-center space-x-2"
               onClick={() => {
+                setError("")
                 setStats([...stats, {}]);
               }}
             >
@@ -332,6 +345,7 @@ const AddEditBusStat = ({ edit = false }) => {
                 index={index}
                 onBusStatChange={onBusStatChange}
                 removeBusStat={removeBusStat}
+                sumitted={sumitted}
               />
             );
           })}
