@@ -87,6 +87,7 @@ const Drivers = (props) => {
         >
           <div className="w-1/2 bg-white rounded-md">
             <ChangePassword
+              userId={currentDriver && currentDriver.id}
               cancelHandler={() => {
                 setCurrentDriver(null);
                 setOpenChangePassword(false);

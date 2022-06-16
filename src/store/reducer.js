@@ -40,7 +40,7 @@ import {
   deleteScheduleReducer,
   singleScheduleReducer,
   updateScheduleReducer,
-  deleteBulkScheduleReducer
+  deleteBulkScheduleReducer,
 } from "./schedule/reducer";
 import { fetchStopsReducer } from "./stop/reducer";
 
@@ -50,6 +50,8 @@ import {
   changeEmailReducer,
   changePasswordReducer,
   changePhonenumberReducer,
+  fetchUserReducer,
+  adminChangeOtherPasswordReducer,
 } from "./setting/reducer";
 
 import {
@@ -63,6 +65,8 @@ export default combineReducers({
   changeEmail: changeEmailReducer,
   changePassword: changePasswordReducer,
   changePhonenumber: changePhonenumberReducer,
+  adminChangeOtherPassword: adminChangeOtherPasswordReducer,
+  fetchUser: fetchUserReducer,
   createDriver: createDriverReducer,
   driversList: driversListReducer,
   editDriver: editDriverReducer,

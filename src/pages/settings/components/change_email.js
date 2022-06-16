@@ -1,10 +1,11 @@
+import { data } from "autoprefixer";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "../../../components/spinner";
 import { changeEmail, resetChangeEmail } from "../../../store/setting/actions";
 import SettingDialog from "./setting_dialog";
-
+import * as Yup from "yup";
 const ChangeEmail = () => {
   const dispatch = useDispatch();
   const {
@@ -19,10 +20,27 @@ const ChangeEmail = () => {
     initialValues: {
       email: email,
     },
+    validationSchema: new Yup.object({
+      email: Yup.string().email("invalid email"),
+    }),
     onSubmit: (values, action) => {
       dispatch(changeEmail(values.email));
     },
   });
+  const { data: fetchUserData } = useSelector((state) => state.fetchUser);
+
+  useEffect(() => {
+    formik.setValues({
+      email: data.email,
+    });
+  }, [fetchUserData]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetChangeEmail());
+    };
+  }, []);
+
   return (
     <div className="my-3">
       {success && (
@@ -53,9 +71,13 @@ const ChangeEmail = () => {
             className="outline-none rounded px-2 py-1 border w-full"
           />
         </div>
+        <div className="text-sm text-red-500">{formik.errors.email}</div>
         <div className="flex justify-end">
-          <button className="bg-gray-700 text-gray-50 px-2 py-1 rounded-md" type="submit">
-            {loading ? "loading ...": "save changes"}
+          <button
+            className="bg-gray-700 text-gray-50 px-2 py-1 rounded-md"
+            type="submit"
+          >
+            {loading ? "loading ..." : "save changes"}
           </button>
         </div>
       </form>

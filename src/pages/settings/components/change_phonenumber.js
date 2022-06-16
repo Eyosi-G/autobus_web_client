@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changePhonenumber,
   resetChangePhonenumber,
 } from "../../../store/setting/actions";
 import SettingDialog from "./setting_dialog";
-
+import * as Yup from "yup";
 const ChangePhonenumber = () => {
   const dispatch = useDispatch();
   const {
@@ -22,10 +22,31 @@ const ChangePhonenumber = () => {
     initialValues: {
       phone_number,
     },
+    validationSchema: new Yup.object({
+      phone_number:
+        Yup.string().matches(/^9\d{8}$/, "invalid phone number format") ||
+        Yup.string().matches(/^09\d{8}$/, "invalid phone number format"),
+    }),
     onSubmit: (values, action) => {
       dispatch(changePhonenumber(values.phone_number));
     },
   });
+
+  const { data: fetchUserData } = useSelector((state) => state.fetchUser);
+
+  useEffect(() => {
+    if (fetchUserData) {
+      formik.setValues({
+        phone_number: fetchUserData.phone_number,
+      });
+    }
+  }, [fetchUserData]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetChangePhonenumber());
+    };
+  }, []);
   return (
     <div className="my-3">
       {success && (
@@ -55,6 +76,9 @@ const ChangePhonenumber = () => {
             placeholder="e.g 0923456789"
             className="outline-none rounded px-2 py-1 border w-full"
           />
+          <div className="text-sm text-red-500">
+            {formik.errors.phone_number}
+          </div>
         </div>
         <div className="flex justify-end">
           <button
