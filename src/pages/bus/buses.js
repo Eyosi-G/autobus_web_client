@@ -18,10 +18,12 @@ import {
   uploadBusReset,
 } from "../../store/bus/actions";
 import AddEditBus from "./add_edit_bus";
+import Confirmation from "../../components/confirmation";
 
 const Buses = () => {
   const dispatch = useDispatch();
   const [openAddEditBus, setOpenAddEditBus] = useState(false);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [singleBus, setSingleBus] = useState(null);
   const uploadRef = useRef();
@@ -141,12 +143,29 @@ const Buses = () => {
           </div>
         </div>
       </Modal>
-
+      <Modal open={openConfirmation}>
+        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
+          <Confirmation
+            handleDelete={() => {
+              if (singleBus) {
+                dispatch(deleteBus(singleBus.id));
+                setOpenConfirmation(false);
+                setSingleBus(null)
+              }
+            }}
+            handleCancel={() => {
+              setOpenConfirmation(false);
+              setSingleBus(null)
+            }}
+          />
+        </div>
+      </Modal>
       <div className="flex items-center justify-between">
         <span className="font-semibold">Buses </span>
         <div className="my-3 flex justify-end items-center">
           <button
             onClick={() => setOpenAddEditBus(true)}
+            data-cy="new_bus"
             className="flex space-x-2 items-center px-3 py-1  rounded-md bg-gray-600 text-white mr-2"
           >
             <svg
@@ -211,7 +230,7 @@ const Buses = () => {
             <tbody>
               {buses.map((bus, index) => {
                 return (
-                  <tr>
+                  <tr data-cy="buses">
                     <td className="border p-2">{bus.side_number}</td>
                     <td className="border p-2">{bus.capacity}</td>
 
@@ -238,7 +257,7 @@ const Buses = () => {
                           style={{ zIndex: 100 }}
                         >
                           <button
-                            data-cy="edit"
+                            data-cy="edit-bus"
                             className="flex space-x-2"
                             onClick={() => {
                               setIsEdit(true);
@@ -265,10 +284,11 @@ const Buses = () => {
                             <span>edit</span>
                           </button>
                           <button
-                            data-cy="delete-driver"
+                            data-cy="delete-bus"
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
-                              dispatch(deleteBus(bus.id));
+                              setSingleBus(bus);
+                              setOpenConfirmation(true)
                             }}
                           >
                             <span>

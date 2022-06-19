@@ -61,7 +61,7 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
   return (
     <form onSubmit={formik.handleSubmit} >
       <div className="flex justify-end border-b pb-3">
-        <button type="button" onClick={() => setOpenAddEditBus(false)}>
+        <button type="button" onClick={() => setOpenAddEditBus(false)} data-cy="close-bus">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
@@ -102,6 +102,7 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
           type="text"
           placeholder="side number"
           name="side_number"
+          data-cy="side_number"
           onChange={formik.handleChange}
           value={formik.values.side_number}
           onBlur={formik.handleBlur}
@@ -119,6 +120,7 @@ const AddEditBus = ({ isEdit, setOpenAddEditBus, bus }) => {
           type="text"
           placeholder="capacity"
           name="capacity"
+          data-cy="capacity"
           onChange={formik.handleChange}
           value={formik.values.capacity}
           onBlur={formik.handleBlur}
