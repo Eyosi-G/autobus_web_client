@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import axios from "axios";
 import BackButton from "../../components/back_button";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createRoute,
@@ -12,9 +12,7 @@ import {
   resetCreateRoute,
   resetFetchSingleRoute,
 } from "../../store/route/actions";
-import Dialog from "../../components/dialog";
-import Modal from "../../components/modal";
-import Spinner from "../../components/spinner";
+
 import L from "leaflet";
 import { MapContainer, TileLayer } from "react-leaflet";
 import SearchLocation from "../../components/search_location";
@@ -346,7 +344,7 @@ const AddEditRoute = ({ edit = false }) => {
 
       {createRouteSuccess && (
         <SuccessMessage
-          message={createRouteSuccess}
+          message="route successfully created"
           onClickHandler={() => dispatch(resetCreateRoute())}
         />
       )}

@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const PrivateRoute = ({ role, children }) => {
-  console.log("here");
   const { data } = useSelector((state) => state.login);
   if (!data || data.user.role !== role) return <Navigate to="/login" />;
   return children;

@@ -9,13 +9,11 @@ import {
   resetFetchDrivers,
 } from "../../store/driver/actions";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../components/spinner";
 import Empty from "../../components/empty";
 import { baseURL } from "../../utils/axios";
 import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
-import Dialog from "../../components/dialog";
-import defaultImage from "../../resources/images/default.jpg";
+import defaultImage from "../../images/default.jpg";
 import Loading from "../../components/loading";
 import ErrorMessage from "../../components/error_message";
 import SuccessMessage from "../../components/success_message";

@@ -1,5 +1,5 @@
 import React from "react";
-import empty from '../resources/images/empty.svg'
+import empty from '../images/empty.svg'
 const Empty = ({message}) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-3 mt-10">

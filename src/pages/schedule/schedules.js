@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Dialog from "../../components/dialog";
+import {  useNavigate } from "react-router-dom";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import {
@@ -12,12 +11,10 @@ import {
   resetDeleteSchedule,
   resetGetSchedules,
 } from "../../store/schedule/actions";
-import { toLongDate } from "../../utils/date_format";
 import { convertTo12 } from "../../utils/time";
-import defaultImage from "../../resources/images/default.jpg";
+import defaultImage from "../../images/default.jpg";
 import { baseURL } from "../../utils/axios";
 import GenerateSchedule from "./generate_schedule";
-import Spinner from "../../components/spinner";
 import Confirmation from "../../components/confirmation";
 import Loading from "../../components/loading";
 import Empty from "../../components/empty";

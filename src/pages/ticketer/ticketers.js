@@ -9,13 +9,11 @@ import {
   resetFetchTicketers,
 } from "../../store/ticketer/actions";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../components/spinner";
 import Empty from "../../components/empty";
 import { baseURL } from "../../utils/axios";
 import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
-import Dialog from "../../components/dialog";
-import defaultImage from "../../resources/images/default.jpg";
+import defaultImage from "../../images/default.jpg";
 import ChangePassword from "../../components/change_password";
 import ErrorMessage from "../../components/error_message";
 import SuccessMessage from "../../components/success_message";

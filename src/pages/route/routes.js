@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Dialog from "../../components/dialog";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
-import Spinner from "../../components/spinner";
 
 import Confirmation from "../../components/confirmation";
 import {
   deleteRoute,
   fetchRoutes,
-  resetCreateRoute,
   resetDeleteRoute,
+  resetFetchRoutes,
 } from "../../store/route/actions";
 import Empty from "../../components/empty";
 import Loading from "../../components/loading";
@@ -87,6 +85,12 @@ const Routes = () => {
         <ErrorMessage
           message={deleteRouteError}
           onClickHandler={() => dispatch(resetDeleteRoute())}
+        />
+      )}
+      {error && (
+        <ErrorMessage
+          message={error}
+          onClickHandler={() => dispatch(resetFetchRoutes())}
         />
       )}
 

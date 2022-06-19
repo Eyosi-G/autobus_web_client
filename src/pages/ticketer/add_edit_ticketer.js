@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import { useFormik } from "formik";
-import Dialog from "../../components/dialog";
 import {
   createTicketer,
   resetCreateTicketer,
@@ -11,9 +10,6 @@ import {
 import * as Yup from "yup";
 
 import { useDispatch, useSelector } from "react-redux";
-import Modal from "../../components/modal";
-import Spinner from "../../components/spinner";
-import { useParams } from "react-router-dom";
 import BackButton from "../../components/back_button";
 import PasswordVisiblity from "../../components/password_visiblity";
 import { getDate } from "../../utils/date_format";

@@ -5,14 +5,12 @@ import { PulseLoader } from "react-spinners";
 import BackButton from "../../components/back_button";
 import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
-import Spinner from "../../components/spinner";
 import { fetchBuses } from "../../store/bus/actions";
 import { fetchDrivers } from "../../store/driver/actions";
 import { fetchRoutes } from "../../store/route/actions";
 import { fetchTicketers } from "../../store/ticketer/actions";
 import { convertTo12 } from "../../utils/time";
-import defaultImage from "../../resources/images/default.jpg";
-import { baseURL } from "../../utils/axios";
+import defaultImage from "../../images/default.jpg";
 import * as Yup from "yup";
 import {
   createSchedule,
@@ -21,10 +19,8 @@ import {
   resetUpdateSchedule,
   updateSchedule,
 } from "../../store/schedule/actions";
-import Modal from "../../components/modal";
-import Dialog from "../../components/dialog";
+
 import { useParams } from "react-router-dom";
-import { resetFetchBusStats } from "../../store/bus_stat/actions";
 import SuccessMessage from "../../components/success_message";
 import ErrorMessage from "../../components/error_message";
 import Loading from "../../components/loading";

@@ -5,10 +5,7 @@ import { useParams } from "react-router-dom";
 import { PulseLoader } from "react-spinners";
 import BackButton from "../../components/back_button";
 import CancelButton from "../../components/cancel_button";
-import Dialog from "../../components/dialog";
-import Modal from "../../components/modal";
 import SaveButton from "../../components/save_button";
-import Spinner from "../../components/spinner";
 import { fetchRoutes, resetFetchRoutes } from "../../store/route/actions";
 import {
   createBusStat,

@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Confirmation from "../../components/confirmation";
-import Dialog from "../../components/dialog";
 import Empty from "../../components/empty";
 import ErrorMessage from "../../components/error_message";
 import Loading from "../../components/loading";

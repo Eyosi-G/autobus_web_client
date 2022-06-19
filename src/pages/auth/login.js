@@ -2,16 +2,11 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ClipLoader, ClockLoader, MoonLoader } from "react-spinners";
-import Dialog from "../../components/dialog";
-import Modal from "../../components/modal";
 import PasswordVisiblity from "../../components/password_visiblity";
 import Spinner from "../../components/spinner";
-import lionLogo from "../../resources/images/lion.png";
+import lionLogo from "../../images/lion.png";
 import { resetSignIn, signIn } from "../../store/auth/actions";
-import * as Yup from "yup";
 import ErrorMessage from "../../components/error_message";
-import SuccessMessage from "../../components/success_message";
 
 const Login = () => {
   const dispatch = useDispatch();

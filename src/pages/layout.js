@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Nav from "../components/nav";
-import { Routes as RootRoute, Route, useNavigate } from "react-router-dom";
+import { Routes as RootRoute, Route, useNavigate, Navigate } from "react-router-dom";
 import Drivers from "./driver/drivers";
 import AddEditDriver from "./driver/add_edit_driver";
 import AddEditTicketer from "./ticketer/add_edit_ticketer";
@@ -173,6 +173,7 @@ const Layout = () => {
                 path="bus_stats/:id/edit"
                 element={<AddEditRouteStat edit={true} />}
               />
+              <Route path="*" element={<Navigate to="/404"/>}/>
             </RootRoute>
           </div>
         </div>

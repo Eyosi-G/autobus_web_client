@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Menu from "./menu";
-import lion from "../resources/images/lion.png";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import lion from "../images/lion.png";
+import {  useLocation, useNavigate } from "react-router-dom";
 
 const Nav = ({ menuOpen }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
