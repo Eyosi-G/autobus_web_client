@@ -43,7 +43,7 @@ const Login = () => {
         <div className="font-semibold italic text-lg text-gray-50">
           Lion Bus
         </div>
-        <div className="text-gray-50">Ethiopia's first city bus provider.</div>
+        <div className="text-gray-50">Hop-on, Hop-off</div>
       </div>
       <div className="col-span-3 flex items-center justify-center">
         <form
@@ -104,7 +104,6 @@ const Login = () => {
               />
             </div>
           </div>
-          <div className="flex justify-end">forgot password ?</div>
           <div className="py-2"></div>
           <button
             type="submit"

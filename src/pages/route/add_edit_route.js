@@ -20,6 +20,9 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import SearchLocation from "../../components/search_location";
 import MapInputSigns from "../../components/map_input_signs";
 import { fetchStops, resetStops } from "../../store/stop/actions";
+import Loading from "../../components/loading";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
 
 const unselectedStopIcon = L.divIcon({
   className: "text-red-400",
@@ -155,21 +158,14 @@ const AddEditRoute = ({ edit = false }) => {
       setWayPoints([]);
     } else {
       setErrors(validate());
-      setBlurs({ backward_stops: true, route_number: true, forward_stops: true });
+      setBlurs({
+        backward_stops: true,
+        route_number: true,
+        forward_stops: true,
+      });
     }
   };
 
-  const closeDialogHandler = () => {
-    if (createRouteSuccess || createRouteError) dispatch(resetCreateRoute());
-    if (singleRouteData || singleRouteError) dispatch(resetFetchSingleRoute());
-  };
-  const successDialogMessage = () => {
-    if (createRouteSuccess) return "route created successfully !";
-  };
-  const errorDialogMessage = () => {
-    if (createRouteError) return "route creation failed!";
-    if (singleRouteError) return "failed fetching route info!";
-  };
 
   const params = useParams();
 
@@ -324,39 +320,37 @@ const AddEditRoute = ({ edit = false }) => {
         }
         return _stops;
       };
-      
+
       setRouteNumber(route_number);
-      setForwardStops(()=>getStops(forward_stops));
-      setBackwardStops(()=>getStops(backward_stops));
+      setForwardStops(() => getStops(forward_stops));
+      setBackwardStops(() => getStops(backward_stops));
       setWayPoints(waypoint_places);
     }
   }, [singleRouteData]);
 
   return (
     <div>
-      <Modal open={createRouteLoading || singleRouteLoading}>
-        <div
-          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center "
-          style={{ zIndex: 3000 }}
-        >
-          <Spinner color="white" />
-        </div>
-      </Modal>
+      <Loading open={createRouteLoading || singleRouteLoading} />
+      {createRouteError && (
+        <ErrorMessage
+          message={createRouteError}
+          onClickHandler={() => dispatch(resetCreateRoute())}
+        />
+      )}
+      {singleRouteError && (
+        <ErrorMessage
+          message={singleRouteError}
+          onClickHandler={() => dispatch(resetFetchSingleRoute())}
+        />
+      )}
 
-      <Modal open={createRouteError || singleRouteError}>
-        <Dialog
-          severity="failure"
-          message={errorDialogMessage()}
-          close={() => closeDialogHandler()}
+      {createRouteSuccess && (
+        <SuccessMessage
+          message={createRouteSuccess}
+          onClickHandler={() => dispatch(resetCreateRoute())}
         />
-      </Modal>
-      <Modal open={createRouteSuccess}>
-        <Dialog
-          severity="success"
-          message={successDialogMessage()}
-          close={() => closeDialogHandler()}
-        />
-      </Modal>
+      )}
+
       <div className="flex justify-end my-2">
         <BackButton />
       </div>

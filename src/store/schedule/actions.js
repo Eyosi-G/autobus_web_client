@@ -4,11 +4,15 @@ export const generateSchedule =
   (workingDays, startWorkingTime, endWorkingTime) => async (dispatch) => {
     try {
       dispatch({ type: types.GENERATE_SCHEDULE_REQUEST });
-      await axios().post(`/schedules/generate`, {
-        startWorkingTime,
-        endWorkingTime,
-        workingDays,
-      });
+      await axios().post(
+        `/schedules/generate`,
+        {
+          startWorkingTime,
+          endWorkingTime,
+          workingDays,
+        },
+        { timeout: 30000 }
+      );
       dispatch({
         type: types.GENERATE_SCHEDULE_SUCCESS,
       });
@@ -148,7 +152,7 @@ export const updateSchedule = (id, data) => async (dispatch) => {
 export const deleteBulkSchedule = (schedules) => async (dispatch) => {
   try {
     dispatch({ type: types.DELETE_BULK_SCHEDULE_REQUEST });
-    console.log(schedules)
+    console.log(schedules);
     await axios().delete(`/schedules/bulk?ids=${schedules}`);
     dispatch({
       type: types.DELETE_BULK_SCHEDULE_SUCCESS,

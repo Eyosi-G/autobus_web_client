@@ -429,7 +429,7 @@ const AddEditDriver = () => {
                   formik.errors.repeat_password && (
                     <div
                       className="text-red-500 text-sm lowercase"
-                      data-cy="password-error"
+                      data-cy="repeat-password-error"
                     >
                       {formik.errors.repeat_password}
                     </div>

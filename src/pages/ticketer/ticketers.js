@@ -16,6 +16,10 @@ import Modal from "../../components/modal";
 import Confirmation from "../../components/confirmation";
 import Dialog from "../../components/dialog";
 import defaultImage from "../../resources/images/default.jpg";
+import ChangePassword from "../../components/change_password";
+import ErrorMessage from "../../components/error_message";
+import SuccessMessage from "../../components/success_message";
+import Loading from "../../components/loading";
 
 const Ticketers = (props) => {
   const dispatch = useDispatch();
@@ -52,13 +56,23 @@ const Ticketers = (props) => {
 
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [currentTicketer, setCurrentTicketer] = useState(null);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   return (
     <div>
-      <Modal open={deleteTicketerLoading}>
-        <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <Spinner className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-black" />
+      <Modal open={openChangePassword}>
+        <div
+          className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center"
+          style={{ zIndex: 1000 }}
+        >
+          <div className="w-1/2 bg-white rounded-md">
+            <ChangePassword
+              userId={currentTicketer && currentTicketer.id}
+              cancelHandler={() => {
+                setCurrentTicketer(null);
+                setOpenChangePassword(false);
+              }}
+            />
           </div>
         </div>
       </Modal>
@@ -77,29 +91,27 @@ const Ticketers = (props) => {
           />
         </div>
       </Modal>
-      <Modal open={deleteTicketerError}>
-        <Dialog
-          severity="failure"
-          message="failed to delete ticketer."
-          close={() => dispatch(resetDeleteTicketer())}
+      <Loading open={deleteTicketerLoading || loading} />
+      {deleteTicketerError && (
+        <ErrorMessage
+          message={deleteTicketerError}
+          onClickHandler={() => dispatch(resetDeleteTicketer())}
         />
-      </Modal>
-      <Modal open={error}>
-        <Dialog
-          severity="failure"
+      )}
+      {deleteTicketerSuccess && (
+        <SuccessMessage
+          message="ticketer deleted successfully"
+          onClickHandler={() => dispatch(resetDeleteTicketer())}
+        />
+      )}
+      {error && (
+        <ErrorMessage
           message={error}
-          close={() => dispatch(resetFetchTicketers())}
+          onClickHandler={() => dispatch(resetFetchTicketers())}
         />
-      </Modal>
-      <Modal open={deleteTicketerSuccess}>
-        <Dialog
-          severity="success"
-          message="ticketer deleted successfully !"
-          close={() => dispatch(resetDeleteTicketer())}
-        />
-      </Modal>
+      )}
 
-      <div className="flex items-center justify-between mb-3 ">
+      <div className="flex items-center justify-between my-3 ">
         <p className="font-semibold capitalize">Manage Ticketers</p>
         <button
           data-cy="add-ticketer"
@@ -137,15 +149,6 @@ const Ticketers = (props) => {
             </thead>
 
             <tbody>
-              <tr>
-                <td colSpan={7}>
-                  {loading && (
-                    <div className=" w-full flex items-center justify-center m-2">
-                      <Spinner />
-                    </div>
-                  )}
-                </td>
-              </tr>
               {ticketers.map((ticketer) => {
                 return (
                   <tr data-cy="ticketer">
@@ -176,7 +179,7 @@ const Ticketers = (props) => {
                       {ticketer.birth_date.split("T")[0]}
                     </td>
                     <td className="border p-2">
-                      <div className="relative group">
+                      <div className="relative group flex justify-end">
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +196,35 @@ const Ticketers = (props) => {
                             />
                           </svg>
                         </span>
-                        <div className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2 -left-10">
+                        <div
+                          className="hidden group-hover:block absolute p-2 bg-gray-50 rounded-lg drop-shadow-md space-y-2"
+                          style={{ zIndex: 100 }}
+                        >
+                          <button
+                            className="flex space-x-2"
+                            onClick={() => {
+                              setCurrentTicketer(ticketer);
+                              setOpenChangePassword(true);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                              </svg>
+                            </span>
+                            <span>change password</span>
+                          </button>
                           <button
                             data-cy="delete-ticketer"
                             className="text-red-600 flex space-x-2"

@@ -64,7 +64,7 @@ const Drivers = (props) => {
 
   return (
     <div>
-      <Loading open={deleteDriverLoading} />
+      <Loading open={deleteDriverLoading || loading} />
       <Modal open={openConfirmation}>
         <div className="absolute h-screen w-screen bg-black bg-opacity-40 flex justify-center items-center">
           <Confirmation
@@ -96,8 +96,11 @@ const Drivers = (props) => {
           </div>
         </div>
       </Modal>
+      {error && <ErrorMessage message={error} onClickHandler={()=>resetFetchDrivers()}/>}
+      {deleteDriverError && <ErrorMessage message={deleteDriverError} onClickHandler={()=>resetDeleteDriver()} />}
+      {deleteDriverSuccess && <SuccessMessage message="driver successfully deleted" onClickHandler={()=>resetDeleteDriver()} />}
 
-      <div className="flex items-center justify-between mb-3 ">
+      <div className="flex items-center justify-between my-3 ">
         <p className="font-semibold capitalize">Manage Drivers</p>
         <button
           data-cy="add-driver"
@@ -151,15 +154,6 @@ const Drivers = (props) => {
             </thead>
 
             <tbody>
-              <tr>
-                <td colSpan={7}>
-                  {loading && (
-                    <div className=" w-full flex items-center justify-center m-2">
-                      <Spinner />
-                    </div>
-                  )}
-                </td>
-              </tr>
               {drivers.map((driver) => {
                 return (
                   <tr data-cy="driver">

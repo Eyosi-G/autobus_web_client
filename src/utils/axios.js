@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 export const baseURL =
   process.env.NODE_ENV === "production"
     ? "https://autobus.herokuapp.com"
@@ -23,7 +24,7 @@ const createInstance = () => {
     headers: {
       "Content-type": "application/json",
     },
-    timeout: 5000
+    timeout: 300000
   });
 };
 

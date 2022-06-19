@@ -11,7 +11,7 @@ describe("check authentication", () => {
     cy.visit("/login");
     cy.window().its("store").invoke("dispatch", action.logout);
     cy.intercept("POST", `${Cypress.env("API")}/auth/login`).as("login");
-    cy.typeCredentials("admin", "adminadmin");
+    cy.typeCredentials("admin", "Password@123");
     cy.wait("@login");
     cy.location("pathname", { timeout: 10000 }).should(
       "eq",
@@ -23,33 +23,15 @@ describe("check authentication", () => {
     cy.visit("/login");
     cy.intercept("POST", `${Cypress.env("API")}/auth/login`).as("login");
     cy.typeCredentials("admin", "12345678");
-    cy.wait("@login");
-    cy.get("[data-cy=dialog]").should("have.class", "bg-red-50");
+    cy.wait("@login").its("response.statusCode").should("eq", 401)
   });
 
   it("check login with invalid username and invalid password", () => {
     cy.visit("/login");
     cy.intercept("POST", `${Cypress.env("API")}/auth/login`).as("login");
     cy.typeCredentials("user1", "12345678");
-    cy.wait("@login");
-    cy.get("[data-cy=dialog]").should("have.class", "bg-red-50");
+    cy.wait("@login").its("response.statusCode").should("eq", 401)
   });
 });
 
-describe("login validation", () => {
-  it("empty username validation", () => {
-    cy.visit("/login");
-    cy.get("[data-cy=username]").type("{enter}");
-    cy.get("[data-cy=username-error]").contains("Username is required");
-  });
-  it("empty password validation", () => {
-    cy.visit("/login");
-    cy.get("[data-cy=password]").type("{enter}");
-    cy.get("[data-cy=password-error]").contains("Password is required");
-  });
-  it("short password validation", () => {
-    cy.visit("/login");
-    cy.get("[data-cy=password]").type("pass{enter}");
-    cy.get("[data-cy=password-error]").contains("Password is too short");
-  });
-});
+

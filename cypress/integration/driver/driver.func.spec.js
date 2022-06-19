@@ -6,7 +6,7 @@ let driverTwo = {};
 const resetData = ()=>{
   driverOne = {
     username: "driver_one",
-    password: "password",
+    password: "Password@123",
     firstName: "selam",
     image: "employee_1.jpg",
     lastName: "girma",
@@ -17,7 +17,7 @@ const resetData = ()=>{
   };
   driverTwo = {
     username: "driver_two",
-    password: "password",
+    password: "Password@123",
     firstName: "tigit",
     lastName: "girma",
     gender: "female",
@@ -94,7 +94,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email
     );
     cy.intercept("POST", `${Cypress.env("API")}/drivers`).as("driverOneCreate");
@@ -108,7 +108,7 @@ describe("create driver", () => {
       driverTwo.lastName,
       driverTwo.gender,
       driverTwo.birthDate,
-      null,
+      undefined,
       driverTwo.email
     );
     cy.intercept("POST", `${Cypress.env("API")}/drivers`).as("driverTwoCreate");
@@ -129,7 +129,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email,
       driverOne.phoneNumber
     );
@@ -144,7 +144,7 @@ describe("create driver", () => {
       driverTwo.lastName,
       driverTwo.gender,
       driverTwo.birthDate,
-      null,
+      undefined,
       driverTwo.email,
       driverTwo.phoneNumber
     );
@@ -167,7 +167,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email,
       driverOne.phoneNumber
     );
@@ -186,7 +186,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email,
       driverOne.phoneNumber
     );
@@ -208,7 +208,7 @@ describe("create driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email,
       driverOne.phoneNumber
     );
@@ -234,7 +234,7 @@ describe("delete driver", () => {
       driverOne.lastName,
       driverOne.gender,
       driverOne.birthDate,
-      null,
+      undefined,
       driverOne.email,
       driverOne.phoneNumber
     );

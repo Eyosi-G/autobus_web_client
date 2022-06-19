@@ -7,7 +7,7 @@ let ticketerTwo = {};
 const resetTicketerData = () => {
   ticketerOne = {
     username: "ticketer_one",
-    password: "password",
+    password: "Password@123",
     firstName: "hiwot",
     lastName: "girma",
     gender: "female",
@@ -18,7 +18,7 @@ const resetTicketerData = () => {
   };
   ticketerTwo = {
     username: "ticketer_two",
-    password: "password",
+    password: "Password@123",
     firstName: "tigit",
     lastName: "girma",
     gender: "female",
@@ -99,7 +99,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email
     );
     cy.intercept("POST", `${Cypress.env("API")}/ticketers`).as(
@@ -107,7 +107,6 @@ describe("create ticketer", () => {
     );
     cy.get("[data-cy=submit-button]").click();
     cy.wait("@ticketerOneCreate");
-    ticketerTwo["email"] = ticketerOne["email"];
     cy.typeEmployeeData(
       ticketerTwo.username,
       ticketerTwo.password,
@@ -115,8 +114,8 @@ describe("create ticketer", () => {
       ticketerTwo.lastName,
       ticketerTwo.gender,
       ticketerTwo.birthDate,
-      null,
-      ticketerTwo.email
+      undefined,
+      ticketerOne.email
     );
     cy.intercept("POST", `${Cypress.env("API")}/ticketers`).as(
       "ticketerTwoCreate"
@@ -138,7 +137,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );
@@ -155,7 +154,7 @@ describe("create ticketer", () => {
       ticketerTwo.lastName,
       ticketerTwo.gender,
       ticketerTwo.birthDate,
-      null,
+      undefined,
       ticketerTwo.email,
       ticketerTwo.phoneNumber
     );
@@ -180,7 +179,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );
@@ -199,7 +198,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );
@@ -221,7 +220,7 @@ describe("create ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );
@@ -247,7 +246,7 @@ describe("delete ticketer", () => {
       ticketerOne.lastName,
       ticketerOne.gender,
       ticketerOne.birthDate,
-      null,
+      undefined,
       ticketerOne.email,
       ticketerOne.phoneNumber
     );

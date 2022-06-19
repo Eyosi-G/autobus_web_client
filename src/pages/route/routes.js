@@ -76,7 +76,7 @@ const Routes = () => {
         </div>
       </Modal>
 
-      <Loading open={deleteRouteLoading} />
+      <Loading open={deleteRouteLoading || loading} />
       {deleteRouteSuccess && (
         <SuccessMessage
           message="route deleted successfully "
@@ -126,15 +126,6 @@ const Routes = () => {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {loading && (
-                <tr>
-                  <td colSpan={4}>
-                    <div className="flex justify-center my-2">
-                      <Spinner />
-                    </div>
-                  </td>
-                </tr>
-              )}
               {routes.map((route) => {
                 return (
                   <tr className="hover:bg-gray-50">

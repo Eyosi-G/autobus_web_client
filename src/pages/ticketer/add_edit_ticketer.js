@@ -404,7 +404,7 @@ const AddEditTicketer = () => {
                       className="bg-gray-50 w-full outline-none"
                       type={confirmPasswordVisibility ? "text" : "password"}
                       name="confirm_password"
-                      data-cy="confirm_password"
+                      data-cy="repeat_password"
                       onChange={formik.handleChange}
                       value={formik.values.confirm_password}
                       onBlur={formik.handleBlur}
@@ -415,7 +415,7 @@ const AddEditTicketer = () => {
                   formik.errors.confirm_password && (
                     <div
                       className="text-sm text-red-500 "
-                      data-cy="confirm_password-error"
+                      data-cy="repeat_password-error"
                     >
                       {formik.errors.confirm_password}
                     </div>
