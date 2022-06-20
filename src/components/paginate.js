@@ -42,6 +42,7 @@ const Paginate = ({
       </div>
       <div className="flex space-x-2 items-center">
         <button
+          type="button"
           disabled={page === 0}
           className={`${page === 0 && "text-gray-400"}`}
           onClick={backPage}
@@ -62,8 +63,9 @@ const Paginate = ({
           </svg>
         </button>
         <button
+          type="button"
           disabled={limit * (page + 1) >= total}
-          className={`${limit * (page + 1 ) >= total && "text-gray-400"}`}
+          className={`${limit * (page + 1) >= total && "text-gray-400"}`}
           onClick={nextPage}
         >
           <svg
