@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Modal from "../../components/modal";
 import Paginate from "../../components/paginate";
 import {
@@ -103,11 +103,11 @@ const Schedules = () => {
             handleDelete={() => {
               dispatch(deleteBulkSchedule(schedulesToBeDeleted));
               setBulkDeleteConfirmation(false);
-              setSchedulesToBeDeleted([])
+              setSchedulesToBeDeleted([]);
             }}
             handleCancel={() => {
               setBulkDeleteConfirmation(false);
-              setSchedulesToBeDeleted([])
+              setSchedulesToBeDeleted([]);
             }}
           />
         </div>
@@ -163,6 +163,7 @@ const Schedules = () => {
           <div className="capitalize font-bold">schedules</div>
           <div className="flex items-center justify-end mb-3 space-x-2 ">
             <button
+              data-cy="new_schedule"
               onClick={() => {
                 navigate("/admin/schedules/new");
               }}

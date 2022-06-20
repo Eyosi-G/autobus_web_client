@@ -32,6 +32,9 @@ Cypress.Commands.add("typeCredentials", (username, password) => {
 Cypress.Commands.add("resetData", () => {
   cy.request("POST", "http://localhost:8080/reset");
 });
+Cypress.Commands.add("populateData", () => {
+  cy.request("POST", "http://localhost:8080/populate");
+});
 
 Cypress.Commands.add("adminLogin", () => {
   cy.visit("/login");

@@ -192,6 +192,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       value={formik.values.startTime}
                       name="startTime"
                       onChange={formik.handleChange}
+                      data-cy="start_time"
                     >
                       {hours.map((hour) => (
                         <option value={hour}>{convertTo12(hour)}</option>
@@ -225,6 +226,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       className="outline-none w-full rounded-md text-gray-600 bg-gray-50 appearance-none"
                       value={formik.values.endTime}
                       name="endTime"
+                      data-cy="end_time"
                       onChange={formik.handleChange}
                     >
                       {hours.map((hour) => (
@@ -255,15 +257,17 @@ const AddEditSchedule = ({ edit = false }) => {
             <div>
               <label>day</label>
               <div className="flex space-x-2">
-                {days.map((day) => {
+                {days.map((day, index) => {
                   return (
                     <div className="flex items-center space-x-1">
                       <input
+                        className="outline-none"
                         type="radio"
                         name="day"
                         checked={formik.values.day == day}
                         value={day}
                         onChange={formik.handleChange}
+                        data-cy={`${index}-day`}
                       />
                       <label>{day}</label>
                     </div>
@@ -284,6 +288,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       value={formik.values.bus}
                       name="bus"
                       onChange={formik.handleChange}
+                      data-cy="bus"
                     >
                       <option></option>
                       {buses.map((bus) => (
@@ -324,6 +329,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       value={formik.values.driver}
                       name="driver"
                       onChange={formik.handleChange}
+                      data-cy="drivers"
                     >
                       <option></option>
                       {drivers.map((driver) => (
@@ -363,6 +369,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       value={formik.values.ticketer}
                       name="ticketer"
                       onChange={formik.handleChange}
+                      data-cy="ticketer"
                     >
                       <option></option>
                       {ticketers.map((ticketer) => (
@@ -404,6 +411,7 @@ const AddEditSchedule = ({ edit = false }) => {
                       value={formik.values.route}
                       name="route"
                       onChange={formik.handleChange}
+                      data-cy="route"
                     >
                       <option></option>
                       {routes.map((route) => (

@@ -4,12 +4,14 @@ import CancelButton from "../../components/cancel_button";
 import SaveButton from "../../components/save_button";
 import axios from "axios";
 import BackButton from "../../components/back_button";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createRoute,
+  editRoute,
   fetchSingleRoute,
   resetCreateRoute,
+  resetEditRoute,
   resetFetchSingleRoute,
 } from "../../store/route/actions";
 
@@ -103,6 +105,11 @@ const AddEditRoute = ({ edit = false }) => {
     success: createRouteSuccess,
     error: createRouteError,
   } = useSelector((state) => state.createRoute);
+  const {
+    loading: editRouteLoading,
+    success: editRouteSuccess,
+    error: editRouteError,
+  } = useSelector((state) => state.editRoute);
 
   const {
     loading: singleRouteLoading,
@@ -139,6 +146,7 @@ const AddEditRoute = ({ edit = false }) => {
       return s;
     });
   };
+  const params = useParams();
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -149,11 +157,12 @@ const AddEditRoute = ({ edit = false }) => {
         backward_stops: Object.keys(backwardStops),
         waypoint_places: wayPoints,
       };
-      dispatch(createRoute(data));
-      setRouteNumber(0);
-      setForwardStops([]);
-      setBackwardStops([]);
-      setWayPoints([]);
+      if (edit) {
+        const { id } = params;
+        dispatch(editRoute(id, data));
+      } else {
+        dispatch(createRoute(data));
+      }
     } else {
       setErrors(validate());
       setBlurs({
@@ -163,9 +172,6 @@ const AddEditRoute = ({ edit = false }) => {
       });
     }
   };
-
-
-  const params = useParams();
 
   useEffect(async () => {
     try {
@@ -328,7 +334,32 @@ const AddEditRoute = ({ edit = false }) => {
 
   return (
     <div>
-      <Loading open={createRouteLoading || singleRouteLoading} />
+      <Loading
+        open={
+          createRouteLoading ||
+          singleRouteLoading ||
+          stopsLoading ||
+          editRouteLoading
+        }
+      />
+      {stopsError && (
+        <ErrorMessage
+          message={stopsError}
+          onClickHandler={() => dispatch(resetStops())}
+        />
+      )}
+      {editRouteError && (
+        <ErrorMessage
+          message={editRouteError}
+          onClickHandler={() => dispatch(resetEditRoute())}
+        />
+      )}
+      {editRouteSuccess && (
+        <SuccessMessage
+          message="routes successfully edited"
+          onClickHandler={() => dispatch(resetEditRoute())}
+        />
+      )}
       {createRouteError && (
         <ErrorMessage
           message={createRouteError}

@@ -60,7 +60,7 @@ export const editRouteReducer = (
       return { loading: true, success: false, error: null };
     case types.EDIT_ROUTE_SUCCESS:
       return { loading: false, success: true, error: null };
-    case types.EDIT_ROUTE_SUCCESS:
+    case types.EDIT_ROUTE_FAILURE:
       return {
         loading: false,
         success: false,
