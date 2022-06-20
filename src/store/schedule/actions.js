@@ -11,7 +11,7 @@ export const generateSchedule =
           endWorkingTime,
           workingDays,
         },
-        { timeout: 30000 }
+        { timeout: 200000 }
       );
       dispatch({
         type: types.GENERATE_SCHEDULE_SUCCESS,

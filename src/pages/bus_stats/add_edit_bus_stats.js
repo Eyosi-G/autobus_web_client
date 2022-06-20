@@ -99,6 +99,8 @@ const AddEditBusStat = ({ edit = false }) => {
       setError("stats are required")
       return
     }
+    console.log(errors)
+    // console.log(validateBusStat())
     if (validateBusStat()) {
       setError("overlapping time slots");
     } else {
