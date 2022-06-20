@@ -7,6 +7,10 @@ export const fetchDashBoard = (route, day) => async (dispatch) => {
     const response = await axios().get(`/dashboard?route=${route}&day=${day}`);
     dispatch({ type: types.FETCH_DASHBOARD_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.FETCH_DASHBOARD_FAILURE, payload: e.message });
+    if(e.response && e.response.data){
+      dispatch({ type: types.FETCH_DASHBOARD_FAILURE, payload: e.message });
+    }else{
+      dispatch({ type: types.FETCH_DASHBOARD_FAILURE, payload: e.message });
+    }
   }
 };

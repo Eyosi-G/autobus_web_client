@@ -8,7 +8,11 @@ export const signIn = (data) => async (dispatch) => {
     localStorage.setItem("data", JSON.stringify(response.data));
     dispatch({ type: types.LOGIN_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.LOGIN_FAILURE, payload: "invalid credentials" });
+    if (e.response && e.response.data) {
+      dispatch({ type: types.LOGIN_FAILURE, payload: e.response.data.message });
+    } else {
+      dispatch({ type: types.LOGIN_FAILURE, payload: e.message });
+    }
   }
 };
 export const logout = () => (dispatch) => {

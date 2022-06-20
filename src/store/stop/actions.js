@@ -6,7 +6,11 @@ export const fetchStops = () => async (dispatch) => {
     const response = await axios().get("/terminals");
     dispatch({ type: types.FETCH_STOPS_SUCCESS, payload: response.data });
   } catch (e) {
-    dispatch({ type: types.FETCH_STOPS_FAILURE, payload: e.message });
+    if(e.response && e.response.data){
+      dispatch({ type: types.FETCH_STOPS_FAILURE, payload: e.response.data.message });
+    }else{
+      dispatch({ type: types.FETCH_STOPS_FAILURE, payload: e.message });
+    }
   }
 };
 
