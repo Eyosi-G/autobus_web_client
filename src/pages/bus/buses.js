@@ -19,6 +19,7 @@ import {
 } from "../../store/bus/actions";
 import AddEditBus from "./add_edit_bus";
 import Confirmation from "../../components/confirmation";
+import Search from "../../components/search";
 
 const Buses = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const Buses = () => {
 
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
+  const [search, setSearch] = useState();
 
   const uploadHandler = (e) => {
     uploadRef.current.click();
@@ -79,9 +81,13 @@ const Buses = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchBuses(page, limit));
-  }, [page, limit]);
+    dispatch(fetchBuses(page, limit, search));
+  }, [page, limit, search]);
 
+
+  const onSearchChange = (value) => {
+    setSearch(value)
+  };
   return (
     <div>
       <Loading open={createBulkBusesLoading || fetchBusesLoading} />
@@ -150,16 +156,17 @@ const Buses = () => {
               if (singleBus) {
                 dispatch(deleteBus(singleBus.id));
                 setOpenConfirmation(false);
-                setSingleBus(null)
+                setSingleBus(null);
               }
             }}
             handleCancel={() => {
               setOpenConfirmation(false);
-              setSingleBus(null)
+              setSingleBus(null);
             }}
           />
         </div>
       </Modal>
+
       <div className="flex items-center justify-between">
         <span className="font-semibold">Buses </span>
         <div className="my-3 flex justify-end items-center">
@@ -213,12 +220,13 @@ const Buses = () => {
           />
         </div>
       </div>
+      <Search search={search} onSearchChange={onSearchChange} placeholder="e.g 1000" />
 
       {buses.length == 0 && !fetchBusesLoading && (
         <Empty message="empty buses" />
       )}
       {buses.length > 0 && (
-        <div>
+        <div className="mt-2">
           <table className="w-full border border-collapse bg-white">
             <thead className="bg-gray-700 text-white capitalize">
               <tr className="font-semibold capitalize">
@@ -288,7 +296,7 @@ const Buses = () => {
                             className="text-red-600 flex space-x-2"
                             onClick={() => {
                               setSingleBus(bus);
-                              setOpenConfirmation(true)
+                              setOpenConfirmation(true);
                             }}
                           >
                             <span>

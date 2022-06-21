@@ -94,9 +94,9 @@ const Drivers = (props) => {
           </div>
         </div>
       </Modal>
-      {error && <ErrorMessage message={error} onClickHandler={()=>resetFetchDrivers()}/>}
-      {deleteDriverError && <ErrorMessage message={deleteDriverError} onClickHandler={()=>resetDeleteDriver()} />}
-      {deleteDriverSuccess && <SuccessMessage message="driver successfully deleted" onClickHandler={()=>resetDeleteDriver()} />}
+      {error && <ErrorMessage message={error} onClickHandler={()=>dispatch(resetFetchDrivers())}/>}
+      {deleteDriverError && <ErrorMessage message={deleteDriverError} onClickHandler={()=>dispatch(resetDeleteDriver())} />}
+      {deleteDriverSuccess && <SuccessMessage message="driver successfully deleted" onClickHandler={()=>dispatch(resetDeleteDriver())} />}
 
       <div className="flex items-center justify-between my-3 ">
         <p className="font-semibold capitalize">Manage Drivers</p>
@@ -120,23 +120,8 @@ const Drivers = (props) => {
       {!loading && drivers.length === 0 ? (
         <Empty message="empty list of drivers" />
       ) : (
-        <div>
-          <div className="my-2">
-            {deleteDriverError && (
-              <ErrorMessage
-                message={deleteDriverError}
-                onClickHandler={() => dispatch(resetDeleteDriver())}
-              />
-            )}
-
-            {deleteDriverSuccess && (
-              <SuccessMessage
-                message="driver successfully deleted"
-                onClickHandler={() => dispatch(resetDeleteDriver())}
-              />
-            )}
-          </div>
-
+        <div className="my-2">
+        
           <table className="w-full border border-collapse bg-white">
             <thead className="bg-gray-700 text-white">
               <tr className="text-left capitalize">

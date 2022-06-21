@@ -1,6 +1,6 @@
 import React from "react";
 
-const Search = ({search, onSearchChange}) => {
+const Search = ({search, onSearchChange, placeholder="e.g abebe"}) => {
   return (
     <div className="p-2 border rounded-md bg-white mb flex space-x-2 items-center">
       <span className="text-gray-500">
@@ -20,7 +20,7 @@ const Search = ({search, onSearchChange}) => {
       <input
         type="text"
         className="w-full outline-none"
-        placeholder="e.g abebe"
+        placeholder={placeholder}
         value={search}
         onChange={(e)=>{
           onSearchChange(e.target.value)

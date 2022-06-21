@@ -24,12 +24,12 @@ export const uploadBus = (data) => async (dispatch) => {
   }
 };
 
-export const fetchBuses = (page, limit) => async (dispatch) => {
+export const fetchBuses = (page, limit, sideNumber) => async (dispatch) => {
   try {
     dispatch({
       type: types.FETCH_BUSES_REQUEST,
     });
-    const response = await axios().get(`/buses?page=${page}&limit=${limit}`);
+    const response = await axios().get(`/buses?page=${page}&limit=${limit}&sideNumber=${sideNumber}`);
     dispatch({ type: types.FETCH_BUSES_SUCCESS, payload: response.data });
   } catch (e) {
     if (e.response && e.response.data) {

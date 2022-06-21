@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import { baseURL } from '../utils/axios'
+import { baseURL } from "../utils/axios";
 const SearchLocation = () => {
   const [search, setSearch] = useState("");
   const [places, setPlaces] = useState([]);
@@ -9,16 +9,13 @@ const SearchLocation = () => {
   const map = useMap();
 
   const loadPlaces = async () => {
-  
     const places = await axios.get(`${baseURL}/api/v1/places?name=${search}`);
     setPlaces(places.data || []);
   };
 
   useEffect(() => {
-    loadPlaces()
+    loadPlaces();
   }, [search]);
-
-  
 
   return (
     <div
@@ -51,17 +48,17 @@ const SearchLocation = () => {
         />
       </div>
       <div className="space-y-2 overflow-y-scroll">
-        {places
-          .map((place) => (
-            <div
-              onClick={() => {
-                map.flyTo(place.location.coordinates);
-              }}
-              className="my-1 p-1 hover:bg-gray-100 hover:cursor-pointer"
-            >
-              {place.name}
-            </div>
-          ))}
+        {places.map((place) => (
+          <div
+            onClick={() => {
+
+              map.flyTo(place.location.coordinates.reverse());
+            }}
+            className="my-1 p-1 hover:bg-gray-100 hover:cursor-pointer"
+          >
+            {place.name}
+          </div>
+        ))}
       </div>
     </div>
   );
