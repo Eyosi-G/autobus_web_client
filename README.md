@@ -23,16 +23,10 @@ It automates scheduling using previous datas and allow commuters to see the ware
 
 Tools and Technologies
 ---
-Node.js (express.js)  
-Reaact.js
-MongoDB  
-Flutter  
+React.js
 OpenStreetMap  
 OSRM  
-PostMan  
-Robo3T  
-vscode  
-android studio  
+VS-Code  
 
 Installation and Setup
 ---
