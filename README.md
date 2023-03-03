@@ -21,6 +21,9 @@ They solely rely on routines that are learned by trial and error and on response
 Overall, there are no comprehensive systems that satisfy commuters' needs. Our project aims to solving this gaps. 
 It automates scheduling using previous datas and allow commuters to see the wareabouts of buses.
 
+<img src="screenshots/image-[2].png" ><img src="screenshots/image-[1].png" ><img src="screenshots/image-[3].png" width="50%"><img src="screenshots/image-[4].png" width="50%"><img src="screenshots/image-[6].png" width="50%">
+
+
 Tools and Technologies
 ---
 React.js  
